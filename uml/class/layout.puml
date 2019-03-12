@@ -1,5 +1,8 @@
 @startuml LayoutPanes
-title GUI Lib - Layout
+''''''''''
+' Page 1 '
+''''''''''
+title GUI - Layout
 
 enum HAlignment {
     Left
@@ -42,12 +45,21 @@ class View {
 
 class FadingView
 note right: Example:\nFades in/out
-class OffsetView
+
+class SlidingView
 note right: Example:\nSlides in/out
 
 abstract class Component {
+    + HGrow : int <<get>> <<set>>
+    + VGrow : int <<get>> <<set>>
     + HAlign : HAlignment <<get>> <<set>>
     + VAlign : VAlignment <<get>> <<set>>
+    + Color : Color <<get>> <<set>>
+    + Alpha : float <<get>> <<set>>
+    + X : float <<get>> <<protected set>>
+    + Y : float <<get>> <<protected set>>
+    + {abstract}Width : float <<get>> <<protected set>>
+    + {abstract}Height : float <<get>> <<protected set>>
     + {abstract}Update(gameTime : GameTime) : void
     + {abstract}Draw(spriteBatch : SpriteBatch) : void
 }
@@ -87,7 +99,7 @@ independent of the other items.
 end note
 
 FadingView -up-|> View
-OffsetView -up-|> View
+SlidingView -up-|> View
 Container -up-|> Component
 HPane -up-|> Container
 VPane -up-|> Container
@@ -95,5 +107,98 @@ StackPane -up-|> Container
 ViewControl --> "*" View
 View --> Container : MainContainer
 Container --> "*" Component
+
+''''''''''
+' Page 2 '
+''''''''''
+newpage
+title GUI - Controls
+
+enum Alignment {
+    Horizontal
+    RHorizontal
+    Vertical
+    RVertical
+}
+
+abstract class Component
+abstract class Control {
+    + Disabled : bool <<get>> <<set>>
+    + ActionEvent : ActionEventHandler
+    + TouchInputEvent: TouchEventHandler
+    + KeyPressedEvent : KeyboardEventHandler
+    + KeyReleasedEvent : KeyboardEventHandler
+    + MouseClickedEvent : MouseEventHandler
+    + MouseReleasedEvent : MouseEventHandler
+    + {override}Update(gameTime : GameTime) : void
+    # {virtual}HandleInput() : void
+    # {virtual}OnAction() : void
+    # {virtual}OnTouchInput() : void
+    # {virtual}OnKeyPressed() : void
+    # {virtual}OnKeyReleased() : void
+    # {virtual}OnMouseClicked() : void
+    # {virtual}OnMouseReleased() : void
+}
+
+interface Toggable {
+    + Toggled : bool <<get>> <<set>>
+}
+
+interface Selectable {
+    + Selected : bool <<get>> <<set>>
+}
+
+interface Alignable {
+    + Align : Alignment <<get>> <<set>>
+}
+
+class Checkbox
+class Radiobox
+class RadioGroup
+
+class Textbox
+class Scrollbar
+class Progressbar
+
+abstract class Menu {
+    + SelectedIndex : int <<get>> <<protected set>>
+    + SelectedItem : Selectable <<get>> <<protected set>>
+    # {abstract}AlignItems() : void
+}
+
+class HList
+class VList
+
+class MenuItem {
+    + Font : Font2D <<get>> <<set>>
+    + Text : string <<get>> <<set>>
+    + Image : Image2D <<get>> <<set>>
+}
+
+Control -up-|> Component
+MenuItem -up-|> Control
+MenuItem ..|> Selectable
+MenuItem ..|> Alignable
+Checkbox -up-|> Control
+Checkbox ..|> Toggable
+Checkbox ..|> Selectable
+Checkbox ..|> Alignable
+Radiobox -up-|> Control
+Radiobox ..|> Toggable
+Radiobox ..|> Selectable
+Radiobox ..|> Alignable
+Textbox -up-|> Control
+Textbox ..|> Alignable
+Scrollbar -up-|> Control
+Scrollbar ..|> Alignable
+Progressbar -up-|> Control
+Progressbar ..|> Alignable
+Menu -up-|> Control
+HList -right-|> Menu
+VList -left-|> Menu
+
+Menu --> "*" Selectable
+RadioGroup -up-> "*" Radiobox
+Radiobox -up-> "0, 1" RadioGroup : Group
 
 @enduml
