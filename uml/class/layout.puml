@@ -1,0 +1,99 @@
+@startuml LayoutPanes
+title GUI Lib - Layout
+
+enum HAlignment {
+    Left
+    Center
+    Right
+}
+
+enum VAlignment {
+    Top
+    Center
+    Bottom
+}
+
+enum ViewState {
+    Opening
+    Open
+    Closing
+    Closed
+    Hiding
+    Hidden
+}
+
+class ViewControl {
+    + ActiveView : View <<get>>
+    + AddView(view : View) : void
+    + RemoveView(view : View) : void
+    + SetActive(viewIndex : int) : void
+    + Update(gameTime : GameTime) : void
+    + Draw(spriteBatch : SpriteBatch) : void
+}
+
+class View {
+    + State : ViewState <<get>> <<protected set>>
+    + MainContainer : Container <<get>>
+    + {abstract}Show() : void
+    + {abstract}Hide() : void
+    + {abstract}Close() : void
+    + {abstract}HandleInput() : void
+}
+
+class FadingView
+note right: Example:\nFades in/out
+class OffsetView
+note right: Example:\nSlides in/out
+
+abstract class Component {
+    + HAlign : HAlignment <<get>> <<set>>
+    + VAlign : VAlignment <<get>> <<set>>
+    + {abstract}Update(gameTime : GameTime) : void
+    + {abstract}Draw(spriteBatch : SpriteBatch) : void
+}
+
+abstract class Container {
+    # {abstract}AlignChildren() : void
+    + {override}Update(gameTime : GameTime) : void
+    + {override}Draw(spriteBatch : SpriteBatch) : void
+}
+
+class HPane
+note right
+The order of items is determined by
+their HAlignment and the order they
+where added to this Container.
+VAlignment determines how items are
+aligned within their column.
+end note
+
+class VPane
+note right
+The order of items is determined by
+their VAlignment and the order they
+where added to this Container.
+HAlignment determines how items are
+aligned within their row.
+end note
+
+class StackPane
+note right
+Items are stacked on top of each
+other in the order they where added
+to this Container. The positioning
+of items according to their H- and
+VAlignment is evaluated for each item
+independent of the other items.
+end note
+
+FadingView -up-|> View
+OffsetView -up-|> View
+Container -up-|> Component
+HPane -up-|> Container
+VPane -up-|> Container
+StackPane -up-|> Container
+ViewControl --> "*" View
+View --> Container : MainContainer
+Container --> "*" Component
+
+@enduml

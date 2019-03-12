@@ -1,0 +1,8 @@
+## vscode
+.vscode
+.settings
+
+## build
+bin
+obj
+doc
