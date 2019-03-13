@@ -8,29 +8,28 @@ participant ":View" as View
 
 participant ":Container" as Container
 
-collections "Components" as Components
-note right: Children
+collections "Children" as Components
 participant ":Component" as Component
 
 collections "Controls" as Controls
-note right: Children
 participant ":Control" as Control
 
 ViewControl -> Views : Update()
-Views -> View : Update()
-View -> Container: Update()
-Container -> Components: Update()
-Components -> Component: Update()
-Components <-- Component: Update()
-Container <-- Components: Update()
-Container -> Controls: Update()
-Controls -> Control: Update()
-Control -> Control: HandleInput()
-Controls <-- Control: Update()
-Container <-- Controls: Update()
-View <-- Container: Update()
-View -> View: HandleInput()
-Views <-- View : Update()
+    Views -> View : ForEach()
+        View -> View : HandleInput()
+        View -> Container : Update()
+            Container -> Controls : Update()
+                Controls -> Control : ForEach()
+                    Control -> Control : HandleInput()
+                Controls <- Control : ForEach()
+            Container <-- Controls : Update()
+            Container -> Components : Update()
+                Components -> Component : ForEach()
+                    Component -> Component : Update()
+                Components <-- Component : ForEach()
+            Container <-- Components : Update()
+        View <-- Container : Update()
+    Views <-- View : ForEach()
 ViewControl <-- Views : Update()
 
 @enduml

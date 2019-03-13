@@ -19,6 +19,7 @@ enum VAlignment {
 enum ViewState {
     Opening
     Open
+    Greedy
     Closing
     Closed
     Hiding
@@ -26,21 +27,19 @@ enum ViewState {
 }
 
 class ViewControl {
-    + ActiveView : View <<get>>
     + AddView(view : View) : void
     + RemoveView(view : View) : void
-    + SetActive(viewIndex : int) : void
     + Update(gameTime : GameTime) : void
     + Draw(spriteBatch : SpriteBatch) : void
 }
 
-class View {
+abstract class View {
     + State : ViewState <<get>> <<protected set>>
     + MainContainer : Container <<get>>
     + {abstract}Show() : void
     + {abstract}Hide() : void
     + {abstract}Close() : void
-    + {abstract}HandleInput() : void
+    + {virtual}HandleInput() : void
 }
 
 class FadingView
@@ -98,15 +97,20 @@ VAlignment is evaluated for each item
 independent of the other items.
 end note
 
+abstract class Control
+
 FadingView -up-|> View
 SlidingView -up-|> View
+Control -right-|> Component
 Container -up-|> Component
 HPane -up-|> Container
 VPane -up-|> Container
 StackPane -up-|> Container
 ViewControl --> "*" View
 View --> Container : MainContainer
-Container --> "*" Component
+Component --> "0, 1" Container : Parent
+Container --> "*" Component : Children
+Container -left-> "*" Control : Controls
 
 ''''''''''
 ' Page 2 '
