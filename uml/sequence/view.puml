@@ -32,4 +32,16 @@ ViewControl -> Views : Update()
     Views <-- View : ForEach()
 ViewControl <-- Views : Update()
 
+ViewControl -> Views : Draw()
+    Views -> View : ForEach()
+        View -> Container : Draw()
+            Container -> Components : Draw()
+                Components -> Component : Draw()
+                    Component -> Component : Draw()
+                Components <-- Component : Draw()
+            Container <-- Components : Draw()
+        View <-- Container : Draw()
+    Views <-- View : ForEach()
+ViewControl <-- Views : Draw()
+
 @enduml
