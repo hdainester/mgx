@@ -148,21 +148,45 @@ interface Toggable {
     + Toggled : bool <<get>> <<set>>
 }
 
-interface Selectable {
-    + Selected : bool <<get>> <<set>>
-}
-
 interface Alignable {
     + Align : Alignment <<get>> <<set>>
+}
+
+interface Stylable {
+    + Textures : Collection<Texture2D> <<get>> <<protected set>>
+}
+
+note right: TODO
+
+abstract class SelectableControl {
+    + {abstract}Selected : bool <<get>> <<set>>
 }
 
 class Checkbox
 class Radiobox
 class RadioGroup
 
-class Textbox
-class Scrollbar
-class Progressbar
+class Textbox {
+    + Text : string <<get>> <<protected set>>
+    + Focused : bool <<get>> <<protected set>>
+    + TextboxTexture : Texture2D <<get>> <<protected set>>
+    + TextboxTexture : Texture2D <<get>> <<protected set>>
+    + TextboxColor : Color <<get>> <<set>>
+}
+
+class Scrollbar {
+    + ScrollbarPosition : float <<get>> <<protected set>>
+    + ScrollbarTexture : Texture2D <<get>> <<protected set>>
+    + ScrollTexture : Texture2D <<get>> <<protected set>>
+    + ScrollColor : Color <<get>> <<set>>
+}
+
+class Progressbar {
+    + Progress : float <<get>> <<set>>
+    + ProgressbarTexture : Texture2D <<get>> <<protected set>>
+    + BackgroundTexture : Texture2D <<get>> <<protected set>>
+    + BackgroundColor : Color <<get>> <<set>>
+}
 
 abstract class Menu {
     + SelectedIndex : int <<get>> <<protected set>>
@@ -173,6 +197,15 @@ abstract class Menu {
 class HList
 class VList
 
+class TextItem {
+    + Font : Font2D <<get>> <<set>>
+    + Text : string <<get>> <<set>>
+}
+
+class ImageItem {
+    + Image : Image2D <<get>> <<set>>
+}
+
 class MenuItem {
     + Font : Font2D <<get>> <<set>>
     + Text : string <<get>> <<set>>
@@ -180,16 +213,15 @@ class MenuItem {
 }
 
 Control -up-|> Component
-MenuItem -up-|> Control
-MenuItem ..|> Selectable
+TextItem -right-|> Component
+ImageItem -left-|> Component
+MenuItem -up-|> SelectableControl
 MenuItem ..|> Alignable
-Checkbox -up-|> Control
+Checkbox -up-|> SelectableControl
 Checkbox ..|> Toggable
-Checkbox ..|> Selectable
 Checkbox ..|> Alignable
-Radiobox -up-|> Control
+Radiobox -up-|> SelectableControl
 Radiobox ..|> Toggable
-Radiobox ..|> Selectable
 Radiobox ..|> Alignable
 Textbox -up-|> Control
 Textbox ..|> Alignable
@@ -197,11 +229,13 @@ Scrollbar -up-|> Control
 Scrollbar ..|> Alignable
 Progressbar -up-|> Control
 Progressbar ..|> Alignable
-Menu -up-|> Control
+Menu -up-|> MenuItem
 HList -right-|> Menu
 VList -left-|> Menu
+SelectableControl -up-|> Control
 
-Menu --> "*" Selectable
+Menu -up-> "*" SelectableControl : Items
+SelectableControl --> "0, 1" Menu : Menu
 RadioGroup -up-> "*" Radiobox
 Radiobox -up-> "0, 1" RadioGroup : Group
 

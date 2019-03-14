@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using System;
+
 namespace Test {
     public class TestGame : Game {
         GraphicsDeviceManager graphics;
@@ -25,9 +27,16 @@ namespace Test {
             // TODO: use this.Content to load your game content here
         }
 
+        private int prevTime = -1;
         protected override void Update(GameTime gameTime) {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            int curTime = gameTime.TotalGameTime.Seconds;
+            if(prevTime != curTime) {
+                Console.WriteLine("Passed Time: {0}s", curTime);
+                prevTime = curTime;
+            }
 
             // TODO: Add your update logic here
 
