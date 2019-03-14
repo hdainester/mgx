@@ -1,5 +1,8 @@
 @startuml ViewSequence
-title GUI - View Update/Draw Sequence
+''''''''
+'Page 1'
+''''''''
+title GUI - View Update Sequence
 
 participant ":ViewControl" as ViewControl
 
@@ -31,6 +34,11 @@ ViewControl -> Views : Update()
         View <-- Container : Update()
     Views <-- View : ForEach()
 ViewControl <-- Views : Update()
+
+''''''''
+'Page 2'
+''''''''
+newpage GUI - View Draw Sequence
 
 ViewControl -> Views : Draw()
     Views -> View : ForEach()
