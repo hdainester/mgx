@@ -190,7 +190,7 @@ class Progressbar {
 
 abstract class Menu {
     + SelectedIndex : int <<get>> <<protected set>>
-    + SelectedItem : Selectable <<get>> <<protected set>>
+    + SelectedItem : MenuItem <<get>> <<protected set>>
     # {abstract}AlignItems() : void
 }
 
@@ -213,30 +213,27 @@ class MenuItem {
 }
 
 Control -up-|> Component
+Control .right.|> Stylable
 TextItem -right-|> Component
 ImageItem -left-|> Component
 MenuItem -up-|> SelectableControl
-MenuItem ..|> Alignable
 Checkbox -up-|> SelectableControl
 Checkbox ..|> Toggable
-Checkbox ..|> Alignable
 Radiobox -up-|> SelectableControl
 Radiobox ..|> Toggable
-Radiobox ..|> Alignable
-Textbox -up-|> Control
-Textbox ..|> Alignable
-Scrollbar -up-|> Control
-Scrollbar ..|> Alignable
-Progressbar -up-|> Control
+Textbox -left-|> SelectableControl
+Scrollbar -right-|> SelectableControl
+Progressbar -right-|> Control
 Progressbar ..|> Alignable
 Menu -up-|> MenuItem
 HList -right-|> Menu
 VList -left-|> Menu
 SelectableControl -up-|> Control
+SelectableControl ..|> Alignable
 
-Menu -up-> "*" SelectableControl : Items
-SelectableControl --> "0, 1" Menu : Menu
-RadioGroup -up-> "*" Radiobox
-Radiobox -up-> "0, 1" RadioGroup : Group
+Menu -up-> "*" MenuItem : Items
+MenuItem --> "0, 1" Menu : Menu
+RadioGroup -right-> "*" Radiobox
+Radiobox -left-> "0, 1" RadioGroup : Group
 
 @enduml
