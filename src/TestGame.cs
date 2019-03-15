@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 
+using System.Collections.Generic;
+using System.Linq;
 using System;
 
 namespace Test {
@@ -9,7 +11,17 @@ namespace Test {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        // mgx default fonts example
+        private Dictionary<string, SpriteFont> mgxFonts;
+        private Dictionary<string, Color> fontColors;
+        private Dictionary<string, Vector2> textPositions;
+
+
         public TestGame() {
+            mgxFonts = new Dictionary<string, SpriteFont>();
+            fontColors = new Dictionary<string, Color>();
+            textPositions = new Dictionary<string, Vector2>();
+
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -24,7 +36,16 @@ namespace Test {
         protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            // mgx default fonts example
+            mgxFonts.Add("Header Font", Content.Load<SpriteFont>("mgx/fonts/header"));
+            mgxFonts.Add("Header (italic) Font", Content.Load<SpriteFont>("mgx/fonts/header_italic"));
+            mgxFonts.Add("Header (bold) Font", Content.Load<SpriteFont>("mgx/fonts/header_bold"));
+            mgxFonts.Add("Content Font", Content.Load<SpriteFont>("mgx/fonts/content"));
+            mgxFonts.Add("Content (italic) Font", Content.Load<SpriteFont>("mgx/fonts/content_italic"));
+            mgxFonts.Add("Content (bold) Font", Content.Load<SpriteFont>("mgx/fonts/content_bold"));
+            mgxFonts.Add("Footer Font", Content.Load<SpriteFont>("mgx/fonts/footer"));
+            mgxFonts.Add("Footer (italic) Font", Content.Load<SpriteFont>("mgx/fonts/footer_italic"));
+            mgxFonts.Add("Footer (bold) Font", Content.Load<SpriteFont>("mgx/fonts/footer_bold"));
         }
 
         private int prevTime = -1;
@@ -32,13 +53,21 @@ namespace Test {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            int curTime = gameTime.TotalGameTime.Seconds;
-            if(prevTime != curTime) {
-                Console.WriteLine("Passed Time: {0}s", curTime);
-                prevTime = curTime;
+            int days = gameTime.TotalGameTime.Days;
+            int hours = gameTime.TotalGameTime.Hours;
+            int minutes = gameTime.TotalGameTime.Minutes;
+            int seconds = gameTime.TotalGameTime.Seconds;
+
+            if(prevTime != seconds) {
+                Console.WriteLine("Passed Time: {0:00}:{1:00}:{2:00}:{3:00}",
+                    days, hours, minutes, seconds);
+
+                prevTime = seconds;
             }
 
-            // TODO: Add your update logic here
+            // basic example for update logic of mgx
+            // fonts example (also handling input)
+            UpdateFonts();
 
             base.Update(gameTime);
         }
@@ -46,9 +75,55 @@ namespace Test {
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            // mgx default fonts example
+            Vector2 position;
+            SpriteFont font;
+            Color color;
+
+            spriteBatch.Begin();
+            mgxFonts.Keys.ToList().ForEach(key => {
+                font = mgxFonts[key];
+                color = fontColors[key];
+                position = textPositions[key];
+                spriteBatch.DrawString(font, key, position, color);
+            });
+            spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        // example of handling input for mgx
+        // font test on mouseover
+        protected void HandleInput(string fontKey, Vector2 pos, Vector2 size) {
+            MouseState ms = Mouse.GetState();
+
+            if(ms.Position.X >= pos.X && ms.Position.Y >= pos.Y
+            && ms.Position.X < pos.X + size.X && ms.Position.Y < pos.Y + size.Y)
+                fontColors[fontKey] = Color.Yellow;
+            else fontColors[fontKey] = Color.White;
+        }
+
+        // helper to update text positions for
+        // mgx font test
+        protected void UpdateFonts() {
+            int textHeight = 0;
+            int screenWidth = GraphicsDevice.Viewport.Width;
+            int screenHeight = GraphicsDevice.Viewport.Height;
+            Vector2 size, position = Vector2.Zero;
+            SpriteFont font;
+
+            mgxFonts.Keys.ToList().ForEach(key =>
+                textHeight += (int)mgxFonts[key].MeasureString(key).Y);
+
+            position.Y = screenHeight/2 - textHeight/2;
+            mgxFonts.Keys.ToList().ForEach(key => {
+                font = mgxFonts[key];
+                size = font.MeasureString(key);
+                position.X = screenWidth/2 - (int)size.X/2;
+                textPositions[key] = position;
+                HandleInput(key, position, size);
+                position.Y += size.Y;
+            });
         }
     }
 }
