@@ -34,6 +34,7 @@ class ViewControl {
 }
 
 abstract class View {
+    + Content : ContentManager <<get>> <<protected set>>
     + State : ViewState <<get>> <<protected set>>
     + MainContainer : Container <<get>>
     + {abstract}Show() : void
@@ -59,12 +60,14 @@ abstract class Component {
     + Y : float <<get>> <<protected set>>
     + {abstract}Width : float <<get>> <<protected set>>
     + {abstract}Height : float <<get>> <<protected set>>
+    + {abstract}Load(content : ContentManager) : void
     + {abstract}Update(gameTime : GameTime) : void
     + {abstract}Draw(spriteBatch : SpriteBatch) : void
 }
 
 abstract class Container {
     # {abstract}AlignChildren() : void
+    + {override}Load(conent : ContentManager) : void
     + {override}Update(gameTime : GameTime) : void
     + {override}Draw(spriteBatch : SpriteBatch) : void
 }
@@ -108,6 +111,14 @@ VPane -up-|> Container
 StackPane -up-|> Container
 ViewControl --> "*" View
 View --> Container : MainContainer
+View -left-> ContentManager : Content
+note top on link
+Content is loaded on View
+initialization. ContentMangagers
+can be share among different
+views.
+end note
+
 Component --> "0, 1" Container : Parent
 Container --> "*" Component : Children
 Container -left-> "*" Control : Controls
@@ -118,7 +129,7 @@ Container -left-> "*" Control : Controls
 newpage
 title GUI - Controls
 
-enum Alignment {
+enum Orientation {
     Horizontal
     RHorizontal
     Vertical
@@ -148,8 +159,8 @@ interface Toggable {
     + Toggled : bool <<get>> <<set>>
 }
 
-interface Alignable {
-    + Align : Alignment <<get>> <<set>>
+interface Orientable {
+    + Orientation : Orientation <<get>> <<set>>
 }
 
 interface Stylable {
@@ -224,12 +235,12 @@ Radiobox ..|> Toggable
 Textbox -left-|> SelectableControl
 Scrollbar -right-|> SelectableControl
 Progressbar -right-|> Control
-Progressbar ..|> Alignable
+Progressbar ..|> Orientable
 Menu -up-|> MenuItem
 HList -right-|> Menu
 VList -left-|> Menu
 SelectableControl -up-|> Control
-SelectableControl ..|> Alignable
+SelectableControl ..|> Orientable
 
 Menu -up-> "*" MenuItem : Items
 MenuItem --> "0, 1" Menu : Menu

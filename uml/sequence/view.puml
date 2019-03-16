@@ -18,22 +18,58 @@ collections "Controls" as Controls
 participant ":Control" as Control
 
 ViewControl -> Views : Update()
+activate Views
+
     Views -> View : ForEach()
+    activate View
+
         View -> View : HandleInput()
+        activate View
+        deactivate View
+
         View -> Container : Update()
+        activate Container
+
             Container -> Controls : Update()
+            activate Controls
+
                 Controls -> Control : ForEach()
+                activate Control
+
                     Control -> Control : HandleInput()
-                Controls <- Control : ForEach()
-            Container <-- Controls : Update()
+                    activate Control
+                    deactivate Control
+
+                Controls <-- Control
+                deactivate Control
+
+            Container <-- Controls
+            deactivate Controls
+
             Container -> Components : Update()
+            activate Components
+
                 Components -> Component : ForEach()
+                activate Component
+
                     Component -> Component : Update()
-                Components <-- Component : ForEach()
-            Container <-- Components : Update()
-        View <-- Container : Update()
-    Views <-- View : ForEach()
-ViewControl <-- Views : Update()
+                    activate Component
+                    deactivate Component
+
+                Components <-- Component
+                deactivate Component
+
+            Container <-- Components
+            deactivate Components
+
+        View <-- Container
+        deactivate Container
+
+    Views <-- View
+    deactivate View
+
+ViewControl <-- Views
+deactivate Views
 
 ''''''''
 'Page 2'
@@ -41,15 +77,37 @@ ViewControl <-- Views : Update()
 newpage GUI - View Draw Sequence
 
 ViewControl -> Views : Draw()
+activate Views
+
     Views -> View : ForEach()
+    activate View
+
         View -> Container : Draw()
+        activate Container
+
             Container -> Components : Draw()
-                Components -> Component : Draw()
+            activate Components
+
+                Components -> Component : ForEach()
+                activate Component
+
                     Component -> Component : Draw()
-                Components <-- Component : Draw()
-            Container <-- Components : Draw()
-        View <-- Container : Draw()
-    Views <-- View : ForEach()
-ViewControl <-- Views : Draw()
+                    activate Component
+                    deactivate Component
+
+                Components <-- Component
+                deactivate Component
+
+            Container <-- Components
+            deactivate Components
+
+        View <-- Container
+        deactivate Container
+
+    Views <-- View
+    deactivate View
+
+ViewControl <-- Views
+deactivate Views
 
 @enduml
