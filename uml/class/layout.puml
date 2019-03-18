@@ -60,7 +60,7 @@ abstract class Component {
     + Y : float <<get>> <<protected set>>
     + {abstract}Width : float <<get>> <<protected set>>
     + {abstract}Height : float <<get>> <<protected set>>
-    + {abstract}Load(content : ContentManager) : void
+    + {virtual}Load(content : ContentManager) : void
     + {abstract}Update(gameTime : GameTime) : void
     + {abstract}Draw(spriteBatch : SpriteBatch) : void
 }
@@ -115,7 +115,7 @@ View -left-> ContentManager : Content
 note top on link
 Content is loaded on View
 initialization. ContentMangagers
-can be share among different
+can be shared among different
 views.
 end note
 
