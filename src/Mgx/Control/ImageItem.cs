@@ -17,8 +17,7 @@ namespace Mgx.Control {
 
         public override void Draw(SpriteBatch spriteBatch) {
             Rectangle destination = new Rectangle((int)X, (int)Y, (int)Width, (int)Height);
-            // TODO place Color property somewhere
-            spriteBatch.Draw(Image, destination, Color);
+            spriteBatch.Draw(Image, destination, Color*Alpha);
         }
     }
 }

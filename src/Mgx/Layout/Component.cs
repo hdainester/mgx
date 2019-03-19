@@ -8,23 +8,52 @@ using System;
 
 namespace Mgx.Layout {
     public abstract class Component : INotifyPropertyChanged {
-        public int HGrow {get; set;}
-        public int VGrow {get; set;}
-        public HAlignment HAlign {get; set;}
-        public VAlignment VAlign {get; set;}
-        public Container Parent {get; protected set;}
-        public Color Color {get; set;} = Color.White;
-        // public float Alpha {get; set;}
+        private int hgrow;
+        public int HGrow {
+            get {return hgrow;}
+            set {SetProperty(ref hgrow, value);}
+        }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private int vgrow;
+        public int VGrow {
+            get {return vgrow;}
+            set {SetProperty(ref vgrow, value);}
+        }
+
+        private HAlignment halign;
+        public HAlignment HAlign {
+            get {return halign;}
+            set {SetProperty(ref halign, value);}
+        }
+
+        private VAlignment valign;
+        public VAlignment VAlign {
+            get {return valign;}
+            set {SetProperty(ref valign, value);}
+        }
+
+        private Container parent;
+        public Container Parent {
+            get {return parent;}
+            protected set {SetProperty(ref parent, value);}
+        }
+
+        private Color color = Color.White;
+        public Color Color {
+            get {return color;}
+            set {SetProperty(ref color, value);}
+        }
+        
+        private float alpha = 1f;
+        public float Alpha {
+            get {return Parent == null ? alpha : alpha*Parent.Alpha;}
+            set {alpha = value;}
+        }
 
         private Vector2 position;
         public Vector2 Position {
             get {return position;}
-            protected set {
-                if(value != position)
-                    SetProperty(ref position, value);
-            }
+            protected set {SetProperty(ref position, value);}
         }
 
         public float X {
@@ -40,10 +69,7 @@ namespace Mgx.Layout {
         private Vector2 size;
         public Vector2 Size {
             get {return size;}
-            protected set {
-                if(value != size)
-                    SetProperty(ref size, value);
-            }
+            protected set {SetProperty(ref size, value);}
         }
 
         public float Width {
@@ -56,6 +82,8 @@ namespace Mgx.Layout {
             protected set {Size = new Vector2(Size.X, value);}
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public virtual void Load(ContentManager content) {}
         public abstract void Update(GameTime gameTime);
         public abstract void Draw(SpriteBatch spriteBatch);
@@ -66,8 +94,10 @@ namespace Mgx.Layout {
         }
 
         protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string name = "") {
-            field = value;
-            OnPropertyChanged(name);
+            if(!value.Equals(field)) {
+                field = value;
+                OnPropertyChanged(name);
+            }
         }
 
         protected static void _SetParent(Component c, Container parent) {

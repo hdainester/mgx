@@ -43,8 +43,7 @@ namespace Mgx.Control {
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
-            // TODO place Color property somewhere
-            spriteBatch.DrawString(Font, Text, Position, Color.White);
+            spriteBatch.DrawString(Font, Text, Position, Color*Alpha);
         }
     }
 }

@@ -32,7 +32,12 @@ namespace Mgx.View {
         public abstract void Hide();
         public abstract void Close();
         public virtual void HandleInput() {}
-        public abstract void Update(GameTime gameTime);
+        public virtual void Update(GameTime gameTime) {
+            if(State == ViewState.Open)
+                HandleInput();
+                
+            MainContainer.Update(gameTime);
+        }
 
         public void Draw(SpriteBatch spriteBatch) {
             MainContainer.Draw(spriteBatch);

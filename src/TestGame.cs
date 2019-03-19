@@ -34,7 +34,7 @@ namespace Test {
 
         private int prevTime = -1;
         protected override void Update(GameTime gameTime) {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if(viewControl.Views.Count == 0)
                 Exit();
 
             int days = gameTime.TotalGameTime.Days;
