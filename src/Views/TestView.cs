@@ -14,24 +14,35 @@ public class TestView : FadingView {
     
     public TestView(ContentManager content, GraphicsDevice graphics)
     : base(content, graphics) {
-        ImageItem img = new ImageItem(content.Load<Texture2D>("mgx/images/blank"));
-        img.HGrow = img.VGrow = 1;
-        img.Color = Color.Red;
+        ImageItem img1 = new ImageItem(content.Load<Texture2D>("mgx/images/blank"));
+        ImageItem img2 = new ImageItem(content.Load<Texture2D>("mgx/images/blank"));
+        ImageItem img3 = new ImageItem(content.Load<Texture2D>("mgx/images/blank"));
 
-        StackPane sp = new StackPane();
-        sp.HAlign = HAlignment.Center;
-        sp.VAlign = VAlignment.Center;
+        img1.HGrow = img1.VGrow = 2;
+        img2.HGrow = img2.VGrow = 1;
+        img3.HGrow = img3.VGrow = 2;
 
-        VPane vpList = new VPane();
-        vpList.Add(new TextItem(Content.Load<SpriteFont>("mgx/fonts/header"), "Header Font"));
-        vpList.Add(new TextItem(Content.Load<SpriteFont>("mgx/fonts/header_italic"), "Header (italic) Font"));
-        vpList.Add(new TextItem(Content.Load<SpriteFont>("mgx/fonts/header_bold"), "Header (bold) Font"));
-        vpList.Add(new TextItem(Content.Load<SpriteFont>("mgx/fonts/content"), "Content Font"));
-        vpList.Add(new TextItem(Content.Load<SpriteFont>("mgx/fonts/content_italic"), "Content (italic) Font"));
-        vpList.Add(new TextItem(Content.Load<SpriteFont>("mgx/fonts/content_bold"), "Content (bold) Font"));
-        vpList.Add(new TextItem(Content.Load<SpriteFont>("mgx/fonts/footer"), "Footer Font"));
-        vpList.Add(new TextItem(Content.Load<SpriteFont>("mgx/fonts/footer_italic"), "Footer (italic) Font"));
-        vpList.Add(new TextItem(Content.Load<SpriteFont>("mgx/fonts/footer_bold"), "Footer (bold) Font"));
+        img1.Color = Color.Red;
+        img2.Color = Color.Yellow;
+        img3.Color = Color.Green;
+
+        HPane hpBack = new HPane(img1, img2, img3);
+        hpBack.HGrow = hpBack.VGrow = 1;
+        
+        VPane vpList = new VPane(
+            new TextItem(Content.Load<SpriteFont>("mgx/fonts/header"), "Header Font"),
+            new TextItem(Content.Load<SpriteFont>("mgx/fonts/header_italic"), "Header (italic) Font"),
+            new TextItem(Content.Load<SpriteFont>("mgx/fonts/header_bold"), "Header (bold) Font"),
+            new TextItem(Content.Load<SpriteFont>("mgx/fonts/content"), "Content Font"),
+            new TextItem(Content.Load<SpriteFont>("mgx/fonts/content_italic"), "Content (italic) Font"),
+            new TextItem(Content.Load<SpriteFont>("mgx/fonts/content_bold"), "Content (bold) Font"),
+            new TextItem(Content.Load<SpriteFont>("mgx/fonts/footer"), "Footer Font"),
+            new TextItem(Content.Load<SpriteFont>("mgx/fonts/footer_italic"), "Footer (italic) Font"),
+            new TextItem(Content.Load<SpriteFont>("mgx/fonts/footer_bold"), "Footer (bold) Font")
+        );
+
+        vpList.HAlign = HAlignment.Center;
+        vpList.VAlign = VAlignment.Top;
 
         // vpList.HGrow = vpList.VGrow = 1;
         vpList.Children.ToList().ForEach(child => {
@@ -39,12 +50,11 @@ public class TestView : FadingView {
             child.VAlign = VAlignment.Center;
         });
 
-        vpList.HAlign = HAlignment.Center;
-        vpList.VAlign = VAlignment.Top;
-        sp.HGrow = 1;
+        StackPane sp = new StackPane(hpBack, vpList);
+        sp.HAlign = HAlignment.Center;
+        sp.VAlign = VAlignment.Center;
+        // sp.HGrow = 1;
 
-        sp.Add(img);
-        sp.Add(vpList);
         MainContainer.Add(sp);
         // MainContainer.Add(vpList);
     }

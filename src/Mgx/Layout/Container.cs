@@ -14,6 +14,11 @@ namespace Mgx.Layout {
         private List<Container> containers = new List<Container>();
         private List<Control> controls = new List<Control>();
 
+        public Container(params Component[] children) {
+            foreach(Component child in children)
+                Add(child);
+        }
+
         public ReadOnlyCollection<Component> Children {
             get {return children.AsReadOnly();}
             protected set {children = new List<Component>(value);}

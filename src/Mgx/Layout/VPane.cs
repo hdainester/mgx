@@ -3,6 +3,8 @@ using System.Linq;
 
 namespace Mgx.Layout {
     public class VPane : Container {
+        public VPane(params Component[] children) : base(children) {}
+
         protected override void AlignChildren() {
             List<Component> top = Children.Where(c => c.VAlign == VAlignment.Top).ToList();
             List<Component> center = Children.Where(c => c.VAlign == VAlignment.Center).ToList();
@@ -14,12 +16,10 @@ namespace Mgx.Layout {
             float w = 0, h = 0;
 
             Children.ToList().ForEach(child => {
-                // TODO items wont shrink back if H/VGrow == 0
-                if(child.HGrow > 0 && HGrow > 0) _SetWidth(child, Width);
-                else if(child.Width > w) w = child.Width;
-
-                if(child.VGrow > 0 && VGrow > 0) _SetHeight(child, Height*child.VGrow/m);
-                else h += child.Height;
+                if(HGrow == 0 && child.Width > w) w = child.Width;
+                if(VGrow == 0) h += child.Height;
+                if(child.HGrow > 0) _SetWidth(child, Width);
+                if(child.VGrow > 0) _SetHeight(child, Height*child.VGrow/m);
             });
             
             if(HGrow == 0) Width = w;

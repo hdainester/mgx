@@ -3,6 +3,8 @@ using System.Linq;
 
 namespace Mgx.Layout {
     public class HPane : Container {
+        public HPane(params Component[] children) : base(children) {}
+
         protected override void AlignChildren() {
             List<Component> left = Children.Where(c => c.HAlign == HAlignment.Left).ToList();
             List<Component> center = Children.Where(c => c.HAlign == HAlignment.Center).ToList();
@@ -14,12 +16,10 @@ namespace Mgx.Layout {
             float w = 0, h = 0;
 
             Children.ToList().ForEach(child => {
-                // TODO items wont shrink back if H/VGrow == 0
-                if(child.HGrow > 0 && HGrow > 0) _SetWidth(child, Width*child.HGrow/m);
-                else w += child.Width;
-
-                if(child.VGrow > 0 && VGrow > 0) _SetHeight(child, Height);
-                else if(child.Height > h) h = child.Height;
+                if(HGrow == 0) w += child.Width;
+                if(VGrow == 0 && child.Height > 0) h = child.Height;
+                if(child.HGrow > 0) _SetWidth(child, Width*child.HGrow/m);
+                if(child.VGrow > 0) _SetHeight(child, Height);
             });
 
             if(HGrow == 0) Width = w;
