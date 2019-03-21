@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace Mgx.Layout {
     public class VPane : Container {
@@ -18,8 +19,9 @@ namespace Mgx.Layout {
             Children.ToList().ForEach(child => {
                 if(HGrow == 0 && child.HGrow == 0 && child.Width > w) w = child.Width;
                 if(VGrow == 0) h += child.Height;
-                if(child.HGrow > 0) _SetWidth(child, Width);
-                if(child.VGrow > 0) _SetHeight(child, Height*child.VGrow/m);
+                if(child.HGrow > 0) _SetWidth(child, Math.Min(1, child.HGrow)*Width);
+                if(child.VGrow >= 1) _SetHeight(child, Height*child.VGrow/m);
+                else if(child.VGrow > 0) _SetHeight(child, Math.Min(1, child.VGrow)*Height);
             });
             
             if(HGrow == 0) Width = w;

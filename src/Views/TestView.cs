@@ -47,7 +47,7 @@ public class TestView : FadingView {
 
         vpList.HAlign = HAlignment.Center;
         vpList.VAlign = VAlignment.Top;
-        
+
         // vpList.HGrow = vpList.VGrow = 1;
         vpList.Children.ToList().ForEach(child => {
             child.HAlign = HAlignment.Center;
@@ -85,7 +85,7 @@ public class TestView : FadingView {
             if(prevKeyboard.IsKeyDown(Keys.Up)
             && keyboard.IsKeyUp(Keys.Up)) {
                 if(keyboard.IsKeyDown(Keys.LeftShift))
-                    spMain.VGrow = Math.Min(1, spMain.VGrow+1);
+                    spMain.VGrow = Math.Min(1, spMain.VGrow+0.1f);
                 else
                     spMain.VAlign = (VAlignment)Math.Max(0, (int)spMain.VAlign-1);
             }
@@ -93,7 +93,7 @@ public class TestView : FadingView {
             if(prevKeyboard.IsKeyDown(Keys.Right)
             && keyboard.IsKeyUp(Keys.Right)) {
                 if(keyboard.IsKeyDown(Keys.LeftShift))
-                    spMain.HGrow = Math.Min(1, spMain.HGrow+1);
+                    spMain.HGrow = Math.Min(1, spMain.HGrow+0.1f);
                 else
                     spMain.HAlign = (HAlignment)Math.Min(2, (int)spMain.HAlign+1);
             }
@@ -101,7 +101,7 @@ public class TestView : FadingView {
             if(prevKeyboard.IsKeyDown(Keys.Down)
             && keyboard.IsKeyUp(Keys.Down)) {
                 if(keyboard.IsKeyDown(Keys.LeftShift))
-                    spMain.VGrow = Math.Max(0, spMain.VGrow-1);
+                    spMain.VGrow = Math.Max(0, spMain.VGrow-0.1f);
                 else
                     spMain.VAlign = (VAlignment)Math.Min(2, (int)spMain.VAlign+1);
             }
@@ -109,7 +109,7 @@ public class TestView : FadingView {
             if(prevKeyboard.IsKeyDown(Keys.Left)
             && keyboard.IsKeyUp(Keys.Left)) {
                 if(keyboard.IsKeyDown(Keys.LeftShift))
-                    spMain.HGrow = Math.Max(0, spMain.HGrow-1);
+                    spMain.HGrow = Math.Max(0, spMain.HGrow-0.1f);
                 else
                     spMain.HAlign = (HAlignment)Math.Max(0, (int)spMain.HAlign-1);
             }

@@ -8,14 +8,14 @@ using System;
 
 namespace Mgx.Layout {
     public abstract class Component : INotifyPropertyChanged {
-        private int hgrow;
-        public int HGrow {
+        private float hgrow;
+        public float HGrow {
             get {return hgrow;}
             set {SetProperty(ref hgrow, value);}
         }
 
-        private int vgrow;
-        public int VGrow {
+        private float vgrow;
+        public float VGrow {
             get {return vgrow;}
             set {SetProperty(ref vgrow, value);}
         }
