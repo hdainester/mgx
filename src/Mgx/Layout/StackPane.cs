@@ -8,8 +8,8 @@ namespace Mgx.Layout {
             float w = 0, h = 0;
 
             Children.ToList().ForEach(child => {
-                if(HGrow == 0 && child.Width > w) w = child.Width;
-                if(VGrow == 0 && child.Height > h) h = child.Height;
+                if(HGrow == 0 && child.HGrow == 0 && child.Width > w) w = child.Width;
+                if(VGrow == 0 && child.VGrow == 0 && child.Height > h) h = child.Height;
                 if(child.HGrow > 0) _SetWidth(child, Width);
                 if(child.VGrow > 0) _SetHeight(child, Height);
                 if(child.HAlign == HAlignment.Left) _SetX(child, X);

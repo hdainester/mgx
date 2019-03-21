@@ -17,7 +17,7 @@ namespace Mgx.Layout {
 
             Children.ToList().ForEach(child => {
                 if(HGrow == 0) w += child.Width;
-                if(VGrow == 0 && child.Height > 0) h = child.Height;
+                if(VGrow == 0 && child.VGrow == 0 && child.Height > 0) h = child.Height;
                 if(child.HGrow > 0) _SetWidth(child, Width*child.HGrow/m);
                 if(child.VGrow > 0) _SetHeight(child, Height);
             });

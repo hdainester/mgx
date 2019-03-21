@@ -12,8 +12,6 @@ using Mgx.Layout;
 using Mgx.View;
 
 public class TestView : FadingView {
-    private Dictionary<string, SpriteFont> mgxFonts;
-    
     private StackPane spMain;
     private VPane vpList;
     private HPane hpBack;
@@ -49,7 +47,7 @@ public class TestView : FadingView {
 
         vpList.HAlign = HAlignment.Center;
         vpList.VAlign = VAlignment.Top;
-
+        
         // vpList.HGrow = vpList.VGrow = 1;
         vpList.Children.ToList().ForEach(child => {
             child.HAlign = HAlignment.Center;
