@@ -94,7 +94,8 @@ namespace Mgx.Layout {
         }
 
         protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string name = "") {
-            if(!value.Equals(field)) {
+            if(field != null && value == null
+            || !value.Equals(field)) {
                 field = value;
                 OnPropertyChanged(name);
             }

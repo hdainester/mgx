@@ -7,8 +7,11 @@ namespace Mgx.Control {
     public class ImageItem : Component {
         public Texture2D Image {get; protected set;}
 
-        public ImageItem(Texture2D image) {
+        public ImageItem(Texture2D image) : this(image, image.Width, image.Height) {}
+        public ImageItem(Texture2D image, int width, int height) {
             Image = image;
+            Width = width;
+            Height = height;
         }
 
         public override void Update(GameTime gameTime) {

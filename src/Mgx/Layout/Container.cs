@@ -12,7 +12,7 @@ namespace Mgx.Layout {
     public abstract class Container : Component {
         private List<Component> children = new List<Component>();
         private List<Container> containers = new List<Container>();
-        private List<Control> controls = new List<Control>();
+        private List<IControlable> controls = new List<IControlable>();
 
         public Container(params Component[] children) {
             foreach(Component child in children)
@@ -29,31 +29,29 @@ namespace Mgx.Layout {
             protected set {containers = new List<Container>(value);}
         }
 
-        public ReadOnlyCollection<Control> Controls {
+        public ReadOnlyCollection<IControlable> Controls {
             get {return controls.AsReadOnly();}
-            protected set {controls = new List<Control>(value);}
+            protected set {controls = new List<IControlable>(value);}
         }
 
         public void Add(Component child) {
-            if(!children.Contains(child)) {
-                if(child.Parent != null)
-                    child.Parent.Remove(child);
-                    
-                _SetParent(child, this);
-                children.Add(child);
-                Control control = child as Control;
-                Container container = child as Container;
-                if(control != null) controls.Add(control);
-                if(container != null) containers.Add(container);
-                child.PropertyChanged += ChildPropertyChangedHandler;
-                alignmentPending = true;
-            }
+            if(child.Parent != null)
+                child.Parent.Remove(child);
+                
+            _SetParent(child, this);
+            children.Add(child);
+            IControlable control = child as IControlable;
+            Container container = child as Container;
+            if(control != null) controls.Add(control);
+            if(container != null) containers.Add(container);
+            child.PropertyChanged += ChildPropertyChangedHandler;
+            alignmentPending = true;
         }
 
         public void Remove(Component child) {
             if(children.Remove(child)) {
                 _SetParent(child, null);
-                Control control = child as Control;
+                IControlable control = child as IControlable;
                 Container container = child as Container;
                 if(control != null) controls.Remove(control);
                 if(container != null) containers.Remove(container);
