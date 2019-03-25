@@ -105,7 +105,7 @@ Component --> "0, 1" Container : Parent
 abstract class Container {
     + Children : ReadOnlyCollection<Component> <<get>> <<protected set>>
     + Containers : ReadOnlyCollection<Container> <<get>> <<protected set>>
-    + Controls : ReadOnlyCollection<IControlable> <<get>> <<protected set>>
+    + Controls : ReadOnlyCollection<Control> <<get>> <<protected set>>
     + {override}Load(conent : ContentManager) : void
     + {override}Update(gameTime : GameTime) : void
     + {override}Draw(spriteBatch : SpriteBatch) : void
@@ -121,14 +121,11 @@ class ViewContainer {
 ViewContainer --|> Container
 View --> "1" ViewContainer : MainContainer
 
-interface IControlable {
-    + HandleInput() : void
-}
-
+abstract class Control
 Container -up-|> Component
 Container --> "*" Component : Children
 Container --> "*" Container : Containers
-Container --> "*" IControlable : Controls
+Container --> "*" Control : Controls
 
 abstract class LayoutPane {
     + Add(child : Component) : void
