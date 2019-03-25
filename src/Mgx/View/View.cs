@@ -18,7 +18,7 @@ namespace Mgx.View {
 
         public ContentManager Content {get; protected set;}
         public ViewState State {get; protected set;}
-        public GraphicsDevice Graphics {get;}
+        public GraphicsDevice Graphics {get; protected set;}
         protected ViewContainer MainContainer {get;}
 
         public View(ContentManager content, GraphicsDevice graphics) {

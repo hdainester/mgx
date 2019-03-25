@@ -26,28 +26,50 @@ enum ViewState {
     Hidden
 }
 
-class ViewControl {
-    + AddView(view : View) : void
-    + RemoveView(view : View) : void
-    + Update(gameTime : GameTime) : void
-    + Draw(spriteBatch : SpriteBatch) : void
-}
-
 abstract class View {
     + Content : ContentManager <<get>> <<protected set>>
     + State : ViewState <<get>> <<protected set>>
-    + MainContainer : Container <<get>>
+    + Graphics : GraphicsDevice <<get>> <<protected set>>
+    + MainContainer : ViewContainer <<get>>
     + {abstract}Show() : void
     + {abstract}Hide() : void
     + {abstract}Close() : void
     + {virtual}HandleInput() : void
+    + {virtual}Update(gameTime : GameTime) : void
+    + Draw(spriteBatch : SpriteBatch) : void
+    # AlignMainContainer() : void
 }
 
-class FadingView
+View -left-> GraphicsDevice
+View -right-> ContentManager
+note top on link
+Content is loaded on View
+initialization. ContentMangagers
+can be shared among different
+views.
+end note
+
+class FadingView {
+    + FadeInTime : int <<get>> <<set>>
+    + FadeOutTime : int <<get>> <<set>>    
+}
+
 note right: Example:\nFades in/out
+FadingView -up-|> View
 
 class SlidingView
-note right: Example:\nSlides in/out
+note right: Example:\nSlides in/out (TODO)
+SlidingView -up-|> View
+
+class ViewControl {
+    + Views : ReadOnlyCollection<View> <<get>> <<protected set>>
+    + Add(view : View) : void
+    + Remove(view : View) : void
+    + Update(gameTime : GameTime) : void
+    + Draw(spriteBatch : SpriteBatch) : void
+}
+
+ViewControl --> "*" View : Views
 
 abstract class Component {
     + HGrow : int <<get>> <<set>>
@@ -56,24 +78,70 @@ abstract class Component {
     + VAlign : VAlignment <<get>> <<set>>
     + Color : Color <<get>> <<set>>
     + Alpha : float <<get>> <<set>>
+    + Position : Vector2 <<get>> <<protected set>>
     + X : float <<get>> <<protected set>>
     + Y : float <<get>> <<protected set>>
-    + {abstract}Width : float <<get>> <<protected set>>
-    + {abstract}Height : float <<get>> <<protected set>>
+    + Size : Vector2 <<get>> <<protected set>>
+    + Width : float <<get>> <<protected set>>
+    + Height : float <<get>> <<protected set>>
+    + Parent : Container <<get>> <<protected set>>
+    + PropertyChanged : PropertyChangedEventHandler
     + {virtual}Load(content : ContentManager) : void
     + {abstract}Update(gameTime : GameTime) : void
     + {abstract}Draw(spriteBatch : SpriteBatch) : void
+    # {virtual}OnPropertyChanged(propertyName : string) : void
+    # SetProperty<T>(field : ref T, value : T) : void
+    # {static}_SetPosition(c : Component, position : Vector2) : void
+    # {static}_SetX(c : Component, x : float) : void
+    # {static}_SetY(c : Component, y : float) : void
+    # {static}_SetSize(c : Component, size : Vector2) : void
+    # {static}_SetWidth(c : Component, width : float) : void
+    # {static}_SetHeight(c : Component, height : float) : void
+    # {static}_SetParent(c : Component, parent : Container) : void
 }
 
+Component --> "0, 1" Container : Parent
+
 abstract class Container {
-    # {abstract}AlignChildren() : void
+    + Children : ReadOnlyCollection<Component> <<get>> <<protected set>>
+    + Containers : ReadOnlyCollection<Container> <<get>> <<protected set>>
+    + Controls : ReadOnlyCollection<IControlable> <<get>> <<protected set>>
     + {override}Load(conent : ContentManager) : void
     + {override}Update(gameTime : GameTime) : void
     + {override}Draw(spriteBatch : SpriteBatch) : void
+    # {virtual}ChildPropertyChangedHandler(sender : object, args : PropertyChangedEventArgs) : void
+    # {virtual}AlignChildren() : void
 }
 
-class HPane
-note right
+class ViewContainer {
+    + SetPosition(position : Vector2) : void
+    + SetSize(position : Vector2) : void
+}
+
+ViewContainer --|> Container
+View --> "1" ViewContainer : MainContainer
+
+interface IControlable {
+    + HandleInput() : void
+}
+
+Container -up-|> Component
+Container --> "*" Component : Children
+Container --> "*" Container : Containers
+Container --> "*" IControlable : Controls
+
+abstract class LayoutPane {
+    + Add(child : Component) : void
+    + Remove(child : Component)
+}
+
+LayoutPane -right-|> Container
+
+class HPane {
+    # {override}AlignChildren() : void
+}
+
+note bottom
 The order of items is determined by
 their HAlignment and the order they
 where added to this Container.
@@ -81,8 +149,11 @@ VAlignment determines how items are
 aligned within their column.
 end note
 
-class VPane
-note right
+class VPane {
+    # {override}AlignChildren() : void
+}
+
+note bottom
 The order of items is determined by
 their VAlignment and the order they
 where added to this Container.
@@ -91,7 +162,7 @@ aligned within their row.
 end note
 
 class StackPane
-note right
+note left
 Items are stacked on top of each
 other in the order they where added
 to this Container. The positioning
@@ -100,28 +171,10 @@ VAlignment is evaluated for each item
 independent of the other items.
 end note
 
-abstract class Control
+HPane -up-|> LayoutPane
+VPane -up-|> LayoutPane
+StackPane -|> LayoutPane
 
-FadingView -up-|> View
-SlidingView -up-|> View
-Control -right-|> Component
-Container -up-|> Component
-HPane -up-|> Container
-VPane -up-|> Container
-StackPane -up-|> Container
-ViewControl --> "*" View
-View --> Container : MainContainer
-View -left-> ContentManager : Content
-note top on link
-Content is loaded on View
-initialization. ContentMangagers
-can be shared among different
-views.
-end note
-
-Component --> "0, 1" Container : Parent
-Container --> "*" Component : Children
-Container -left-> "*" Control : Controls
 
 ''''''''''
 ' Page 2 '
@@ -136,115 +189,118 @@ enum Orientation {
     RVertical
 }
 
+class TextItem {
+    + Font : SpriteFont <<get>> <<set>>
+    + Text : string <<get>> <<set>>
+    + {override} Update(gameTime : GameTime) : void
+    + {override} Draw(spriteBatch : SpriteBatch) : void
+}
+
+class ImageItem {
+    + Image : Texture2D <<get>> <<protected set>>
+    + {override} Update(gameTime : GameTime) : void
+    + {override} Draw(spriteBatch : SpriteBatch) : void
+}
+
 abstract class Component
+TextItem -up-|> Component
+ImageItem -up-|> Component
+
 abstract class Control {
-    + Disabled : bool <<get>> <<set>>
-    + ActionEvent : ActionEventHandler
-    + TouchInputEvent: TouchEventHandler
-    + KeyPressedEvent : KeyboardEventHandler
-    + KeyReleasedEvent : KeyboardEventHandler
-    + MouseClickedEvent : MouseEventHandler
-    + MouseReleasedEvent : MouseEventHandler
-    + {override}Update(gameTime : GameTime) : void
-    # {virtual}HandleInput() : void
-    # {virtual}OnAction() : void
-    # {virtual}OnTouchInput() : void
-    # {virtual}OnKeyPressed() : void
-    # {virtual}OnKeyReleased() : void
-    # {virtual}OnMouseClicked() : void
-    # {virtual}OnMouseReleased() : void
+    + IsFocused : bool <<get>> <<protected set>>
+    + IsDisabled : bool <<get>> <<protected set>>
+    + Action : EventHandler
+    + Enabled : EventHandler
+    + Disabled : EventHandler
+    + FocusGain : EventHandler
+    + FocusLoss : EventHandler
+    + KeyPressed : KeyEventHandler
+    + KeyReleased : KeyEventHandler
+    # {virtual} HandleMouse() : void
+    # {virtula} HandleKeyboard() : void
+    # {virtual} HandleGamepad() : void
+    # {virtual} HandleTouch() : void
+    # {virtual} OnAction() : void
+    # {virtual} OnEnabled() : void
+    # {virtual} OnDisabled() : void
+    # {virtual} OnFocusGain() : void
+    # {virtual} OnFocusLoss() : void
+    # {virtual} OnKeyPressed() : void
+    # {virtual} OnKeyReleased() : void
+    # HandleInput() : void
 }
 
-interface Toggable {
-    + Toggled : bool <<get>> <<set>>
+abstract class Container
+Control -up-|>Container
+
+class MenuItem {
+    + Orientation : Orientation <<get>> <<protected set>>
+    + Text : TextItem <<get>> <<protected set>>
+    + Image : ImageItem <<get>> <<protected set>>
 }
 
-interface Orientable {
-    + Orientation : Orientation <<get>> <<set>>
+MenuItem -up-|> Control
+MenuItem -up-> "0, 1" TextItem : Text
+MenuItem -up-> "0, 1" ImageItem : Image
+
+abstract class Menu {
+    + Items : ReadOnlyCollection<MenuItem> <<get>> <<protected set>>
+    + AddItem(item : MenuItem) : void
+    + RemoveItem(item : MenuItem) : void
+    # {abstract} AlignItems() : void
 }
 
-interface Stylable {
-    + Textures : Collection<Texture2D> <<get>> <<protected set>>
+Menu -up-|> MenuItem
+Menu --> "*" MenuItem
+
+class ListMenu {
+    + {unused} SelectedIndex : int <<get>> <<protected set>>
+    + ItemsOrientation : Orientation <<get>> <<set>>
+    # {override} AlignItems() : void
+    # {override} OnPropertyChanged(propertyName : string) : void
 }
 
-note right: TODO
+class RingMenu {
 
-abstract class SelectableControl {
-    + {abstract}Selected : bool <<get>> <<set>>
 }
+note bottom: TODO
 
-class Checkbox
-class Radiobox
-class RadioGroup
+ListMenu -up-|> Menu
+RingMenu -up-|> Menu
 
-class Textbox {
+class TextBox {
     + Text : string <<get>> <<protected set>>
-    + Focused : bool <<get>> <<protected set>>
-    + TextboxTexture : Texture2D <<get>> <<protected set>>
-    + TextboxTexture : Texture2D <<get>> <<protected set>>
-    + TextboxColor : Color <<get>> <<set>>
+    + IsFocused : bool <<get>> <<protected set>>
+    + TextBoxTexture : Texture2D <<get>> <<protected set>>
+    + TextBoxColor : Color <<get>> <<set>>
 }
 
-class Scrollbar {
-    + ScrollbarPosition : float <<get>> <<protected set>>
-    + ScrollbarTexture : Texture2D <<get>> <<protected set>>
+TextBox -left-|> Control
+
+class ScrollBar {
+    + ScrollBarPosition : float <<get>> <<protected set>>
+    + ScrollBarTexture : Texture2D <<get>> <<protected set>>
     + ScrollTexture : Texture2D <<get>> <<protected set>>
     + ScrollColor : Color <<get>> <<set>>
 }
 
-class Progressbar {
+ScrollBar -up-|> Control
+
+class ProgressBar {
     + Progress : float <<get>> <<set>>
-    + ProgressbarTexture : Texture2D <<get>> <<protected set>>
+    + ProgressBarTexture : Texture2D <<get>> <<protected set>>
     + BackgroundTexture : Texture2D <<get>> <<protected set>>
     + BackgroundColor : Color <<get>> <<set>>
 }
 
-abstract class Menu {
-    + SelectedIndex : int <<get>> <<protected set>>
-    + SelectedItem : MenuItem <<get>> <<protected set>>
-    # {abstract}AlignItems() : void
-}
+ProgressBar -up-|> Control
 
-class HList
-class VList
+class CheckBox
+class RadioBox
+class RadioGroup
 
-class TextItem {
-    + Font : Font2D <<get>> <<set>>
-    + Text : string <<get>> <<set>>
-}
-
-class ImageItem {
-    + Image : Image2D <<get>> <<set>>
-}
-
-class MenuItem {
-    + Font : Font2D <<get>> <<set>>
-    + Text : string <<get>> <<set>>
-    + Image : Image2D <<get>> <<set>>
-}
-
-Control -up-|> Component
-Control .right.|> Stylable
-TextItem -right-|> Component
-ImageItem -left-|> Component
-MenuItem -up-|> SelectableControl
-Checkbox -up-|> SelectableControl
-Checkbox ..|> Toggable
-Radiobox -up-|> SelectableControl
-Radiobox ..|> Toggable
-Textbox -left-|> SelectableControl
-Scrollbar -right-|> SelectableControl
-Progressbar -right-|> Control
-Progressbar ..|> Orientable
-Menu -up-|> MenuItem
-HList -right-|> Menu
-VList -left-|> Menu
-SelectableControl -up-|> Control
-SelectableControl ..|> Orientable
-
-Menu -up-> "*" MenuItem : Items
-MenuItem --> "0, 1" Menu : Menu
-RadioGroup -right-> "*" Radiobox
-Radiobox -left-> "0, 1" RadioGroup : Group
+CheckBox -left-|> Control
+RadioBox -left-|> Control
+RadioGroup --> "*" RadioBox : Radios
 
 @enduml

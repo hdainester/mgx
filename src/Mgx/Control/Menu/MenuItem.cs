@@ -75,32 +75,6 @@ namespace Mgx.Control.Menu {
             hPane.VAlign = vPane.VAlign = VAlignment.Center;
         }
 
-        protected override void OnPropertyChanged(string propertyName) {
-            base.OnPropertyChanged(propertyName);
-
-            if(propertyName.Equals("Orientation") && Text != null && Image != null) {
-                if(Orientation == Orientation.Horizontal) {
-                    hPane.Add(Image);
-                    hPane.Add(Text);
-                }
-
-                if(Orientation == Orientation.RHorizontal) {
-                    hPane.Add(Text);
-                    hPane.Add(Image);
-                }
-
-                if(Orientation == Orientation.Vertical) {
-                    vPane.Add(Image);
-                    vPane.Add(Text);
-                }
-
-                if(Orientation == Orientation.RVertical) {
-                    vPane.Add(Text);
-                    vPane.Add(Image);
-                }
-            }
-        }
-
         public virtual void HandleInput() {
             if(!IsDisabled) {
                 HandleMouse();
@@ -223,6 +197,32 @@ namespace Mgx.Control.Menu {
         protected virtual void OnKeyReleased(Keys key) {
             KeyEventHandler handler = KeyReleased;
             if(handler != null) handler(this, new KeyEventArgs(key));
+        }
+
+        protected override void OnPropertyChanged(string propertyName) {
+            base.OnPropertyChanged(propertyName);
+
+            if(propertyName.Equals("Orientation") && Text != null && Image != null) {
+                if(Orientation == Orientation.Horizontal) {
+                    hPane.Add(Image);
+                    hPane.Add(Text);
+                }
+
+                if(Orientation == Orientation.RHorizontal) {
+                    hPane.Add(Text);
+                    hPane.Add(Image);
+                }
+
+                if(Orientation == Orientation.Vertical) {
+                    vPane.Add(Image);
+                    vPane.Add(Text);
+                }
+
+                if(Orientation == Orientation.RVertical) {
+                    vPane.Add(Text);
+                    vPane.Add(Image);
+                }
+            }
         }
     }
 }

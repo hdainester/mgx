@@ -10,14 +10,10 @@ namespace Mgx.Layout {
     using Control;
 
     public abstract class Container : Component {
+        private bool alignmentPending;
         private List<Component> children = new List<Component>();
         private List<Container> containers = new List<Container>();
         private List<IControlable> controls = new List<IControlable>();
-
-        public Container(params Component[] children) {
-            foreach(Component child in children)
-                Add(child);
-        }
 
         public ReadOnlyCollection<Component> Children {
             get {return children.AsReadOnly();}
@@ -32,6 +28,11 @@ namespace Mgx.Layout {
         public ReadOnlyCollection<IControlable> Controls {
             get {return controls.AsReadOnly();}
             protected set {controls = new List<IControlable>(value);}
+        }
+
+        public Container(params Component[] children) {
+            foreach(Component child in children)
+                Add(child);
         }
 
         public void Add(Component child) {
@@ -74,7 +75,6 @@ namespace Mgx.Layout {
             children.ForEach(c => c.Draw(spriteBatch));
         }
 
-        private bool alignmentPending;
         protected virtual void ChildPropertyChangedHandler(
         object sender, PropertyChangedEventArgs args) {
             if(args.PropertyName.Equals("HAlign")
@@ -84,11 +84,14 @@ namespace Mgx.Layout {
             || args.PropertyName.Equals("Size")
             || args.PropertyName.Equals("Position")) {
                 alignmentPending = true;
+                // TODO may be unnecesary since sender should realign anyway
                 Container container = sender as Container;
                 if(container != null) container.alignmentPending = true;
             }
         }
 
-        protected virtual void AlignChildren() {}
+        protected virtual void AlignChildren() {
+            // TODO default alignment like StackPane
+        }
     }
 }

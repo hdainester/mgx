@@ -32,12 +32,6 @@ namespace Mgx.Layout {
             set {SetProperty(ref valign, value);}
         }
 
-        private Container parent;
-        public Container Parent {
-            get {return parent;}
-            protected set {SetProperty(ref parent, value);}
-        }
-
         private Color color = Color.White;
         public Color Color {
             get {return color;}
@@ -82,6 +76,12 @@ namespace Mgx.Layout {
             protected set {Size = new Vector2(Size.X, value);}
         }
 
+        private Container parent;
+        public Container Parent {
+            get {return parent;}
+            protected set {SetProperty(ref parent, value);}
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public virtual void Load(ContentManager content) {}
@@ -101,8 +101,8 @@ namespace Mgx.Layout {
             }
         }
 
-        protected static void _SetParent(Component c, Container parent) {
-            c.Parent = parent;
+        protected static void _SetPosition(Component c, Vector2 position) {
+            c.Position = position;
         }
 
         protected static void _SetX(Component c, float x) {
@@ -112,9 +112,9 @@ namespace Mgx.Layout {
         protected static void _SetY(Component c, float y) {
             c.Y = y;
         }
-
-        protected static void _SetPosition(Component c, Vector2 position) {
-            c.Position = position;
+        
+        protected static void _SetSize(Component c, Vector2 size) {
+            c.Size = size;
         }
 
         protected static void _SetWidth(Component c, float width) {
@@ -125,8 +125,8 @@ namespace Mgx.Layout {
             c.Height = height;
         }
 
-        protected static void _SetSize(Component c, Vector2 size) {
-            c.Size = size;
+        protected static void _SetParent(Component c, Container parent) {
+            c.Parent = parent;
         }
     }
 }
