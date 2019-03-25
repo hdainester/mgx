@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System;
 
 namespace Mgx.Layout {
     using Control;
@@ -13,7 +14,7 @@ namespace Mgx.Layout {
         private bool alignmentPending;
         private List<Component> children = new List<Component>();
         private List<Container> containers = new List<Container>();
-        private List<IControlable> controls = new List<IControlable>();
+        private List<Control> controls = new List<Control>();
 
         public ReadOnlyCollection<Component> Children {
             get {return children.AsReadOnly();}
@@ -25,40 +26,9 @@ namespace Mgx.Layout {
             protected set {containers = new List<Container>(value);}
         }
 
-        public ReadOnlyCollection<IControlable> Controls {
+        public ReadOnlyCollection<Control> Controls {
             get {return controls.AsReadOnly();}
-            protected set {controls = new List<IControlable>(value);}
-        }
-
-        public Container(params Component[] children) {
-            foreach(Component child in children)
-                Add(child);
-        }
-
-        public void Add(Component child) {
-            if(child.Parent != null)
-                child.Parent.Remove(child);
-                
-            _SetParent(child, this);
-            children.Add(child);
-            IControlable control = child as IControlable;
-            Container container = child as Container;
-            if(control != null) controls.Add(control);
-            if(container != null) containers.Add(container);
-            child.PropertyChanged += ChildPropertyChangedHandler;
-            alignmentPending = true;
-        }
-
-        public void Remove(Component child) {
-            if(children.Remove(child)) {
-                _SetParent(child, null);
-                IControlable control = child as IControlable;
-                Container container = child as Container;
-                if(control != null) controls.Remove(control);
-                if(container != null) containers.Remove(container);
-                child.PropertyChanged -= ChildPropertyChangedHandler;
-                alignmentPending = true;
-            }
+            protected set {controls = new List<Control>(value);}
         }
 
         public override void Update(GameTime gameTime) {
@@ -90,8 +60,52 @@ namespace Mgx.Layout {
             }
         }
 
+        /// Default alignment for children is for each child
+        /// determined independent of the other children
         protected virtual void AlignChildren() {
-            // TODO default alignment like StackPane
+            float w = 0, h = 0;
+
+            Children.ToList().ForEach(child => {
+                if(HGrow == 0 && child.HGrow == 0 && child.Width > w) w = child.Width;
+                if(VGrow == 0 && child.VGrow == 0 && child.Height > h) h = child.Height;
+                if(child.HGrow > 0) _SetWidth(child, Math.Min(1, child.HGrow)*Width);
+                if(child.VGrow > 0) _SetHeight(child, Math.Min(1, child.VGrow)*Height);
+                if(child.HAlign == HAlignment.Left) _SetX(child, X);
+                if(child.HAlign == HAlignment.Center) _SetX(child, X + Width/2 - child.Width/2);
+                if(child.HAlign == HAlignment.Right) _SetX(child, X + Width - child.Width);
+                if(child.VAlign == VAlignment.Top) _SetY(child, Y);
+                if(child.VAlign == VAlignment.Center) _SetY(child, Y + Height/2 - child.Height/2);
+                if(child.VAlign == VAlignment.Bottom) _SetY(child, Y + Height - child.Height);
+            });
+            
+            if(HGrow == 0) Width = w;
+            if(VGrow == 0) Height = h;
+        }
+
+        protected void _Add(Component child) {
+            if(child.Parent != null)
+                child.Parent._Remove(child);
+                
+            _SetParent(child, this);
+            children.Add(child);
+            Control control = child as Control;
+            Container container = child as Container;
+            if(control != null) controls.Add(control);
+            if(container != null) containers.Add(container);
+            child.PropertyChanged += ChildPropertyChangedHandler;
+            alignmentPending = true;
+        }
+
+        protected void _Remove(Component child) {
+            if(children.Remove(child)) {
+                _SetParent(child, null);
+                Control control = child as Control;
+                Container container = child as Container;
+                if(control != null) controls.Remove(control);
+                if(container != null) containers.Remove(container);
+                child.PropertyChanged -= ChildPropertyChangedHandler;
+                alignmentPending = true;
+            }
         }
     }
 }

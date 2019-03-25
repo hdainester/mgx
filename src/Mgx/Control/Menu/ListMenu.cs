@@ -24,8 +24,8 @@ namespace Mgx.Control.Menu {
             // hPane.HGrow = hPane.VGrow = 1;
             // vPane.HGrow = vPane.VGrow = 1;
 
-            Add(hPane);
-            Add(vPane);
+            _Add(hPane);
+            _Add(vPane);
             AlignItems();
         }
 

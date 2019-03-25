@@ -3,7 +3,7 @@ using System.Linq;
 using System;
 
 namespace Mgx.Layout {
-    public class HPane : Container {
+    public class HPane : LayoutPane {
         public HPane(params Component[] children) : base(children) {}
 
         protected override void AlignChildren() {

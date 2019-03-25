@@ -111,6 +111,8 @@ abstract class Container {
     + {override}Draw(spriteBatch : SpriteBatch) : void
     # {virtual}ChildPropertyChangedHandler(sender : object, args : PropertyChangedEventArgs) : void
     # {virtual}AlignChildren() : void
+    # _Add(child : Component) : void
+    # _Remove(child : Component) : void
 }
 
 class ViewContainer {
@@ -213,6 +215,7 @@ abstract class Control {
     + FocusLoss : EventHandler
     + KeyPressed : KeyEventHandler
     + KeyReleased : KeyEventHandler
+    + {virtual} HandleInput() : void
     # {virtual} HandleMouse() : void
     # {virtula} HandleKeyboard() : void
     # {virtual} HandleGamepad() : void
@@ -224,7 +227,6 @@ abstract class Control {
     # {virtual} OnFocusLoss() : void
     # {virtual} OnKeyPressed() : void
     # {virtual} OnKeyReleased() : void
-    # HandleInput() : void
 }
 
 abstract class Container
