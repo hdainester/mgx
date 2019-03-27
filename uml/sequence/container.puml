@@ -1,0 +1,51 @@
+@startuml AlignChildrenSequence
+title Container - AlignChildren Sequence
+
+participant ":Container" as Container
+collections "Containers" as Containers
+collections "Children" as Children
+participant ":Component" as Component
+
+Container -> Containers : AlignChildren
+activate Containers
+
+    Containers -> Container : ForEach
+    activate Container
+
+        Container -> Container : AlignChildren
+        activate Container
+        
+        Container <-- Container
+        deactivate Container
+
+    Containers <-- Container
+    deactivate Container
+
+Container <-- Containers
+deactivate Containers
+
+Container -> Container : SetSize
+activate Container
+
+Container <-- Container
+deactivate Container
+
+Container -> Children : AlignChildren
+activate Children
+
+    Children -> Component : ForEach
+    activate Component
+
+        Component -> Component : SetSize/SetPosition
+        activate Component
+
+        Component <-- Component
+        deactivate Component
+
+    Children <-- Component
+    deactivate Component
+
+Container <-- Children
+deactivate Children
+
+@enduml
