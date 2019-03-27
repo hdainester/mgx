@@ -39,7 +39,6 @@ namespace Mgx.Control.Menu {
                 hPane.Add(Text);
             }
 
-            
             hPane.HAlign = vPane.HAlign = HAlignment.Center;
             hPane.VAlign = vPane.VAlign = VAlignment.Center;
 
@@ -80,6 +79,13 @@ namespace Mgx.Control.Menu {
 
         protected override void OnPropertyChanged(string propertyName) {
             base.OnPropertyChanged(propertyName);
+
+            // TODO temp solution
+            if(propertyName.Equals("HGrow"))
+                hPane.HGrow = vPane.HGrow = HGrow;
+
+            if(propertyName.Equals("VGrow"))
+                hPane.VGrow = vPane.VGrow = VGrow;
 
             if(propertyName.Equals("Orientation") && Text != null && Image != null) {
                 if(Orientation == Orientation.Horizontal) {

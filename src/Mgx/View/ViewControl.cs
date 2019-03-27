@@ -23,13 +23,18 @@ namespace Mgx.View {
 
         public void Update(GameTime gameTime) {
             LinkedListNode<View> node = views.First;
+            LinkedListNode<View> prevNode;
 
             for(View view; node != null; node = node.Next) {
                 view = node.Value;
 
-                if(view.State == ViewState.Closed)
+                if(view.State == ViewState.Closed) {
+                    if((prevNode = node.Next) != null
+                    && prevNode.Value.State == ViewState.Hidden)
+                        prevNode.Value.Show();
+                        
                     views.Remove(node);
-                else {
+                } else {
                     view.Update(gameTime);
                     if(view.State == ViewState.Greedy)
                         break;

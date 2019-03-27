@@ -9,6 +9,7 @@ namespace Mgx.Layout {
             /// Default alignment strategy of containers is
             /// equal to the alignment strategy of a StackPane
             base.AlignChildren();
+            _DefaultAlign();
         }
     }
 }

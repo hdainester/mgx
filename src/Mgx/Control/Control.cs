@@ -136,5 +136,10 @@ namespace Mgx.Control {
             KeyEventHandler handler = KeyReleased;
             if(handler != null) handler(this, new KeyEventArgs(key));
         }
+
+        protected override void AlignChildren() {
+            base.AlignChildren();
+            _DefaultAlign();
+        }
     }
 }

@@ -7,31 +7,36 @@ namespace Mgx.Layout {
         public HPane(params Component[] children) : base(children) {}
 
         protected override void AlignChildren() {
-            List<Component> left = Children.Where(c => c.HAlign == HAlignment.Left).ToList();
-            List<Component> center = Children.Where(c => c.HAlign == HAlignment.Center).ToList();
-            List<Component> right = Children.Where(c => c.HAlign == HAlignment.Right).ToList();
-
-            float m = Children.Sum(c => c.HGrow);
-            float cw = center.Sum(c => c.Width);
-            float rw = right.Sum(c => c.Width);
+            base.AlignChildren();
             float w = 0, h = 0;
+            float m = Children.Sum(c => c.HGrow);
 
             Children.ToList().ForEach(child => {
-                if(HGrow == 0 && child.HGrow == 0) w += child.Width;
-                if(VGrow == 0 && child.VGrow == 0 && child.Height > h) h = child.Height;
-                if(child.HGrow >= 1) _SetWidth(child, Width*child.HGrow/m);
-                else if(child.HGrow > 0) _SetWidth(child, Math.Min(1, child.HGrow)*Width);
-                if(child.VGrow > 0) _SetHeight(child, Math.Min(1, child.VGrow)*Height);
+                if(child.HGrow == 0) w += child.Width;
+                if(VGrow == 0 && child.VGrow == 0
+                && child.Height > h) h = child.Height;
             });
 
             if(HGrow == 0) Width = w;
             if(VGrow == 0) Height = h;
 
+            Children.ToList().ForEach(child => {
+                if(HGrow == 0 && child.HGrow >= 1) _SetWidth(child, Width*child.HGrow/m);
+                else if(HGrow > 0 && child.HGrow >= 1) _SetWidth(child, (Width-w)*child.HGrow/m);
+                else if(child.HGrow > 0) _SetWidth(child, child.HGrow*(Width-w));
+                if(child.VGrow > 0) _SetHeight(child, Math.Min(1, child.VGrow)*Height);
+            });
+
+            List<Component> left = Children.Where(c => c.HAlign == HAlignment.Left).ToList();
+            List<Component> center = Children.Where(c => c.HAlign == HAlignment.Center).ToList();
+            List<Component> right = Children.Where(c => c.HAlign == HAlignment.Right).ToList();
+            float cw = center.Sum(c => c.Width);
+            float rw = right.Sum(c => c.Width);
             _AlignGroup(0, left);
             _AlignGroup(Width/2 - cw/2, center);
-            _AlignGroup(Width - rw/2, right);
+            _AlignGroup(Width - rw, right);
         }
-
+        
         private void _AlignGroup(float x, List<Component> group) {
             group.ForEach(child => {
                 _SetX(child, X + x);

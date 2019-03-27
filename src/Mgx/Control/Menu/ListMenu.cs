@@ -21,8 +21,6 @@ namespace Mgx.Control.Menu {
             vPane = new VPane();
             hPane.HAlign = vPane.HAlign = HAlignment.Center;
             hPane.VAlign = vPane.VAlign = VAlignment.Center;
-            // hPane.HGrow = hPane.VGrow = 1;
-            // vPane.HGrow = vPane.VGrow = 1;
 
             _Add(hPane);
             _Add(vPane);
@@ -55,6 +53,14 @@ namespace Mgx.Control.Menu {
 
         protected override void OnPropertyChanged(string propertyName) {
             base.OnPropertyChanged(propertyName);
+
+            // TODO temp solution
+            if(propertyName.Equals("HGrow"))
+                hPane.HGrow = vPane.HGrow = HGrow;
+
+            if(propertyName.Equals("VGrow"))
+                hPane.VGrow = vPane.VGrow = VGrow;
+
             if(propertyName.Equals("ItemsOrientation"))
                 AlignItems();
         }
