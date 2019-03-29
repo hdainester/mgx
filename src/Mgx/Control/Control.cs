@@ -8,10 +8,19 @@ using System;
 
 namespace Mgx.Control {
     using Layout;
+    using View;
     using Menu;
 
     public abstract class Control : Container {
-        public bool IsFocused {get; protected set;}
+        private bool isFocused;
+        public bool IsFocused {
+            get {return isFocused
+                && Parent != null
+                && Parent.ParentView != null
+                && Parent.ParentView.State == ViewState.Open;
+            }
+            protected set {isFocused = value;}
+        }
 
         private bool isDisabled;
         public bool IsDisabled {

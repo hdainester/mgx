@@ -45,7 +45,7 @@ namespace Mgx.Layout {
         }
 
         private Vector2 position;
-        public Vector2 Position {
+        public virtual Vector2 Position {
             get {return position;}
             protected set {SetProperty(ref position, value);}
         }
@@ -61,7 +61,7 @@ namespace Mgx.Layout {
         }
 
         private Vector2 size;
-        public Vector2 Size {
+        public virtual Vector2 Size {
             get {return size;}
             protected set {SetProperty(ref size, value);}
         }

@@ -113,6 +113,7 @@ abstract class Container {
     # {virtual}AlignChildren() : void
     # _Add(child : Component) : void
     # _Remove(child : Component) : void
+    # _DefaultAlign() : void
 }
 
 class ViewContainer {

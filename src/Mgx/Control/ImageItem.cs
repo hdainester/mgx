@@ -4,7 +4,7 @@ namespace Mgx.Control {
     using Layout;
     using Microsoft.Xna.Framework;
 
-    public class ImageItem : Component {
+    public class ImageItem : Item {
         public Texture2D Image {get; protected set;}
 
         public ImageItem(Texture2D image) : this(image, image.Width, image.Height) {}

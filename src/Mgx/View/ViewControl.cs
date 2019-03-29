@@ -14,11 +14,17 @@ namespace Mgx.View {
         }
 
         public void Add(View view) {
-            views.AddFirst(view);
+            if(view.Manager != this)
+                view.Manager = this;
+            else if(!views.Contains(view))
+                views.AddFirst(view);
         }
 
         public void Remove(View view) {
-            views.Remove(view);
+            if(view.Manager == this) {
+                views.Remove(view);
+                view.Manager = null;
+            }
         }
 
         public void Update(GameTime gameTime) {

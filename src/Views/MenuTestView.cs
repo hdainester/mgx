@@ -117,11 +117,39 @@ public class MenuTestView : FadingView {
         listMenu1.AddItem(item11);
         listMenu1.AddItem(item12);
 
+        MenuItem itemtb0 = new MenuItem("", font_f0, Content.Load<Texture2D>("mgx/images/icons/entry-door"), 64, 64);
+        MenuItem itemtb1 = new MenuItem("", font_f0, Content.Load<Texture2D>("mgx/images/icons/exit-door"), 64, 64);
 
-        MenuItem itemtb0 = new MenuItem(Content.Load<Texture2D>("mgx/images/icons/entry-door"), 64, 64);
-        MenuItem itemtb1 = new MenuItem(Content.Load<Texture2D>("mgx/images/icons/exit-door"), 64, 64);
+        itemtb0.Orientation = Orientation.Vertical;
+        itemtb1.Orientation = Orientation.Vertical;
         itemtb0.HAlign = HAlignment.Left;
         itemtb1.HAlign = HAlignment.Right;
+
+        itemtb0.FocusGain += (sender, args) => {
+            itemtb0.Image.Color = Color.Yellow;
+            itemtb0.Text.Text = "Next View";
+        };
+
+        itemtb1.FocusGain += (sender, args) => {
+            itemtb1.Image.Color = Color.Yellow;
+            itemtb1.Text.Text = "Exit";
+        };
+
+        itemtb0.FocusLoss += (sender, args) => {
+            itemtb0.Image.Color = Color.White;
+            itemtb0.Text.Text = "";
+        };
+
+        itemtb1.FocusLoss += (sender, args) => {
+            itemtb1.Image.Color = Color.White;
+            itemtb1.Text.Text = "";
+        };
+
+        itemtb1.Action += (sender, args) => Close();
+        itemtb0.Action += (sender, args) => {
+            Manager.Add(new LayoutTestView(Content, Graphics));
+            Hide();
+        };
 
         HPane listMenuTb = new HPane();
         listMenuTb.HAlign = HAlignment.Center;

@@ -6,7 +6,12 @@ namespace Mgx.View {
     using Layout;
 
     public abstract class View {
+
         protected class ViewContainer : StackPane {
+            public ViewContainer(View view) {
+                ParentView = view;
+            }
+
             public void SetPosition(Vector2 position) {
                 Position = position;
             }
@@ -16,15 +21,32 @@ namespace Mgx.View {
             }
         }
 
+        private ViewControl manager;
+        public ViewControl Manager {
+            get {return manager;}
+            set {
+                if(value != manager) {
+                    if(manager != null)
+                        manager.Remove(this);
+
+                    manager = value;
+                    if(value != null)
+                        value.Add(this);
+                }
+            }
+        }
+
         public ContentManager Content {get; protected set;}
-        public ViewState State {get; protected set;}
         public GraphicsDevice Graphics {get; protected set;}
+        public ViewState State {get; protected set;}
         protected ViewContainer MainContainer {get;}
 
-        public View(ContentManager content, GraphicsDevice graphics) {
-            MainContainer = new ViewContainer();
+        public View(ContentManager content, GraphicsDevice graphics) : this(content, graphics, null) {}
+        public View(ContentManager content, GraphicsDevice graphics, ViewControl manager) {
+            MainContainer = new ViewContainer(this);
             Graphics = graphics;
             Content = content;
+            Manager = manager;
             AlignMainContainer();
         }
 

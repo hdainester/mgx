@@ -11,12 +11,12 @@ using Mgx.Control;
 using Mgx.Layout;
 using Mgx.View;
 
-public class TestView : FadingView {
+public class LayoutTestView : FadingView {
     private StackPane spMain;
     private VPane vpList;
     private HPane hpBack;
 
-    public TestView(ContentManager content, GraphicsDevice graphics)
+    public LayoutTestView(ContentManager content, GraphicsDevice graphics)
     : base(content, graphics) {
         ImageItem img1 = new ImageItem(content.Load<Texture2D>("mgx/images/blank"));
         ImageItem img2 = new ImageItem(content.Load<Texture2D>("mgx/images/blank"));

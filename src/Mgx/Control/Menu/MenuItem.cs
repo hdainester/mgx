@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
+using System;
+
 namespace Mgx.Control.Menu {
     using Layout;
 
@@ -16,6 +18,9 @@ namespace Mgx.Control.Menu {
 
         private HPane hPane;
         private VPane vPane;
+        
+        private float focusFade;
+        private float extraScale = 0.1f;
 
         public MenuItem(Texture2D image) : this(null, null, image) {}
         public MenuItem(Texture2D image, int imageWidth, int imageHeight) : this(null, null, image, imageWidth, imageHeight) {}
@@ -47,6 +52,29 @@ namespace Mgx.Control.Menu {
             VAlign = VAlignment.Center;
             _Add(hPane);
             _Add(vPane);
+        }
+
+        public override void Update(GameTime gameTime) {
+            base.Update(gameTime);
+            UpdateFocusedEffect(gameTime);
+        }
+
+        protected virtual void UpdateFocusedEffect(GameTime gameTime) {
+            if(IsFocused || focusFade != 0) {
+                float elapsedSecs = gameTime.ElapsedGameTime.Milliseconds/500f;
+                double secs = gameTime.TotalGameTime.TotalSeconds;
+                float s = (float)(Math.Sin(2*Math.PI*secs) + 1)*extraScale;
+
+                if(IsFocused)
+                    focusFade = Math.Min(1, focusFade += elapsedSecs);
+                else if(focusFade != 0)
+                    focusFade = Math.Max(0, focusFade -= elapsedSecs);
+
+                // float scale = originalScale + s*focusFade;
+                float scale = 1 + s*focusFade;
+                if(Text != null) Text.Scale = scale;
+                if(Image != null) Image.Scale = scale;
+            }
         }
 
         protected override void OnEnabled() {

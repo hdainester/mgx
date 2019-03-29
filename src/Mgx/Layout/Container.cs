@@ -9,8 +9,18 @@ using System;
 
 namespace Mgx.Layout {
     using Control;
+    using View;
 
     public abstract class Container : Component {
+        private View parentView;
+        public View ParentView {
+            get {return Parent != null ? Parent.ParentView : parentView;}
+            protected set {
+                if(Parent != null) Parent.ParentView = value;
+                else parentView = value;
+            }
+        }
+
         private bool alignmentPending;
         private List<Component> children = new List<Component>();
         private List<Container> containers = new List<Container>();
@@ -37,12 +47,15 @@ namespace Mgx.Layout {
                 AlignChildren();
             }
 
-            controls.ForEach(c => c.HandleInput());
+            if(ParentView.State == ViewState.Open)
+                controls.ForEach(c => c.HandleInput());
+
             children.ForEach(c => c.Update(gameTime));
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
-            children.ForEach(c => c.Draw(spriteBatch));
+            // if(!alignmentPending) // TODO make this optional (not good)
+                children.ForEach(c => c.Draw(spriteBatch));
         }
 
         protected virtual void ChildPropertyChangedHandler(
@@ -51,6 +64,7 @@ namespace Mgx.Layout {
             || args.PropertyName.Equals("VAlign")
             || args.PropertyName.Equals("HGrow")
             || args.PropertyName.Equals("VGrow")
+            || args.PropertyName.Equals("Scale")
             || args.PropertyName.Equals("Size")
             || args.PropertyName.Equals("Position")) {
                 Container root = this;
@@ -107,13 +121,16 @@ namespace Mgx.Layout {
         protected void _DefaultAlign() {
             float w = 0, h = 0;
 
-            Children.ToList().ForEach(child => {
-                if(HGrow == 0 && child.HGrow == 0 && child.Width > w) w = child.Width;
-                if(VGrow == 0 && child.VGrow == 0 && child.Height > h) h = child.Height;
-            });
+            if(HGrow == 0 || VGrow == 0) {
+                Children.ToList().ForEach(child => {
+                    if(HGrow == 0 && child.HGrow == 0 && child.Width > w) w = child.Width;
+                    if(VGrow == 0 && child.VGrow == 0 && child.Height > h) h = child.Height;
+                });
+                
+                if(HGrow == 0) Width = w;
+                if(VGrow == 0) Height = h;
+            }
             
-            if(HGrow == 0) Width = w;
-            if(VGrow == 0) Height = h;
 
             Children.ToList().ForEach(child => {
                 if(child.HGrow > 0) _SetWidth(child, Math.Min(1, child.HGrow)*Width);

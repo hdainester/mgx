@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 namespace Mgx.Control {
     using Layout;
 
-    public class TextItem : Component {
+    public class TextItem : Item {
         private SpriteFont font;
         public SpriteFont Font {
             get {return font;}
@@ -43,7 +43,8 @@ namespace Mgx.Control {
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.DrawString(Font, Text, Position, Color*Alpha);
+            spriteBatch.DrawString(Font, Text, Position, Color*Alpha,
+                0f, Vector2.Zero, Scale, SpriteEffects.None, 1f);
         }
     }
 }
