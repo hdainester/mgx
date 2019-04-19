@@ -41,6 +41,7 @@ public class MenuTestView : FadingView {
         ListMenu listMenu0 = new ListMenu();
         listMenu0.HAlign = HAlignment.Center;
         listMenu0.VAlign = VAlignment.Center;
+        listMenu0.KeyBoardEnabled = false;
 
         MenuItem item00 = new MenuItem("Item0", font_f0, Content.Load<Texture2D>("mgx/images/icons/keyboard"), 64, 64);
         MenuItem item01 = new MenuItem("Item1", font_f0, Content.Load<Texture2D>("mgx/images/icons/gamepad"), 64, 64);
@@ -85,6 +86,7 @@ public class MenuTestView : FadingView {
         listMenu1.ItemsOrientation = Orientation.Vertical;
         listMenu1.HAlign = HAlignment.Center;
         listMenu1.VAlign = VAlignment.Center;
+        listMenu1.MouseEnabled = false;
 
         MenuItem item10 = new MenuItem("Enabled", font_c0);
         MenuItem item11 = new MenuItem("Enabled", font_c0);
@@ -151,12 +153,14 @@ public class MenuTestView : FadingView {
             Hide();
         };
 
-        HPane listMenuTb = new HPane();
+        ListMenu listMenuTb = new ListMenu();
+        listMenuTb.ItemsOrientation = Orientation.Horizontal;
         listMenuTb.HAlign = HAlignment.Center;
         listMenuTb.VAlign = VAlignment.Center;
         listMenuTb.HGrow = 0.8f;
-        listMenuTb.Add(itemtb0);
-        listMenuTb.Add(itemtb1);
+        listMenuTb.AddItem(itemtb0);
+        listMenuTb.AddItem(itemtb1);
+        listMenuTb.IsDisabled = true;
 
         VPane vpInfo = new VPane(
             new HPane(

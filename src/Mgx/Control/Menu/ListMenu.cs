@@ -1,12 +1,12 @@
 using Microsoft.Xna.Framework.Input;
+
 using System.Linq;
+using System;
 
 namespace Mgx.Control.Menu {
     using Layout;
 
     public class ListMenu : Menu {
-        public int SelectedIndex {get; protected set;}
-
         private Orientation itemsOrientation;
         public Orientation ItemsOrientation {
             get {return itemsOrientation;}
@@ -24,10 +24,10 @@ namespace Mgx.Control.Menu {
 
             _Add(hPane);
             _Add(vPane);
-            AlignItems();
+            AlignChildren();
         }
 
-        protected override void AlignItems() {
+        protected override void AlignChildren() {
             if(ItemsOrientation == Orientation.Horizontal)
                 _OrientHorizontal();
 
@@ -39,6 +39,8 @@ namespace Mgx.Control.Menu {
 
             if(ItemsOrientation == Orientation.RVertical)
                 _OrientVertical(true);
+
+            base.AlignChildren();
         }
 
         private void _OrientHorizontal(bool reverse = false) {
@@ -49,6 +51,41 @@ namespace Mgx.Control.Menu {
         private void _OrientVertical(bool reverse = false) {
             for(int i = 0; i < Items.Count; ++i)
                 vPane.Add(Items[reverse ? Items.Count-1-i : i]);
+        }
+
+        protected override void OnKeyPressed(Keys key) {
+            base.OnKeyPressed(key);
+
+            if(ItemsOrientation == Orientation.Horizontal) {
+                if(key == Keys.Left) {
+                    while(Selected > 0)
+                        if(!Items[--Selected].IsDisabled) break;
+                }
+
+                if(key == Keys.Right) {
+                    while(Selected < Items.Count-1)
+                        if(!Items[++Selected].IsDisabled) break;
+                }
+
+                if(key == Keys.Left || key  == Keys.Right)
+                    if(Items[Selected].IsDisabled)
+                        _SetFocus(Items[Selected], false);
+            } else
+
+            if(ItemsOrientation == Orientation.RHorizontal) {
+                if(key == Keys.Right) Selected = Math.Max(0, Selected-1);
+                if(key == Keys.Left) Selected = Math.Min(Items.Count-1, Selected+1);
+            } else
+
+            if(ItemsOrientation == Orientation.Vertical) {
+                if(key == Keys.Up) Selected = Math.Max(0, Selected-1);
+                if(key == Keys.Down) Selected = Math.Min(Items.Count-1, Selected+1);
+            } else
+
+            if(ItemsOrientation == Orientation.RVertical) {
+                if(key == Keys.Down) Selected = Math.Max(0, Selected-1);
+                if(key == Keys.Up) Selected = Math.Min(Items.Count-1, Selected+1);
+            }
         }
 
         protected override void OnPropertyChanged(string propertyName) {
@@ -62,7 +99,7 @@ namespace Mgx.Control.Menu {
                 hPane.VGrow = vPane.VGrow = VGrow;
 
             if(propertyName.Equals("ItemsOrientation"))
-                AlignItems();
+                AlignChildren();
         }
     }
 }

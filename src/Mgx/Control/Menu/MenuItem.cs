@@ -15,6 +15,12 @@ namespace Mgx.Control.Menu {
 
         public TextItem Text {get; protected set;}
         public ImageItem Image {get; protected set;}
+        public Menu Menu {get; protected set;}
+
+        public bool KeyBoardEnabled {get; set;} = true;
+        public bool GamePadEnabled {get; set;} = true;
+        public bool MouseEnabled {get; set;} = true;
+        public bool TouchEnabled {get; set;} = true;
 
         private HPane hPane;
         private VPane vPane;
@@ -59,11 +65,20 @@ namespace Mgx.Control.Menu {
             UpdateFocusedEffect(gameTime);
         }
 
+        public override void HandleInput() {
+            if(!IsDisabled && (Menu == null || !Menu.IsDisabled)) {
+                if(KeyBoardEnabled && (Menu == null || Menu.KeyBoardEnabled)) HandleKeyboard();
+                if(GamePadEnabled && (Menu == null || Menu.GamePadEnabled)) HandleGamepad();
+                if(MouseEnabled && (Menu == null || Menu.MouseEnabled)) HandleMouse();
+                if(TouchEnabled && (Menu == null || Menu.TouchEnabled)) HandleTouch();
+            }
+        }
+
         protected virtual void UpdateFocusedEffect(GameTime gameTime) {
             if(IsFocused || focusFade != 0) {
                 float elapsedSecs = gameTime.ElapsedGameTime.Milliseconds/500f;
                 double secs = gameTime.TotalGameTime.TotalSeconds;
-                float s = (float)(Math.Sin(2*Math.PI*secs) + 1)*extraScale;
+                float s = (float)(Math.Sin(2*Math.PI*secs) + 1)/2*extraScale;
 
                 if(IsFocused)
                     focusFade = Math.Min(1, focusFade += elapsedSecs);
@@ -109,6 +124,9 @@ namespace Mgx.Control.Menu {
             base.OnPropertyChanged(propertyName);
 
             // TODO temp solution
+            if(propertyName.Equals("IsDisabled"))
+                if(IsDisabled) IsFocused = false;
+                
             if(propertyName.Equals("HGrow"))
                 hPane.HGrow = vPane.HGrow = HGrow;
 
@@ -136,6 +154,10 @@ namespace Mgx.Control.Menu {
                     vPane.Add(Image);
                 }
             }
+        }
+
+        internal static void _SetMenu(MenuItem item, Menu menu) {
+            item.Menu = menu;
         }
     }
 }

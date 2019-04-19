@@ -19,7 +19,14 @@ namespace Mgx.Control {
                 && Parent.ParentView != null
                 && Parent.ParentView.State == ViewState.Open;
             }
-            protected set {isFocused = value;}
+            protected set {
+                if(value != isFocused) {
+                    SetProperty(ref isFocused, value);
+                    if(isFocused)
+                        OnFocusGain();
+                    else OnFocusLoss();
+                }
+            }
         }
 
         private bool isDisabled;
@@ -27,7 +34,7 @@ namespace Mgx.Control {
             get {return isDisabled;}
             set {
                 if(value != isDisabled) {
-                    isDisabled = value;
+                    SetProperty(ref isDisabled, value);
                     if(isDisabled) OnDisabled();
                     else OnEnabled();
                 }
@@ -46,12 +53,8 @@ namespace Mgx.Control {
             if(!IsDisabled) {
                 HandleMouse();
                 HandleTouch();
-
-                // TODO
-                // if(IsSelected) {
-                    HandleGamepad();
-                    HandleKeyboard();
-                // }
+                HandleGamepad();
+                HandleKeyboard();
             }
         }
 
@@ -62,24 +65,18 @@ namespace Mgx.Control {
             float my = mouse.Position.Y;
 
             if(mx > X && mx - X < Width && my > Y && my - Y < Height) {
-                if(!IsFocused) {
+                if(!IsFocused)
                     IsFocused = true;
-                    OnFocusGain();
-                }
 
                 if(prevMouse != null) {
-                    if(mouse.LeftButton == ButtonState.Released
+                    if(IsFocused && mouse.LeftButton == ButtonState.Released
                     && prevMouse.LeftButton == ButtonState.Pressed) {
                         // OnMousePressed(mouse.LeftButton);
                         OnAction();
                     }
                 }
-            } else {
-                if(IsFocused) {
-                    IsFocused = false;
-                    OnFocusLoss();
-                }
-            }
+            } else if(IsFocused)
+                IsFocused = false;
 
             prevMouse = mouse;
         }
@@ -91,8 +88,12 @@ namespace Mgx.Control {
 
             keyboard.GetPressedKeys().ToList().ForEach(key => {
                 newKeyMap.Add(key, true);
-                if(!keyMap.ContainsKey(key))
+                if(!keyMap.ContainsKey(key)) {
                     OnKeyPressed(key);
+
+                    if(IsFocused && key == Keys.Enter)
+                        OnAction();
+                }
             });
 
             keyMap.Keys.ToList().ForEach(key => {
@@ -149,6 +150,10 @@ namespace Mgx.Control {
         protected override void AlignChildren() {
             base.AlignChildren();
             _DefaultAlign();
+        }
+
+        protected static void _SetFocus(Control c, bool focus) {
+            c.IsFocused = focus;
         }
     }
 }
