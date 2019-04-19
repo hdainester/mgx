@@ -1,4 +1,4 @@
-namespace Mgx.Layout {
+namespace Chaotx.Mgx.Layout {
     public enum HAlignment {
         Left,
         Center,

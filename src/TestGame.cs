@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-using Mgx.View;
+using Chaotx.Mgx.View;
 
 namespace Test {
     public class TestGame : Game {

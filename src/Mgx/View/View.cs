@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
-namespace Mgx.View {
+namespace Chaotx.Mgx.View {
     using Layout;
 
     public abstract class View {

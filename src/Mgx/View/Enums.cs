@@ -1,4 +1,4 @@
-namespace Mgx.View {
+namespace Chaotx.Mgx.View {
     public enum ViewState {
         Opening,
         Open,

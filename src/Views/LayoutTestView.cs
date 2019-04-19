@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-using Mgx.Control;
-using Mgx.Layout;
-using Mgx.View;
+using Chaotx.Mgx.Control;
+using Chaotx.Mgx.Layout;
+using Chaotx.Mgx.View;
 
 public class LayoutTestView : FadingView {
     private StackPane spMain;

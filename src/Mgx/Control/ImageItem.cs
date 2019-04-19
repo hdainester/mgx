@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Mgx.Control {
+namespace Chaotx.Mgx.Control {
     using Layout;
     using Microsoft.Xna.Framework;
 

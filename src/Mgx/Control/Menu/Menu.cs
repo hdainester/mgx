@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System;
 
-namespace Mgx.Control.Menu {
+namespace Chaotx.Mgx.Control.Menu {
     public abstract class Menu : MenuItem {
         private List<MenuItem> items;
         public ReadOnlyCollection<MenuItem> Items {

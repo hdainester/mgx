@@ -1,7 +1,7 @@
 using System.Linq;
 using System;
 
-namespace Mgx.Layout {
+namespace Chaotx.Mgx.Layout {
     public class StackPane : LayoutPane {
         public StackPane(params Component[] children) : base(children) {}
 

@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Mgx.View {
+namespace Chaotx.Mgx.View {
     public class ViewControl {
         private LinkedList<View> views = new LinkedList<View>();
         public ReadOnlyCollection<View> Views {

@@ -1,4 +1,4 @@
-namespace Mgx.Layout {
+namespace Chaotx.Mgx.Layout {
     using  Control;
 
     public abstract class LayoutPane : Container {

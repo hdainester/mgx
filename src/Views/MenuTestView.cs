@@ -3,10 +3,10 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 
-using Mgx.Control.Menu;
-using Mgx.Control;
-using Mgx.Layout;
-using Mgx.View;
+using Chaotx.Mgx.Control.Menu;
+using Chaotx.Mgx.Control;
+using Chaotx.Mgx.Layout;
+using Chaotx.Mgx.View;
 
 using System.Linq;
 using System;
@@ -62,7 +62,13 @@ public class MenuTestView : FadingView {
         listMenu0.AddItem(item00);
         listMenu0.AddItem(item01);
         listMenu0.AddItem(item02);
-        listMenu0.KeyReleased += (sender, args) => {
+
+        ListMenu listMenu1 = new ListMenu();
+        listMenu1.ItemsOrientation = Orientation.Vertical;
+        listMenu1.HAlign = HAlignment.Center;
+        listMenu1.VAlign = VAlignment.Center;
+        listMenu1.MouseEnabled = false;
+        listMenu1.KeyReleased += (sender, args) => {
             if(args.Key == Keys.R)
                 listMenu0.ItemsOrientation = (Orientation)((((int)listMenu0.ItemsOrientation)+1) % 4);
 
@@ -81,12 +87,6 @@ public class MenuTestView : FadingView {
             if(args.Key == Keys.Escape)
                 Close();
         };
-
-        ListMenu listMenu1 = new ListMenu();
-        listMenu1.ItemsOrientation = Orientation.Vertical;
-        listMenu1.HAlign = HAlignment.Center;
-        listMenu1.VAlign = VAlignment.Center;
-        listMenu1.MouseEnabled = false;
 
         MenuItem item10 = new MenuItem("Enabled", font_c0);
         MenuItem item11 = new MenuItem("Enabled", font_c0);
@@ -160,7 +160,8 @@ public class MenuTestView : FadingView {
         listMenuTb.HGrow = 0.8f;
         listMenuTb.AddItem(itemtb0);
         listMenuTb.AddItem(itemtb1);
-        listMenuTb.IsDisabled = true;
+        listMenuTb.KeyBoardEnabled = false;
+        item12.Action += (sender, args) => listMenuTb.IsDisabled = item02.IsDisabled;
 
         VPane vpInfo = new VPane(
             new HPane(

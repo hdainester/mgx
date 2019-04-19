@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Input.Touch;
 using System;
 
-namespace Mgx.Control.Menu {
+namespace Chaotx.Mgx.Control.Menu {
     public class KeyEventArgs : EventArgs {
         public Keys Key {get; protected set;}
 

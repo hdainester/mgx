@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-namespace Mgx.Control {
+namespace Chaotx.Mgx.Control {
     using Layout;
     using View;
     using Menu;
@@ -17,7 +17,8 @@ namespace Mgx.Control {
             get {return isFocused
                 && Parent != null
                 && Parent.ParentView != null
-                && Parent.ParentView.State == ViewState.Open;
+                && Parent.ParentView.State != ViewState.Closed
+                && Parent.ParentView.State != ViewState.Hidden;
             }
             protected set {
                 if(value != isFocused) {

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 using System;
 
-namespace Mgx.Control.Menu {
+namespace Chaotx.Mgx.Control.Menu {
     using Layout;
 
     public class MenuItem : Control {
@@ -126,7 +126,7 @@ namespace Mgx.Control.Menu {
             // TODO temp solution
             if(propertyName.Equals("IsDisabled"))
                 if(IsDisabled) IsFocused = false;
-                
+
             if(propertyName.Equals("HGrow"))
                 hPane.HGrow = vPane.HGrow = HGrow;
 
@@ -156,7 +156,7 @@ namespace Mgx.Control.Menu {
             }
         }
 
-        internal static void _SetMenu(MenuItem item, Menu menu) {
+        protected static void _SetMenu(MenuItem item, Menu menu) {
             item.Menu = menu;
         }
     }

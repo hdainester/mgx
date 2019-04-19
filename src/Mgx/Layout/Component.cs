@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.ComponentModel;
 using System;
 
-namespace Mgx.Layout {
+namespace Chaotx.Mgx.Layout {
     public abstract class Component : INotifyPropertyChanged {
         private float hgrow;
         public float HGrow {

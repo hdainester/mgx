@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace Mgx.Control {
+namespace Chaotx.Mgx.Control {
     using Layout;
 
     public abstract class Item : Component {

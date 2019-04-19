@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Linq;
 using System;
 
-namespace Mgx.Control.Menu {
+namespace Chaotx.Mgx.Control.Menu {
     using Layout;
 
     public class ListMenu : Menu {

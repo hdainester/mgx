@@ -1,4 +1,4 @@
-namespace Mgx.Control {
+namespace Chaotx.Mgx.Control {
     public enum Orientation {
         Horizontal,
         RHorizontal,

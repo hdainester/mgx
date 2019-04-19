@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace Mgx.Control {
+namespace Chaotx.Mgx.Control {
     using Layout;
 
     public class TextItem : Item {

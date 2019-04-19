@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-namespace Mgx.Layout {
+namespace Chaotx.Mgx.Layout {
     public class HPane : LayoutPane {
         public HPane(params Component[] children) : base(children) {}
 

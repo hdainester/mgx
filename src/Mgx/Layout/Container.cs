@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System;
 
-namespace Mgx.Layout {
+namespace Chaotx.Mgx.Layout {
     using Control;
     using View;
 
