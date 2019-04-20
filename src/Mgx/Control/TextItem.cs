@@ -43,7 +43,10 @@ namespace Chaotx.Mgx.Control {
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.DrawString(Font, Text, Position, Color*Alpha,
+            int x = (int)(X - (ScaledSize.X - Size.X)/2);
+            int y = (int)(Y - (ScaledSize.Y - Size.Y)/2);
+
+            spriteBatch.DrawString(Font, Text, new Vector2(x, y), Color*Alpha,
                 0f, Vector2.Zero, Scale, SpriteEffects.None, 1f);
         }
     }

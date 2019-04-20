@@ -5,7 +5,7 @@ namespace Chaotx.Mgx.Control {
     using Microsoft.Xna.Framework;
 
     public class ImageItem : Item {
-        public Texture2D Image {get; protected set;}
+        public Texture2D Image {get; set;}
 
         public ImageItem(Texture2D image) : this(image, image.Width, image.Height) {}
         public ImageItem(Texture2D image, int width, int height) {
@@ -19,7 +19,12 @@ namespace Chaotx.Mgx.Control {
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
-            Rectangle destination = new Rectangle((int)X, (int)Y, (int)Width, (int)Height);
+            int width = (int)ScaledSize.X;
+            int height = (int)ScaledSize.Y;
+            int x = (int)(X - (width - Width)/2);
+            int y = (int)(Y - (height - Height)/2);
+
+            Rectangle destination = new Rectangle(x, y, width, height);
             spriteBatch.Draw(Image, destination, Color*Alpha);
         }
     }

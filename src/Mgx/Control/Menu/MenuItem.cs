@@ -92,33 +92,33 @@ namespace Chaotx.Mgx.Control.Menu {
             }
         }
 
-        protected override void OnEnabled() {
-            base.OnEnabled();
+        // protected override void OnEnabled() {
+        //     base.OnEnabled();
 
-            if(Text != null) {
-                Text.Color = Color.White;
-                Text.Alpha = 1;
-            }
+        //     if(Text != null) {
+        //         Text.Color = Color.White;
+        //         Text.Alpha = 1;
+        //     }
 
-            if(Image != null) {
-                Image.Color = Color.White;
-                Image.Alpha = 1;
-            }
-        }
+        //     if(Image != null) {
+        //         Image.Color = Color.White;
+        //         Image.Alpha = 1;
+        //     }
+        // }
 
-        protected override void OnDisabled() {
-            base.OnDisabled();
+        // protected override void OnDisabled() {
+        //     base.OnDisabled();
 
-            if(Text != null) {
-                Text.Color = Color.Gray;
-                Text.Alpha = 0.75f;
-            }
+        //     if(Text != null) {
+        //         Text.Color = Color.Gray;
+        //         Text.Alpha = 0.75f;
+        //     }
 
-            if(Image != null) {
-                Image.Color = Color.Gray;
-                Image.Alpha = 0.75f;
-            }
-        }
+        //     if(Image != null) {
+        //         Image.Color = Color.Gray;
+        //         Image.Alpha = 0.75f;
+        //     }
+        // }
 
         protected override void OnPropertyChanged(string propertyName) {
             base.OnPropertyChanged(propertyName);
