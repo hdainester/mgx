@@ -12,7 +12,7 @@ namespace Chaotx.Mgx.Control {
 
         public string Text {
             get {return textItem.Text;}
-            protected set {textItem.Text = value;}
+            set {textItem.Text = value;}
         }
 
         public override Vector2 Size {
