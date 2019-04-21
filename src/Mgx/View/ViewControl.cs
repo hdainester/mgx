@@ -35,12 +35,13 @@ namespace Chaotx.Mgx.View {
                 view = node.Value;
 
                 if(view.State == ViewState.Closed) {
-                    if((prevNode = node.Next) != null
+                    if(node == views.First
+                    && (prevNode = node.Next) != null
                     && prevNode.Value.State == ViewState.Hidden)
                         prevNode.Value.Show();
                         
                     views.Remove(node);
-                } else {
+                } else if(view.State != ViewState.Suspended) {
                     view.Update(gameTime);
                     if(view.State == ViewState.Greedy)
                         break;
@@ -50,11 +51,8 @@ namespace Chaotx.Mgx.View {
 
         public void Draw(SpriteBatch spriteBatch) {
             spriteBatch.Begin();
-            foreach(View view in views) {
+            foreach(View view in views.Reverse())
                 view.Draw(spriteBatch);
-                if(view.State == ViewState.Greedy)
-                    break;
-            }
             spriteBatch.End();
         }
     }

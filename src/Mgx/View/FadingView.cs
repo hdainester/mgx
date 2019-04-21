@@ -6,8 +6,8 @@ namespace Chaotx.Mgx.View {
     using Layout;
 
     public class FadingView : View {
-        public int FadeInTime {get; set;} = 2500;
-        public int FadeOutTime {get; set;} = 2500;
+        public int FadeInTime {get; set;} = 1000;
+        public int FadeOutTime {get; set;} = 1000;
 
         public FadingView(ContentManager content, GraphicsDevice graphics)
         : base(content, graphics) {}

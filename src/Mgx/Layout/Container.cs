@@ -47,10 +47,13 @@ namespace Chaotx.Mgx.Layout {
                 AlignChildren();
             }
 
-            if(ParentView.State == ViewState.Open)
+            if(ParentView != null
+            && !ParentView.InputDisabled
+            && ParentView.State == ViewState.Open)
                 controls.ForEach(c => c.HandleInput());
 
-            children.ForEach(c => c.Update(gameTime));
+            for(int i = children.Count-1; i >= 0; --i)
+                children[i].Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
@@ -129,8 +132,7 @@ namespace Chaotx.Mgx.Layout {
                 
                 if(HGrow == 0) Width = w;
                 if(VGrow == 0) Height = h;
-            }
-            
+            }            
 
             Children.ToList().ForEach(child => {
                 if(child.HGrow > 0) _SetWidth(child, Math.Min(1, child.HGrow)*Width);

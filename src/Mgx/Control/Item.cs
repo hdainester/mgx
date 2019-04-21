@@ -4,7 +4,7 @@ namespace Chaotx.Mgx.Control {
     using Layout;
 
     public abstract class Item : Component {
-        public bool LayoutWithTrueSize {get; set;} = true;
+        public bool LayoutWithTrueSize {get; set;}
 
         private float scale = 1f;
         public float Scale {

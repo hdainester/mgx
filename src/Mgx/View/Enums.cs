@@ -6,6 +6,7 @@ namespace Chaotx.Mgx.View {
         Closing,
         Closed,
         Hiding,
-        Hidden
+        Hidden,
+        Suspended
     }    
 }

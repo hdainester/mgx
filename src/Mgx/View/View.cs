@@ -6,6 +6,7 @@ namespace Chaotx.Mgx.View {
     using Layout;
 
     public abstract class View {
+        public bool InputDisabled {get; set;}
 
         protected class ViewContainer : StackPane {
             public ViewContainer(View view) {
@@ -55,7 +56,7 @@ namespace Chaotx.Mgx.View {
         public abstract void Close();
         public virtual void HandleInput() {}
         public virtual void Update(GameTime gameTime) {
-            if(State == ViewState.Open)
+            if(!InputDisabled && State == ViewState.Open)
                 HandleInput();
                 
             MainContainer.Update(gameTime);

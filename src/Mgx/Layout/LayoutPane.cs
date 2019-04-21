@@ -14,5 +14,10 @@ namespace Chaotx.Mgx.Layout {
         public void Remove(Component child) {
             _Remove(child);
         }
+
+        public void Clear() {
+            for(int i = Children.Count-1; i >= 0; --i)
+                Remove(Children[i]);
+        }
     }
 }
