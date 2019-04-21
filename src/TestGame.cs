@@ -29,7 +29,7 @@ namespace Test {
 
         protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            viewControl.Add(new MenuTestView(Content, GraphicsDevice));
+            viewControl.Add(new MenuTestView(this));
         }
 
         private int prevTime = -1;

@@ -18,8 +18,8 @@ public class MenuTestView : FadingView {
     private SpriteFont font_f1;
     private Texture2D blank;
 
-    public MenuTestView(ContentManager content, GraphicsDevice graphics)
-    : base(content, graphics) {
+    public MenuTestView(Game game)
+    : base(game.Content, game.GraphicsDevice) {
         font_c0 = Content.Load<SpriteFont>("mgx/fonts/content");
         font_c1 = Content.Load<SpriteFont>("mgx/fonts/content_italic");
         font_f0 = Content.Load<SpriteFont>("mgx/fonts/footer");
@@ -68,6 +68,8 @@ public class MenuTestView : FadingView {
         listMenu1.HAlign = HAlignment.Center;
         listMenu1.VAlign = VAlignment.Center;
         listMenu1.MouseEnabled = false;
+        listMenu1.VGrow = 1;
+
         listMenu1.KeyReleased += (sender, args) => {
             if(args.Key == Keys.R)
                 listMenu0.ItemsOrientation = (Orientation)((((int)listMenu0.ItemsOrientation)+1) % 4);
@@ -88,9 +90,14 @@ public class MenuTestView : FadingView {
                 Close();
         };
 
+        TextField textField = new TextField(game.Window, font_c0, blank);
+        textField.HAlign = HAlignment.Center;
+        textField.VAlign = VAlignment.Center;
+        textField.HGrow = 0.8f;
+
         MenuItem item10 = new MenuItem("Enabled", font_c0);
         MenuItem item11 = new MenuItem("Enabled", font_c0);
-        MenuItem item12 = new MenuItem("Enabled", font_c0);
+        MenuItem item12 = new MenuItem("Enabled", font_c0);        
 
         item10.FocusGain += (sender, args) => item10.Text.Color = Color.Yellow;
         item11.FocusGain += (sender, args) => item11.Text.Color = Color.Yellow;
@@ -102,6 +109,7 @@ public class MenuTestView : FadingView {
 
         item10.Action += (sender, args) => {
             item00.IsDisabled = !item00.IsDisabled;
+            textField.IsDisabled = item00.IsDisabled;
             item10.Text.Text = item00.IsDisabled ? "Disabled" : "Enabled";
         };
 
@@ -197,8 +205,11 @@ public class MenuTestView : FadingView {
         TextItem tiFocus = new TextItem(font_c1, "Focus right");
         tiFocus.HAlign = HAlignment.Center;
 
+        VPane vpCen = new VPane(listMenu1, textField);
+        vpCen.HGrow = vpCen.VGrow = 1;
+
         StackPane spTop = new StackPane(back0, vpInfo);
-        StackPane spCen = new StackPane(back1, listMenu1);
+        StackPane spCen = new StackPane(back1, vpCen);
         StackPane spBot = new StackPane(back2, tiFocus);
 
         spTop.HGrow = spCen.HGrow = spBot.HGrow = 1;
