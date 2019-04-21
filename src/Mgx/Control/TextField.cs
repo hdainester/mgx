@@ -2,10 +2,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 
+using System;
+
 namespace Chaotx.Mgx.Control {
     using Layout;
 
     public class TextField : Control {
+        public delegate void TextInputEventHandler(object sender, TextInputEventArgs args);
+
         public string Text {
             get {return textItem.Text;}
             protected set {textItem.Text = value;}
@@ -20,6 +24,8 @@ namespace Chaotx.Mgx.Control {
             get {return textItem.HAlign;}
             set {textItem.HAlign = value;}
         }
+
+        public event TextInputEventHandler TextInput;
 
         private GameWindow window;
         private Texture2D backTexture;
@@ -61,7 +67,14 @@ namespace Chaotx.Mgx.Control {
                     textItem.Text = textItem.Text.Remove(textItem.Text.Length-1);
                 else if(font.Characters.Contains(args.Character))
                     textItem.Text += args.Character;
+
+                OnTextInput(args);
             }
+        }
+
+        protected void OnTextInput(TextInputEventArgs args) {
+            TextInputEventHandler handler = TextInput;
+            if(handler != null) handler(this, args);
         }
 
         protected override void OnPropertyChanged(string propertyName) {
