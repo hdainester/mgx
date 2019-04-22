@@ -16,8 +16,8 @@ namespace Chaotx.Mgx.Control {
         }
 
         public override Vector2 Size {
-            get => new Vector2(base.Size.X, font.MeasureString("I").Y);
-            protected set => base.Size = value;
+            protected set => base.Size
+                = new Vector2(value.X, font.MeasureString("I").Y);
         }
 
         public HAlignment TextAlignment {

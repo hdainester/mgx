@@ -57,7 +57,8 @@ namespace Chaotx.Mgx.Layout {
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
-            // if(!alignmentPending) // TODO make this optional (not good)
+            if(ParentView.State != ViewState.Opening
+            || ParentView.State == ViewState.Opening && !alignmentPending)
                 children.ForEach(c => c.Draw(spriteBatch));
         }
 
@@ -132,7 +133,7 @@ namespace Chaotx.Mgx.Layout {
                 
                 if(HGrow == 0) Width = w;
                 if(VGrow == 0) Height = h;
-            }            
+            }
 
             Children.ToList().ForEach(child => {
                 if(child.HGrow > 0) _SetWidth(child, Math.Min(1, child.HGrow)*Width);
