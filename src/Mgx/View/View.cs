@@ -6,8 +6,6 @@ namespace Chaotx.Mgx.View {
     using Layout;
 
     public abstract class View {
-        public bool InputDisabled {get; set;}
-
         protected class ViewContainer : StackPane {
             public ViewContainer(View view) {
                 ParentView = view;
@@ -41,6 +39,7 @@ namespace Chaotx.Mgx.View {
         public GraphicsDevice Graphics {get; protected set;}
         public ViewState State {get; protected set;}
         protected ViewContainer MainContainer {get;}
+        public bool InputDisabled {get; set;}
 
         public View(ContentManager content, GraphicsDevice graphics) : this(content, graphics, null) {}
         public View(ContentManager content, GraphicsDevice graphics, ViewControl manager) {

@@ -22,6 +22,7 @@ namespace Chaotx.Mgx.Layout {
         }
 
         private bool alignmentPending;
+        private bool initialAligned;
         private List<Component> children = new List<Component>();
         private List<Container> containers = new List<Container>();
         private List<Control> controls = new List<Control>();
@@ -41,7 +42,12 @@ namespace Chaotx.Mgx.Layout {
             protected set {controls = new List<Control>(value);}
         }
 
+        private int alignmentBuffer = 128;
         public override void Update(GameTime gameTime) {
+            if(alignmentBuffer > 0)
+                alignmentBuffer -= gameTime.ElapsedGameTime.Milliseconds;
+            else initialAligned = true;
+
             if(alignmentPending) {
                 alignmentPending = false;
                 AlignChildren();
@@ -57,8 +63,7 @@ namespace Chaotx.Mgx.Layout {
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
-            if(ParentView.State != ViewState.Opening
-            || ParentView.State == ViewState.Opening && !alignmentPending)
+            if(initialAligned)
                 children.ForEach(c => c.Draw(spriteBatch));
         }
 
