@@ -42,7 +42,7 @@ namespace Chaotx.Mgx.Layout {
             protected set {controls = new List<Control>(value);}
         }
 
-        private int alignmentBuffer = 128;
+        private int alignmentBuffer = 160;
         public override void Update(GameTime gameTime) {
             if(alignmentBuffer > 0)
                 alignmentBuffer -= gameTime.ElapsedGameTime.Milliseconds;
