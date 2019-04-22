@@ -20,21 +20,7 @@ namespace Chaotx.Mgx.View {
             }
         }
 
-        private ViewControl manager;
-        public ViewControl Manager {
-            get {return manager;}
-            set {
-                if(value != manager) {
-                    if(manager != null)
-                        manager.Remove(this);
-
-                    manager = value;
-                    if(value != null)
-                        value.Add(this);
-                }
-            }
-        }
-
+        public ViewControl Manager {get; internal set;}
         public ContentManager Content {get; protected set;}
         public GraphicsDevice Graphics {get; protected set;}
         public ViewState State {get; protected set;}
@@ -44,15 +30,20 @@ namespace Chaotx.Mgx.View {
         public View(ContentManager content, GraphicsDevice graphics) : this(content, graphics, null) {}
         public View(ContentManager content, GraphicsDevice graphics, ViewControl manager) {
             MainContainer = new ViewContainer(this);
+            State = ViewState.Closed;
             Graphics = graphics;
             Content = content;
             Manager = manager;
             AlignMainContainer();
         }
 
+        // TODO make these virtual (like Suspend())
         public abstract void Show();
         public abstract void Hide();
         public abstract void Close();
+        public virtual void Suspend() {State = ViewState.Suspended;}
+        public virtual void Resume() {State = ViewState.Open;}
+
         public virtual void HandleInput() {}
         public virtual void Update(GameTime gameTime) {
             if(!InputDisabled && State == ViewState.Open)

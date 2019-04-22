@@ -13,11 +13,16 @@ namespace Chaotx.Mgx.View {
             set {views = new LinkedList<View>(value);}
         }
 
-        public void Add(View view) {
-            if(view.Manager != this)
-                view.Manager = this;
-            else if(!views.Contains(view))
-                views.AddFirst(view);
+        public void Add(View view, bool greedy = true) {
+            if(view.Manager != null) 
+                view.Manager.Remove(view);
+
+            view.Manager = this;
+            views.AddFirst(view);
+            view.Show();
+
+            if(greedy && views.Count > 1)
+                views.First.Next.Value.Suspend();
         }
 
         public void Remove(View view) {
@@ -41,11 +46,10 @@ namespace Chaotx.Mgx.View {
                         prevNode.Value.Show();
                         
                     views.Remove(node);
-                } else if(view.State != ViewState.Suspended) {
+                } else if(view.State != ViewState.Suspended)
                     view.Update(gameTime);
-                    if(view.State == ViewState.Greedy)
-                        break;
-                }
+                else if(node == views.First)
+                    view.Resume();
             }
         }
 
