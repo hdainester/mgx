@@ -161,13 +161,11 @@ public class MenuTestView : FadingView {
             Hide();
         };
 
-        ListMenu listMenuTb = new ListMenu();
+        ListMenu listMenuTb = new ListMenu(itemtb0, itemtb1);
         listMenuTb.ItemsOrientation = Orientation.Horizontal;
         listMenuTb.HAlign = HAlignment.Center;
         listMenuTb.VAlign = VAlignment.Center;
         listMenuTb.HGrow = 0.8f;
-        listMenuTb.AddItem(itemtb0);
-        listMenuTb.AddItem(itemtb1);
         listMenuTb.KeyBoardEnabled = false;
         item12.Action += (sender, args) => listMenuTb.IsDisabled = item02.IsDisabled;
 

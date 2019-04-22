@@ -22,8 +22,8 @@ namespace Chaotx.Mgx.Control.Menu {
         public bool MouseEnabled {get; set;} = true;
         public bool TouchEnabled {get; set;} = true;
 
-        private HPane hPane;
-        private VPane vPane;
+        protected HPane hPane;
+        protected VPane vPane;
         
         private float focusFade;
         private float extraScale = 0.1f;

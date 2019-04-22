@@ -13,19 +13,8 @@ namespace Chaotx.Mgx.Control.Menu {
             set {SetProperty(ref itemsOrientation, value);}
         }
 
-        private HPane hPane;
-        private VPane vPane;
-
-        public ListMenu(params MenuItem[] items) : base(items) {
-            hPane = new HPane();
-            vPane = new VPane();
-            hPane.HAlign = vPane.HAlign = HAlignment.Center;
-            hPane.VAlign = vPane.VAlign = VAlignment.Center;
-
-            _Add(hPane);
-            _Add(vPane);
-            AlignChildren();
-        }
+        public ListMenu(params MenuItem[] items)
+        : base(items) {}
 
         protected override void AlignChildren() {
             if(ItemsOrientation == Orientation.Horizontal)
