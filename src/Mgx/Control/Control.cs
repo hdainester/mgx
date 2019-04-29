@@ -65,7 +65,7 @@ namespace Chaotx.Mgx.Control {
             float mx = mouse.Position.X;
             float my = mouse.Position.Y;
 
-            if(mx > X && mx - X < Width && my > Y && my - Y < Height) {
+            if(ContainsPoint(mx, my)) {
                 if(!IsFocused)
                     IsFocused = true;
 
@@ -151,6 +151,10 @@ namespace Chaotx.Mgx.Control {
         protected override void AlignChildren() {
             base.AlignChildren();
             _DefaultAlign();
+        }
+
+        protected bool ContainsPoint(float x, float y) {
+            return x > X && x - X < Width && y > Y && y - Y < Height;
         }
 
         protected static void _SetFocus(Control c, bool focus) {

@@ -2,9 +2,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
-namespace Chaotx.Mgx.View {
-    using Layout;
+using Chaotx.Mgx.Layout;
 
+namespace Chaotx.Mgx.View {
     public abstract class View {
         protected class ViewContainer : StackPane {
             public ViewContainer(View view) {
