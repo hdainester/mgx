@@ -21,8 +21,12 @@ namespace Chaotx.Mgx.View {
             views.AddFirst(view);
             view.Show();
 
-            if(greedy && views.Count > 1)
-                views.First.Next.Value.Suspend();
+            if(greedy && views.Count > 1) {
+                View next = views.First.Next.Value;
+                if(next.State == ViewState.Opening
+                || next.State == ViewState.Open)
+                    next.Suspend();
+            }
         }
 
         public void Remove(View view) {
