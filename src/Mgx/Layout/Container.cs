@@ -53,11 +53,6 @@ namespace Chaotx.Mgx.Layout {
                 AlignChildren();
             }
 
-            if(ParentView != null
-            && !ParentView.InputDisabled
-            && ParentView.State == ViewState.Open)
-                controls.ForEach(c => c.HandleInput());
-
             for(int i = children.Count-1; i >= 0; --i)
                 children[i].Update(gameTime);
         }

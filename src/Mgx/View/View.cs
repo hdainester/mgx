@@ -1,31 +1,57 @@
+using Microsoft.Xna.Framework.Input.Touch;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
+
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.View {
-    public abstract class View {
-        protected class ViewContainer : StackPane {
-            public ViewContainer(View view) {
-                ParentView = view;
-            }
+    public class InputArgs {
+        public HashSet<Keys> Keys {get;}
+        public HashSet<Buttons> Buttons {get;}
+        public HashSet<MouseState> MouseStates {get;}
+        public HashSet<TouchLocation> TouchLocations {get;}
+        public HashSet<GestureSample> GestureSamples {get;}
 
-            public void SetPosition(Vector2 position) {
-                Position = position;
-            }
+        public InputArgs() : this(
+            Enumerable.Empty<Keys>(),
+            Enumerable.Empty<Buttons>(),
+            Enumerable.Empty<MouseState>(),
+            Enumerable.Empty<TouchLocation>(),
+            Enumerable.Empty<GestureSample>()) {}
 
-            public void SetSize(Vector2 size) {
-                Size = size;
-            }
+        public InputArgs(
+            IEnumerable<Keys> keys,
+            IEnumerable<Buttons> buttons,
+            IEnumerable<MouseState> mouseStates,
+            IEnumerable<TouchLocation> touchLocations,
+            IEnumerable<GestureSample> gestureSamples)
+        {
+            Keys = new HashSet<Keys>(keys);
+            Buttons = new HashSet<Buttons>(buttons);
+            MouseStates = new HashSet<MouseState>(mouseStates);
+            TouchLocations = new HashSet<TouchLocation>(touchLocations);
+            GestureSamples = new HashSet<GestureSample>(gestureSamples);
         }
+    }
 
+    public abstract class View {
         public ViewControl Manager {get; internal set;}
+        public InputArgs InputArgs {get; protected set;}
         public ContentManager Content {get; protected set;}
         public GraphicsDevice Graphics {get; protected set;}
         public ViewState State {get; protected set;}
-        protected ViewContainer MainContainer {get;}
+        public ViewContainer MainContainer {get;}
         public bool InputDisabled {get; set;}
+
+        private HashSet<Keys> pressedKeys;
+        private HashSet<Buttons> pressedButtons;
+        private MouseState prevMouseState;
 
         public View(ContentManager content, GraphicsDevice graphics) : this(content, graphics, null) {}
         public View(ContentManager content, GraphicsDevice graphics, ViewControl manager) {
@@ -35,6 +61,10 @@ namespace Chaotx.Mgx.View {
             Content = content;
             Manager = manager;
             AlignMainContainer();
+
+            pressedKeys = new HashSet<Keys>();
+            pressedButtons = new HashSet<Buttons>();
+            InputArgs = new InputArgs();
         }
 
         // TODO make these virtual (like Suspend())
@@ -44,7 +74,6 @@ namespace Chaotx.Mgx.View {
         public virtual void Suspend() {State = ViewState.Suspended;}
         public virtual void Resume() {State = ViewState.Open;}
 
-        public virtual void HandleInput() {}
         public virtual void Update(GameTime gameTime) {
             if(!InputDisabled && State == ViewState.Open)
                 HandleInput();
@@ -54,6 +83,51 @@ namespace Chaotx.Mgx.View {
 
         public void Draw(SpriteBatch spriteBatch) {
             MainContainer.Draw(spriteBatch);
+        }
+
+        protected virtual void HandleInput() {
+            HashSet<Keys> keys = new HashSet<Keys>();
+            HashSet<Buttons> buttons = new HashSet<Buttons>();
+            HashSet<MouseState> mouseStates = new HashSet<MouseState>();
+            HashSet<TouchLocation> touchLocations = new HashSet<TouchLocation>();
+            HashSet<GestureSample> gestureSamples = new HashSet<GestureSample>();
+
+            List<Keys> pressed = new List<Keys>(Keyboard.GetState().GetPressedKeys());
+            pressedKeys.Where(key => !pressed.Contains(key)).ToList().ForEach(key => keys.Add(key));
+            pressedKeys.RemoveWhere(key => !pressed.Contains(key));
+            foreach(var key in pressed) {
+                if(!pressedKeys.Contains(key)) {
+                    pressedKeys.Add(key);
+                    keys.Add(key);
+                }
+            }
+
+            GamePadState pad = GamePad.GetState(0);
+            foreach(var button in (Buttons[])Enum.GetValues(typeof(Buttons))) {
+                if(pad.IsButtonDown(button)) {
+                    if(!pressedButtons.Contains(button)) {
+                        pressedButtons.Add(button);
+                        buttons.Add(button);
+                    }
+                } else if(pressedButtons.Remove(button))
+                    buttons.Add(button);
+            }
+
+            MouseState mouseState = Mouse.GetState();
+            if(mouseState != null && !mouseState.Equals(prevMouseState)) {
+                prevMouseState = mouseState;
+                mouseStates.Add(mouseState);
+            }
+
+            foreach(var touch in TouchPanel.GetState())
+                touchLocations.Add(touch);
+
+            while(TouchPanel.IsGestureAvailable)
+                gestureSamples.Add(TouchPanel.ReadGesture());
+
+            InputArgs = new InputArgs(
+                keys, buttons, mouseStates,
+                touchLocations, gestureSamples);
         }
 
         // TODO (needs to be called after viewport changes)

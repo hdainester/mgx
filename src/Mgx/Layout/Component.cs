@@ -41,7 +41,7 @@ namespace Chaotx.Mgx.Layout {
         private float alpha = 1f;
         public float Alpha {
             get {return Parent == null ? alpha : alpha*Parent.Alpha;}
-            set {alpha = value;}
+            set {SetProperty(ref alpha, value);}
         }
 
         private Vector2 position;
@@ -87,6 +87,18 @@ namespace Chaotx.Mgx.Layout {
         public virtual void Load(ContentManager content) {}
         public abstract void Update(GameTime gameTime);
         public abstract void Draw(SpriteBatch spriteBatch);
+
+        public bool ContainsPoint(Point position) {
+            return ContainsPoint(position.X, position.Y);
+        }
+
+        public bool ContainsPoint(Vector2 position) {
+            return ContainsPoint(position.X, position.Y);
+        }
+
+        public bool ContainsPoint(float x, float y) {
+            return x > X && x - X < Width && y > Y && y - Y < Height;
+        }
 
         protected virtual void OnPropertyChanged(string propertyName) {
             PropertyChangedEventHandler handler = PropertyChanged;

@@ -17,11 +17,6 @@ namespace Chaotx.Mgx.Control.Menu {
         public ImageItem Image {get; protected set;}
         public Menu Menu {get; protected set;}
 
-        public bool KeyBoardEnabled {get; set;} = true;
-        public bool GamePadEnabled {get; set;} = true;
-        public bool MouseEnabled {get; set;} = true;
-        public bool TouchEnabled {get; set;} = true;
-
         protected HPane hPane;
         protected VPane vPane;
         
@@ -65,13 +60,14 @@ namespace Chaotx.Mgx.Control.Menu {
             UpdateFocusedEffect(gameTime);
         }
 
-        public override void HandleInput() {
-            if(!IsDisabled && (Menu == null || !Menu.IsDisabled)) {
-                if(KeyBoardEnabled && (Menu == null || Menu.KeyBoardEnabled)) HandleKeyboard();
-                if(GamePadEnabled && (Menu == null || Menu.GamePadEnabled)) HandleGamepad();
-                if(MouseEnabled && (Menu == null || Menu.MouseEnabled)) HandleMouse();
-                if(TouchEnabled && (Menu == null || Menu.TouchEnabled)) HandleTouch();
-            }
+        protected override void OnAction() {
+            if(!IsDisabled && (Menu == null || !Menu.IsDisabled))
+                base.OnAction();
+        }
+
+        protected override void OnCancel() {
+            if(!IsDisabled && (Menu == null || !Menu.IsDisabled))
+                base.OnCancel();
         }
 
         protected virtual void UpdateFocusedEffect(GameTime gameTime) {
@@ -92,40 +88,12 @@ namespace Chaotx.Mgx.Control.Menu {
             }
         }
 
-        // protected override void OnEnabled() {
-        //     base.OnEnabled();
-
-        //     if(Text != null) {
-        //         Text.Color = Color.White;
-        //         Text.Alpha = 1;
-        //     }
-
-        //     if(Image != null) {
-        //         Image.Color = Color.White;
-        //         Image.Alpha = 1;
-        //     }
-        // }
-
-        // protected override void OnDisabled() {
-        //     base.OnDisabled();
-
-        //     if(Text != null) {
-        //         Text.Color = Color.Gray;
-        //         Text.Alpha = 0.75f;
-        //     }
-
-        //     if(Image != null) {
-        //         Image.Color = Color.Gray;
-        //         Image.Alpha = 0.75f;
-        //     }
-        // }
-
         protected override void OnPropertyChanged(string propertyName) {
             base.OnPropertyChanged(propertyName);
 
             // TODO temp solution
-            if(propertyName.Equals("IsDisabled"))
-                if(IsDisabled) IsFocused = false;
+            // if(propertyName.Equals("IsDisabled"))
+            //     if(IsDisabled) IsFocused = false;
 
             if(propertyName.Equals("HGrow"))
                 hPane.HGrow = vPane.HGrow = HGrow;

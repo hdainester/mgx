@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input.Touch;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 
@@ -6,15 +7,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-namespace Chaotx.Mgx.Control {
-    using Layout;
-    using View;
-    using Menu;
+using Chaotx.Mgx.Control.Menu;
+using Chaotx.Mgx.Layout;
+using Chaotx.Mgx.View;
 
+namespace Chaotx.Mgx.Control {
     public abstract class Control : Container {
         private bool isFocused;
         public bool IsFocused {
-            get {return isFocused
+            get {return !IsDisabled
+                && isFocused
                 && Parent != null
                 && Parent.ParentView != null
                 && Parent.ParentView.State != ViewState.Closed
@@ -43,78 +45,87 @@ namespace Chaotx.Mgx.Control {
         }
 
         public event EventHandler Action;
+        public event EventHandler Cancel;
         public event EventHandler Enabled;
         public event EventHandler Disabled;
         public event EventHandler FocusGain;
         public event EventHandler FocusLoss;
         public event KeyEventHandler KeyPressed;
         public event KeyEventHandler KeyReleased;
+        public event ButtonEventHandler ButtonPressed;
+        public event ButtonEventHandler ButtonReleased;
+        
+        public override void Update(GameTime gameTime) {
+            if(!IsDisabled
+            && ParentView != null
+            && !ParentView.InputDisabled
+            && ParentView.State == ViewState.Open)
+                HandleInput();
 
-        public virtual void HandleInput() {
-            if(!IsDisabled) {
-                HandleMouse();
-                HandleTouch();
-                HandleGamepad();
-                HandleKeyboard();
-            }
+            base.Update(gameTime);
         }
 
-        private MouseState prevMouse;
-        protected virtual void HandleMouse() {
-            MouseState mouse = Mouse.GetState();
-            float mx = mouse.Position.X;
-            float my = mouse.Position.Y;
+        protected virtual void HandleInput() {
+            if(ParentView == null) return;
+            foreach(var key in ParentView.InputArgs.Keys) HandleKey(key);
+            foreach(var button in ParentView.InputArgs.Buttons) HandleButton(button);
+            foreach(var mouse in ParentView.InputArgs.MouseStates) HandleMouse(mouse);
+            foreach(var touch in ParentView.InputArgs.TouchLocations) HandleTouch(touch);
+            foreach(var gesture in ParentView.InputArgs.GestureSamples) HandleGesture(gesture);
+        }
 
-            if(ContainsPoint(mx, my)) {
-                if(!IsFocused)
-                    IsFocused = true;
+        protected virtual void HandleKey(Keys key) {
+            if(!IsFocused) return;
+            if(Keyboard.GetState().IsKeyDown(key)) {
+                if(key == Keys.Enter) OnAction();
+                if(key == Keys.Escape) OnCancel();
+                OnKeyPressed(key);
+            } else OnKeyReleased(key);
+        }
 
-                if(prevMouse != null) {
-                    if(IsFocused && mouse.LeftButton == ButtonState.Released
-                    && prevMouse.LeftButton == ButtonState.Pressed) {
-                        // OnMousePressed(mouse.LeftButton);
+        protected virtual void HandleButton(Buttons button) {
+            if(!IsFocused) return;
+            if(GamePad.GetState(0).IsButtonDown(button)) {
+                if(button == Buttons.A) OnAction();
+                if(button == Buttons.Back) OnCancel();
+                OnButtonPressed(button);
+            } else OnButtonReleased(button);
+        }
+
+        private bool mouseLeftDown;
+        protected virtual void HandleMouse(MouseState mouse) {
+            if(ContainsPoint(mouse.Position)) {
+                IsFocused = true;
+
+                if(mouse.LeftButton == ButtonState.Pressed) {
+                    if(!mouseLeftDown) {
+                        mouseLeftDown = true;
                         OnAction();
                     }
-                }
-            } else if(IsFocused)
-                IsFocused = false;
-
-            prevMouse = mouse;
+                } else mouseLeftDown = false;
+            } else IsFocused = false;
         }
 
-        private Dictionary<Keys, bool> keyMap = new Dictionary<Keys, bool>();
-        protected virtual void HandleKeyboard() {
-            KeyboardState keyboard = Keyboard.GetState();
-            Dictionary<Keys, bool> newKeyMap = new Dictionary<Keys, bool>();
-
-            keyboard.GetPressedKeys().ToList().ForEach(key => {
-                newKeyMap.Add(key, true);
-                if(!keyMap.ContainsKey(key)) {
-                    OnKeyPressed(key);
-
-                    if(IsFocused && key == Keys.Enter)
-                        OnAction();
-                }
-            });
-
-            keyMap.Keys.ToList().ForEach(key => {
-                if(!newKeyMap.ContainsKey(key))
-                    OnKeyReleased(key);
-            });
-
-            keyMap = newKeyMap;
+        protected virtual void HandleTouch(TouchLocation touch) {
+            // TODO test
+            if(touch.State == TouchLocationState.Pressed
+            && ContainsPoint(touch.Position))
+                OnAction();
         }
 
-        protected virtual void HandleGamepad() {
-            // TODO
-        }
-
-        protected virtual void HandleTouch() {
-            // TODO
+        protected virtual void HandleGesture(GestureSample gesture) {
+            if(gesture.GestureType == GestureType.Tap
+            && ContainsPoint(gesture.Position))
+                OnAction();
         }
 
         protected virtual void OnAction() {
             EventHandler handler = Action;
+            if(handler != null) handler(this, null);
+        }
+
+        protected virtual void OnCancel() {
+            EventHandler handler = Cancel;
             if(handler != null) handler(this, null);
         }
 
@@ -126,6 +137,7 @@ namespace Chaotx.Mgx.Control {
         protected virtual void OnDisabled() {
             EventHandler handler = Disabled;
             if(handler != null) handler(this, null);
+            if(isFocused) OnFocusLoss();
         }
 
         protected virtual void OnFocusGain() {
@@ -148,13 +160,19 @@ namespace Chaotx.Mgx.Control {
             if(handler != null) handler(this, new KeyEventArgs(key));
         }
 
+        protected virtual void OnButtonPressed(Buttons button) {
+            ButtonEventHandler handler = ButtonPressed;
+            if(handler != null) handler(this, new ButtonEventArgs(button));
+        }
+
+        protected virtual void OnButtonReleased(Buttons button) {
+            ButtonEventHandler handler = ButtonReleased;
+            if(handler != null) handler(this, new ButtonEventArgs(button));
+        }
+
         protected override void AlignChildren() {
             base.AlignChildren();
             _DefaultAlign();
-        }
-
-        protected bool ContainsPoint(float x, float y) {
-            return x > X && x - X < Width && y > Y && y - Y < Height;
         }
 
         protected static void _SetFocus(Control c, bool focus) {

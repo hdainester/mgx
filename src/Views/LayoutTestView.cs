@@ -68,7 +68,7 @@ public class LayoutTestView : FadingView {
         // place game logic etc. here
     }
 
-    public override void HandleInput() {
+    protected override void HandleInput() {
         HandleKeyboard();
     }
 

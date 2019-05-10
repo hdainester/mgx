@@ -11,8 +11,16 @@ namespace Chaotx.Mgx.Control.Menu {
         }
     }
 
+    public class ButtonEventArgs : EventArgs {
+        public Buttons Button {get; protected set;}
+
+        public ButtonEventArgs(Buttons button) {
+            Button = button;
+        }
+    }
+
     public delegate void KeyEventHandler(object sender, KeyEventArgs args);
-    // public delegate void ButtonEventHandler(object sender, ButtonEventArgs args);
+    public delegate void ButtonEventHandler(object sender, ButtonEventArgs args);
     // public delegate void MouseEventHandler(object sender, MouseEventArgs args);
     // public delegate void TouchEventHandler(object sender, TouchEventArgs args);
 }
