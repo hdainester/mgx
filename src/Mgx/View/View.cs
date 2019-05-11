@@ -4,14 +4,13 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 
-using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Linq;
 using System;
 
 using Chaotx.Mgx.Layout;
 
-namespace Chaotx.Mgx.View {
+namespace Chaotx.Mgx.Views {
     public class InputArgs {
         public HashSet<Keys> Keys {get;}
         public HashSet<Buttons> Buttons {get;}
@@ -46,10 +45,22 @@ namespace Chaotx.Mgx.View {
         public bool InputDisabled {get; set;}
 
         [ContentSerializer(FlattenContent = true)]
-        public ViewContainer MainContainer {get;}
+        public ViewContainer MainContainer {
+            get => mainContainer;
+            protected set {
+                mainContainer = value;
+                mainContainer.ParentView = this;
+            }
+        }
 
         [ContentSerializerIgnore]
-        public ViewControl Manager {get; internal set;}
+        public ViewManager Manager {
+            get => manager;
+            internal set {
+                manager = value;
+                AlignMainContainer();
+            }
+        }
 
         [ContentSerializerIgnore]
         public InputArgs InputArgs {get; protected set;}
@@ -58,7 +69,7 @@ namespace Chaotx.Mgx.View {
         public ContentManager Content {get; protected set;}
 
         [ContentSerializerIgnore]
-        public GraphicsDevice Graphics {get; protected set;}
+        public GraphicsDevice Graphics => Manager.Graphics.GraphicsDevice; // temp fix
 
         [ContentSerializerIgnore]
         public ViewState State {get; protected set;}
@@ -66,20 +77,15 @@ namespace Chaotx.Mgx.View {
         private HashSet<Keys> pressedKeys;
         private HashSet<Buttons> pressedButtons;
         private MouseState prevMouseState;
+        private ViewContainer mainContainer;
+        private ViewManager manager;
 
-        protected View() {} // for content serializer
-        public View(ContentManager content, GraphicsDevice graphics) : this(content, graphics, null) {}
-        public View(ContentManager content, GraphicsDevice graphics, ViewControl manager) {
-            MainContainer = new ViewContainer(this);
+        public View() {
             State = ViewState.Closed;
-            Graphics = graphics;
-            Content = content;
-            Manager = manager;
-            AlignMainContainer();
-
             pressedKeys = new HashSet<Keys>();
             pressedButtons = new HashSet<Buttons>();
             InputArgs = new InputArgs();
+            MainContainer = new ViewContainer();
         }
 
         // TODO make these virtual (like Suspend())
@@ -153,8 +159,5 @@ namespace Chaotx.Mgx.View {
                 Graphics.Viewport.Width,
                 Graphics.Viewport.Height));
         }
-
-        [OnDeserialized]
-        protected virtual void OnDeserialized() {}
     }
 }

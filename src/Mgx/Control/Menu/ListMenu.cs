@@ -1,10 +1,10 @@
 using Microsoft.Xna.Framework.Input;
+using Chaotx.Mgx.Layout;
 
 using System.Linq;
 using System;
 
-namespace Chaotx.Mgx.Control.Menu {
-    using Layout;
+namespace Chaotx.Mgx.Controls.Menus {
 
     public class ListMenu : Menu {
         private Orientation itemsOrientation;

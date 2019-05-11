@@ -1,6 +1,6 @@
-namespace Chaotx.Mgx.Layout {
-    using  Control;
+using Chaotx.Mgx.Controls;
 
+namespace Chaotx.Mgx.Layout {
     public abstract class LayoutPane : Container {
         public LayoutPane() : this(new Component[0]) {}
         public LayoutPane(params Component[] children) {

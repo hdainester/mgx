@@ -1,11 +1,10 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
+using Chaotx.Mgx.Layout;
 using System;
 
-namespace Chaotx.Mgx.Control.Menu {
-    using Layout;
-
+namespace Chaotx.Mgx.Controls.Menus {
     public class MenuItem : Control {
         private Orientation orientation;
         public Orientation Orientation {

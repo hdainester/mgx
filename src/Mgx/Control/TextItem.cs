@@ -1,9 +1,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace Chaotx.Mgx.Control {
-    using Layout;
+using Chaotx.Mgx.Layout;
 
+namespace Chaotx.Mgx.Controls {
     public class TextItem : Item {
         private SpriteFont font;
         public SpriteFont Font {

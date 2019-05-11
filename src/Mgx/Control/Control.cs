@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-using Chaotx.Mgx.Control.Menu;
+using Chaotx.Mgx.Controls.Menus;
 using Chaotx.Mgx.Layout;
-using Chaotx.Mgx.View;
+using Chaotx.Mgx.Views;
 
-namespace Chaotx.Mgx.Control {
+namespace Chaotx.Mgx.Controls {
     public abstract class Control : Container {
         private bool isFocused;
         public bool IsFocused {

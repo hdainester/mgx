@@ -2,19 +2,15 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
-namespace Chaotx.Mgx.View {
-    using Layout;
+using Chaotx.Mgx.Layout;
 
+namespace Chaotx.Mgx.Views {
     public class FadingView : View {
         [ContentSerializer(Optional = true)]
         public int FadeInTime {get; set;} = 1000;
 
         [ContentSerializer(Optional = true)]
         public int FadeOutTime {get; set;} = 1000;
-
-        protected FadingView() {}
-        public FadingView(ContentManager content, GraphicsDevice graphics)
-        : base(content, graphics) {}
 
         public override void Show() {
             State = ViewState.Opening;

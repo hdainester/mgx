@@ -2,10 +2,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 
+using Chaotx.Mgx.Layout;
 using System;
 
-namespace Chaotx.Mgx.Control {
-    using Layout;
+namespace Chaotx.Mgx.Controls {
 
     public class TextField : Control {
         public delegate void TextInputEventHandler(object sender, TextInputEventArgs args);

@@ -8,28 +8,24 @@ using System.ComponentModel;
 using System.Linq;
 using System;
 
-namespace Chaotx.Mgx.Layout {
-    using System.Runtime.Serialization;
-    using Control;
-    using View;
+using Chaotx.Mgx.Controls;
+using Chaotx.Mgx.Views;
 
+namespace Chaotx.Mgx.Layout {
     public abstract class Container : Component {
         [ContentSerializer(FlattenContent = true, CollectionItemName = "Component")]
-        protected List<Component> DeserializedChildren {get;} = new List<Component>();
+        public ReadOnlyCollection<Component> Children {
+            get => children.AsReadOnly();
+            protected set => value.ToList().ForEach(_Add);
+        }
 
         [ContentSerializerIgnore]
         public View ParentView {
             get {return Parent != null ? Parent.ParentView : parentView;}
-            protected set {
+            internal set {
                 if(Parent != null) Parent.ParentView = value;
                 else parentView = value;
             }
-        }
-
-        [ContentSerializerIgnore]
-        public ReadOnlyCollection<Component> Children {
-            get {return children.AsReadOnly();}
-            protected set {children = new List<Component>(value);}
         }
 
         [ContentSerializerIgnore]
@@ -154,11 +150,6 @@ namespace Chaotx.Mgx.Layout {
                 if(child.VAlign == VAlignment.Center) _SetY(child, Y + Height/2 - child.Height/2);
                 if(child.VAlign == VAlignment.Bottom) _SetY(child, Y + Height - child.Height);
             });
-        }
-
-        [OnDeserialized]
-        protected virtual void OnDeserialized() {
-            DeserializedChildren.ForEach(_Add);
         }
     }
 }

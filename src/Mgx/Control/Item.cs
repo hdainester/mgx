@@ -1,8 +1,7 @@
 using Microsoft.Xna.Framework;
+using Chaotx.Mgx.Layout;
 
-namespace Chaotx.Mgx.Control {
-    using Layout;
-
+namespace Chaotx.Mgx.Controls {
     public abstract class Item : Component {
         public bool LayoutWithTrueSize {get; set;}
 

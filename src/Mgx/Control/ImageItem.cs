@@ -1,9 +1,9 @@
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
-namespace Chaotx.Mgx.Control {
-    using Layout;
-    using Microsoft.Xna.Framework;
+using Chaotx.Mgx.Layout;
 
+namespace Chaotx.Mgx.Controls {
     public class ImageItem : Item {
         public Texture2D Image {get; set;}
 

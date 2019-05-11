@@ -1,12 +1,9 @@
 using Chaotx.Mgx.Layout;
 using Microsoft.Xna.Framework;
 
-namespace Chaotx.Mgx.View {
+namespace Chaotx.Mgx.Views {
     public class ViewContainer : StackPane {
         internal ViewContainer() {}
-        internal ViewContainer(View view) {
-            ParentView = view;
-        }
 
         public void SetPosition(Vector2 position) {
             Position = position;

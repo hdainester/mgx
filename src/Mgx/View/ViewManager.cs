@@ -1,16 +1,25 @@
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Chaotx.Mgx.View {
-    public class ViewControl {
+namespace Chaotx.Mgx.Views {
+    public class ViewManager {
+        public ContentManager Content {get;}
+        public GraphicsDeviceManager Graphics {get;}
+
         private LinkedList<View> views = new LinkedList<View>();
         public ReadOnlyCollection<View> Views {
             get {return views.ToList().AsReadOnly();}
             set {views = new LinkedList<View>(value);}
+        }
+
+        public ViewManager(ContentManager content, GraphicsDeviceManager graphics) {
+            Content = content;
+            Graphics = graphics;
         }
 
         public void Add(View view, bool greedy = true) {
