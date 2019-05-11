@@ -66,12 +66,11 @@ namespace Chaotx.Mgx.Control {
         }
 
         protected virtual void HandleInput() {
-            if(ParentView == null) return;
-            foreach(var key in ParentView.InputArgs.Keys) HandleKey(key);
-            foreach(var button in ParentView.InputArgs.Buttons) HandleButton(button);
-            foreach(var mouse in ParentView.InputArgs.MouseStates) HandleMouse(mouse);
-            foreach(var touch in ParentView.InputArgs.TouchLocations) HandleTouch(touch);
-            foreach(var gesture in ParentView.InputArgs.GestureSamples) HandleGesture(gesture);
+            if(ParentView != null) foreach(var key in ParentView.InputArgs.Keys) HandleKey(key);
+            if(ParentView != null) foreach(var button in ParentView.InputArgs.Buttons) HandleButton(button);
+            if(ParentView != null) foreach(var mouse in ParentView.InputArgs.MouseStates) HandleMouse(mouse);
+            if(ParentView != null) foreach(var touch in ParentView.InputArgs.TouchLocations) HandleTouch(touch);
+            if(ParentView != null) foreach(var gesture in ParentView.InputArgs.GestureSamples) HandleGesture(gesture);
         }
 
         protected virtual void HandleKey(Keys key) {
