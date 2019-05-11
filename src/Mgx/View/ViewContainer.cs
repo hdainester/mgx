@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Chaotx.Mgx.View {
     public class ViewContainer : StackPane {
+        internal ViewContainer() {}
         internal ViewContainer(View view) {
             ParentView = view;
         }

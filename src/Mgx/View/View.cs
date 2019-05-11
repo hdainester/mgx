@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 
+using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -41,18 +42,32 @@ namespace Chaotx.Mgx.View {
     }
 
     public abstract class View {
-        public ViewControl Manager {get; internal set;}
-        public InputArgs InputArgs {get; protected set;}
-        public ContentManager Content {get; protected set;}
-        public GraphicsDevice Graphics {get; protected set;}
-        public ViewState State {get; protected set;}
-        public ViewContainer MainContainer {get;}
+        [ContentSerializer(Optional = true)]
         public bool InputDisabled {get; set;}
+
+        [ContentSerializer(FlattenContent = true)]
+        public ViewContainer MainContainer {get;}
+
+        [ContentSerializerIgnore]
+        public ViewControl Manager {get; internal set;}
+
+        [ContentSerializerIgnore]
+        public InputArgs InputArgs {get; protected set;}
+
+        [ContentSerializerIgnore]
+        public ContentManager Content {get; protected set;}
+
+        [ContentSerializerIgnore]
+        public GraphicsDevice Graphics {get; protected set;}
+
+        [ContentSerializerIgnore]
+        public ViewState State {get; protected set;}
 
         private HashSet<Keys> pressedKeys;
         private HashSet<Buttons> pressedButtons;
         private MouseState prevMouseState;
 
+        protected View() {} // for content serializer
         public View(ContentManager content, GraphicsDevice graphics) : this(content, graphics, null) {}
         public View(ContentManager content, GraphicsDevice graphics, ViewControl manager) {
             MainContainer = new ViewContainer(this);
@@ -138,5 +153,8 @@ namespace Chaotx.Mgx.View {
                 Graphics.Viewport.Width,
                 Graphics.Viewport.Height));
         }
+
+        [OnDeserialized]
+        protected virtual void OnDeserialized() {}
     }
 }

@@ -14,7 +14,10 @@ namespace Chaotx.Mgx.Layout {
     using View;
 
     public abstract class Container : Component {
-        private View parentView;
+        [ContentSerializer(FlattenContent = true, CollectionItemName = "Component")]
+        protected List<Component> DeserializedChildren {get;} = new List<Component>();
+
+        [ContentSerializerIgnore]
         public View ParentView {
             get {return Parent != null ? Parent.ParentView : parentView;}
             protected set {
@@ -23,31 +26,32 @@ namespace Chaotx.Mgx.Layout {
             }
         }
 
-        [ContentSerializer(FlattenContent = true, CollectionItemName = "Component")]
-        protected List<Component> DeserializedChildren {get;} = new List<Component>();
-
-        private bool alignmentPending;
-        private bool initialAligned;
-        private List<Component> children = new List<Component>();
-        private List<Container> containers = new List<Container>();
-        private List<Control> controls = new List<Control>();
-
+        [ContentSerializerIgnore]
         public ReadOnlyCollection<Component> Children {
             get {return children.AsReadOnly();}
             protected set {children = new List<Component>(value);}
         }
 
+        [ContentSerializerIgnore]
         public ReadOnlyCollection<Container> Containers {
             get {return containers.AsReadOnly();}
             protected set {containers = new List<Container>(value);}
         }
 
+        [ContentSerializerIgnore]
         public ReadOnlyCollection<Control> Controls {
             get {return controls.AsReadOnly();}
             protected set {controls = new List<Control>(value);}
         }
 
+        private View parentView;
+        private bool alignmentPending;
+        private bool initialAligned;
+        private List<Component> children = new List<Component>();
+        private List<Container> containers = new List<Container>();
+        private List<Control> controls = new List<Control>();
         private int alignmentBuffer = 160;
+        
         public override void Update(GameTime gameTime) {
             if(alignmentBuffer > 0)
                 alignmentBuffer -= gameTime.ElapsedGameTime.Milliseconds;

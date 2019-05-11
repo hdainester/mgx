@@ -2,6 +2,7 @@ namespace Chaotx.Mgx.Layout {
     using  Control;
 
     public abstract class LayoutPane : Container {
+        public LayoutPane() : this(new Component[0]) {}
         public LayoutPane(params Component[] children) {
             foreach(Component child in children)
                 Add(child);
