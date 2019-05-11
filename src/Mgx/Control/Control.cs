@@ -136,7 +136,7 @@ namespace Chaotx.Mgx.Control {
         protected virtual void OnDisabled() {
             EventHandler handler = Disabled;
             if(handler != null) handler(this, null);
-            if(isFocused) OnFocusLoss();
+            if(isFocused) IsFocused = false;
         }
 
         protected virtual void OnFocusGain() {
