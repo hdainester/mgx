@@ -3,6 +3,7 @@ using System;
 
 namespace Chaotx.Mgx.Layout {
     public class StackPane : LayoutPane {
+        public StackPane() : this(new Component[0]) {}
         public StackPane(params Component[] children) : base(children) {}
 
         protected override void AlignChildren() {

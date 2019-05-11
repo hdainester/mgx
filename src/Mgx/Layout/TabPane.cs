@@ -8,6 +8,7 @@ namespace Chaotx.Mgx.Layout {
         public ReadOnlyCollection<Container> Tabs => tabs.AsReadOnly();
         public int TabIndex {get; protected set;} = -1;
 
+        public TabPane() : this(new Container[0]) {}
         public TabPane(params Container[] tabs) {
             this.tabs = new List<Container>(tabs);
             NextTab();

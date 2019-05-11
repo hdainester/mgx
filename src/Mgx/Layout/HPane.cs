@@ -4,6 +4,7 @@ using System;
 
 namespace Chaotx.Mgx.Layout {
     public class HPane : LayoutPane {
+        public HPane() : this(new Component[0]) {}
         public HPane(params Component[] children) : base(children) {}
 
         protected override void AlignChildren() {

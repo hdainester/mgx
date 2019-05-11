@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
 using System.Collections.ObjectModel;
@@ -8,6 +9,7 @@ using System.Linq;
 using System;
 
 namespace Chaotx.Mgx.Layout {
+    using System.Runtime.Serialization;
     using Control;
     using View;
 
@@ -20,6 +22,9 @@ namespace Chaotx.Mgx.Layout {
                 else parentView = value;
             }
         }
+
+        [ContentSerializer(FlattenContent = true, CollectionItemName = "Component")]
+        protected List<Component> DeserializedChildren {get;} = new List<Component>();
 
         private bool alignmentPending;
         private bool initialAligned;
@@ -145,6 +150,11 @@ namespace Chaotx.Mgx.Layout {
                 if(child.VAlign == VAlignment.Center) _SetY(child, Y + Height/2 - child.Height/2);
                 if(child.VAlign == VAlignment.Bottom) _SetY(child, Y + Height - child.Height);
             });
+        }
+
+        [OnDeserialized]
+        protected virtual void OnDeserialized() {
+            DeserializedChildren.ForEach(_Add);
         }
     }
 }
