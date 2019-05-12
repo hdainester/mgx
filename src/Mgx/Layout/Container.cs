@@ -14,18 +14,12 @@ using Chaotx.Mgx.Views;
 namespace Chaotx.Mgx.Layout {
     public abstract class Container : Component {
         [ContentSerializer(FlattenContent = true, CollectionItemName = "Component")]
-        public ReadOnlyCollection<Component> Children {
-            get => children.AsReadOnly();
-            protected set => value.ToList().ForEach(_Add);
-        }
+        private List<Component> _Children {get => children; set => value.ForEach(_Add);}
 
         [ContentSerializerIgnore]
-        public View ParentView {
-            get {return Parent != null ? Parent.ParentView : parentView;}
-            internal set {
-                if(Parent != null) Parent.ParentView = value;
-                else parentView = value;
-            }
+        public ReadOnlyCollection<Component> Children {
+            get => children.AsReadOnly();
+            protected set => children = new List<Component>(value);
         }
 
         [ContentSerializerIgnore]
@@ -38,6 +32,15 @@ namespace Chaotx.Mgx.Layout {
         public ReadOnlyCollection<Control> Controls {
             get {return controls.AsReadOnly();}
             protected set {controls = new List<Control>(value);}
+        }
+
+        [ContentSerializerIgnore]
+        public View ParentView {
+            get {return Parent != null ? Parent.ParentView : parentView;}
+            internal set {
+                if(Parent != null) Parent.ParentView = value;
+                else parentView = value;
+            }
         }
 
         private View parentView;
