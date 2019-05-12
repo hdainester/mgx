@@ -1,17 +1,31 @@
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
 using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.Controls {
     public class ImageItem : Item {
+        [ContentSerializer(ElementName = "Image")]
+        private string _imageRef;
+
+        [ContentSerializerIgnore]
         public Texture2D Image {get; set;}
 
+        private ImageItem() {} // for content serializer
         public ImageItem(Texture2D image) : this(image, image.Width, image.Height) {}
         public ImageItem(Texture2D image, int width, int height) {
             Image = image;
             Width = width;
             Height = height;
+        }
+
+        public override void Load(ContentManager content) {
+            if(Image == null) {
+                Image = content.Load<Texture2D>(_imageRef);
+                if(Width <= 0) Width = Image.Width;
+                if(Height <= 0) Height = Image.Height;
+            }
         }
 
         public override void Update(GameTime gameTime) {

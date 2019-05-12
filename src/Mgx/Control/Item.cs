@@ -1,11 +1,22 @@
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.Controls {
     public abstract class Item : Component {
-        public bool LayoutWithTrueSize {get; set;}
+        [ContentSerializer(Optional = true, ElementName = "Size")]
+        private Vector2 _Size {get => Size; set => Size = value;}
 
-        private float scale = 1f;
+        [ContentSerializerIgnore]
+        public override Vector2 Size {
+            get => IsSizeScaled ? scaledSize : base.Size;
+            protected set {
+                base.Size = value;
+                scaledSize = value*Scale;
+            }
+        }
+
+        [ContentSerializer(Optional = true)]
         public float Scale {
             get {return scale;}
             set {
@@ -14,15 +25,20 @@ namespace Chaotx.Mgx.Controls {
             }
         }
 
-        private Vector2 scaledSize;
+        [ContentSerializer(Optional=true)]
+        public Color Color {
+            get {return color;}
+            set {SetProperty(ref color, value);}
+        }
+
+        [ContentSerializer(Optional = true)]
+        public bool IsSizeScaled {get; set;}
+
+        [ContentSerializerIgnore]
         public Vector2 ScaledSize => scaledSize;
 
-        public override Vector2 Size {
-            get => LayoutWithTrueSize ? scaledSize : base.Size;
-            protected set {
-                base.Size = value;
-                scaledSize = value*Scale;
-            }
-        }
+        private Vector2 scaledSize;
+        private float scale = 1f;
+        private Color color = Color.White;
     }
 }

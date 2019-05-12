@@ -51,6 +51,11 @@ namespace Chaotx.Mgx.Layout {
         private List<Control> controls = new List<Control>();
         private int alignmentBuffer = 160;
         
+        public override void Load(ContentManager content) {
+            base.Load(content);
+            children.ForEach(child => child.Load(content));
+        }
+
         public override void Update(GameTime gameTime) {
             if(alignmentBuffer > 0)
                 alignmentBuffer -= gameTime.ElapsedGameTime.Milliseconds;

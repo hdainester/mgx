@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 
@@ -6,23 +7,26 @@ using Chaotx.Mgx.Layout;
 using System;
 
 namespace Chaotx.Mgx.Controls {
-
     public class TextField : Control {
         public delegate void TextInputEventHandler(object sender, TextInputEventArgs args);
 
+        [ContentSerializer(Optional = true)]
+        public HAlignment TextAlignment {
+            get {return textItem.HAlign;}
+            set {textItem.HAlign = value;}
+        }
+
+        [ContentSerializerIgnore]
         public string Text {
             get {return textItem.Text;}
             set {textItem.Text = value;}
         }
 
+        [ContentSerializerIgnore]
         public override Vector2 Size {
+            get => base.Size;
             protected set => base.Size
                 = new Vector2(value.X, font.MeasureString("I").Y);
-        }
-
-        public HAlignment TextAlignment {
-            get {return textItem.HAlign;}
-            set {textItem.HAlign = value;}
         }
 
         public event TextInputEventHandler TextInput;

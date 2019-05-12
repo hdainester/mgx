@@ -1,11 +1,27 @@
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
 using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.Controls {
     public class TextItem : Item {
-        private SpriteFont font;
+        [ContentSerializer(Optional = true)]
+        public string Text {
+            get {return text;}
+            set {
+                if(value != text && value != null) {
+                    text = value;
+                    if(Font != null)
+                        Size = Font.MeasureString(text);
+                }
+            }
+        }
+
+        [ContentSerializer(ElementName = "Font")]
+        private string _fontRef;
+
+        [ContentSerializerIgnore]
         public SpriteFont Font {
             get {return font;}
             set {
@@ -19,23 +35,22 @@ namespace Chaotx.Mgx.Controls {
             }
         }
 
+        private SpriteFont font;
         private string text = "";
-        public string Text {
-            get {return text;}
-            set {
-                if(value != text && value != null) {
-                    text = value;
-                    Size = Font.MeasureString(text);
-                }
-            }
-        }
 
+        private TextItem() {} // for content serializer
         public TextItem(SpriteFont font)
         : this(font, "") {}
 
         public TextItem(SpriteFont font, string text) {
             Font = font;
             Text = text;
+        }
+
+        public override void Load(ContentManager content) {
+            base.Load(content);
+            if(Font == null)
+                Font = content.Load<SpriteFont>(_fontRef);
         }
 
         public override void Update(GameTime gameTime) {

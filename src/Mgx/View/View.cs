@@ -58,6 +58,7 @@ namespace Chaotx.Mgx.Views {
             get => manager;
             internal set {
                 manager = value;
+                MainContainer.Load(Content);
                 AlignMainContainer();
             }
         }
@@ -66,7 +67,7 @@ namespace Chaotx.Mgx.Views {
         public InputArgs InputArgs {get; protected set;}
 
         [ContentSerializerIgnore]
-        public ContentManager Content {get; protected set;}
+        public ContentManager Content => Manager.Content; // temp fix
 
         [ContentSerializerIgnore]
         public GraphicsDevice Graphics => Manager.Graphics.GraphicsDevice; // temp fix

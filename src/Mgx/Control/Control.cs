@@ -8,12 +8,14 @@ using System.Linq;
 using System;
 
 using Chaotx.Mgx.Controls.Menus;
+using Microsoft.Xna.Framework.Content;
+
 using Chaotx.Mgx.Layout;
 using Chaotx.Mgx.Views;
 
 namespace Chaotx.Mgx.Controls {
     public abstract class Control : Container {
-        private bool isFocused;
+        [ContentSerializerIgnore]
         public bool IsFocused {
             get {return !IsDisabled
                 && isFocused
@@ -32,7 +34,7 @@ namespace Chaotx.Mgx.Controls {
             }
         }
 
-        private bool isDisabled;
+        [ContentSerializerIgnore]
         public bool IsDisabled {
             get {return isDisabled;}
             set {
@@ -43,6 +45,9 @@ namespace Chaotx.Mgx.Controls {
                 }
             }
         }
+
+        private bool isFocused;
+        private bool isDisabled;
 
         public event EventHandler Action;
         public event EventHandler Cancel;

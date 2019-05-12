@@ -9,6 +9,12 @@ using System;
 namespace Chaotx.Mgx.Layout {
     public abstract class Component : INotifyPropertyChanged {
         [ContentSerializer(Optional=true)]
+        public float Alpha {
+            get {return Parent == null ? alpha : alpha*Parent.Alpha;}
+            set {SetProperty(ref alpha, value);}
+        }
+
+        [ContentSerializer(Optional=true)]
         public float HGrow {
             get {return hgrow;}
             set {SetProperty(ref hgrow, value);}
@@ -30,18 +36,6 @@ namespace Chaotx.Mgx.Layout {
         public VAlignment VAlign {
             get {return valign;}
             set {SetProperty(ref valign, value);}
-        }
-
-        [ContentSerializer(Optional=true)]
-        public Color Color {
-            get {return color;}
-            set {SetProperty(ref color, value);}
-        }
-        
-        [ContentSerializer(Optional=true)]
-        public float Alpha {
-            get {return Parent == null ? alpha : alpha*Parent.Alpha;}
-            set {SetProperty(ref alpha, value);}
         }
 
         [ContentSerializerIgnore]
@@ -86,12 +80,11 @@ namespace Chaotx.Mgx.Layout {
             protected set {SetProperty(ref parent, value);}
         }
 
+        private float alpha = 1f;
         private float hgrow;
         private float vgrow;
         private HAlignment halign;
         private VAlignment valign;
-        private Color color = Color.White;
-        private float alpha = 1f;
         private Vector2 position;
         private Vector2 size;
         private Container parent;
