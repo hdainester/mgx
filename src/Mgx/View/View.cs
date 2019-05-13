@@ -41,52 +41,57 @@ namespace Chaotx.Mgx.Views {
     }
 
     public abstract class View {
-        [ContentSerializer(Optional = true)]
         public bool InputDisabled {get; set;}
-
-        [ContentSerializer(FlattenContent = true)]
-        public ViewContainer MainContainer {
-            get => mainContainer;
+        public ViewPane ViewPane {get; protected set;}
+        public LayoutPane RootPane {
+            get => rootPane;
             protected set {
-                mainContainer = value;
-                mainContainer.ParentView = this;
+                rootPane = value;
+                rootPane.ParentView = this;
+                items = new Dictionary<string, object>();
+                ScanForItems(rootPane, items);
+
+                ViewPane.Clear();
+                ViewPane.Add(rootPane);
+
+                if(!rootHistory.Contains(rootPane)) {
+                    rootHistory.Add(rootPane);
+                    Init();
+                }
             }
         }
 
-        [ContentSerializerIgnore]
         public ViewManager Manager {
             get => manager;
             internal set {
                 manager = value;
-                MainContainer.Load(Content);
-                AlignMainContainer();
+                RootPane.Load(Content);
+                AlignViewPane();
             }
         }
 
-        [ContentSerializerIgnore]
         public InputArgs InputArgs {get; protected set;}
-
-        [ContentSerializerIgnore]
         public ContentManager Content => Manager.Content; // temp fix
-
-        [ContentSerializerIgnore]
         public GraphicsDevice Graphics => Manager.Graphics.GraphicsDevice; // temp fix
-
-        [ContentSerializerIgnore]
         public ViewState State {get; protected set;}
+
+        private Dictionary<string, object> items;
+        private HashSet<LayoutPane> rootHistory;
 
         private HashSet<Keys> pressedKeys;
         private HashSet<Buttons> pressedButtons;
         private MouseState prevMouseState;
-        private ViewContainer mainContainer;
+        private LayoutPane rootPane;
         private ViewManager manager;
 
-        public View() {
+        public View(LayoutPane rootPane) {
             State = ViewState.Closed;
             pressedKeys = new HashSet<Keys>();
             pressedButtons = new HashSet<Buttons>();
+            rootHistory = new HashSet<LayoutPane>();
             InputArgs = new InputArgs();
-            MainContainer = new ViewContainer();
+            ViewPane = new ViewPane();
+            RootPane = rootPane;
         }
 
         // TODO make these virtual (like Suspend())
@@ -100,11 +105,15 @@ namespace Chaotx.Mgx.Views {
             if(!InputDisabled && State == ViewState.Open)
                 HandleInput();
                 
-            MainContainer.Update(gameTime);
+            ViewPane.Update(gameTime);
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            MainContainer.Draw(spriteBatch);
+            ViewPane.Draw(spriteBatch);
+        }
+
+        public T GetItem<T> (string id) where T : Component {
+            return items[id] as T;
         }
 
         protected virtual void HandleInput() {
@@ -153,12 +162,25 @@ namespace Chaotx.Mgx.Views {
         }
 
         // TODO (needs to be called after viewport changes)
-        protected void AlignMainContainer() {
-            MainContainer.HGrow = MainContainer.VGrow = 1;
-            MainContainer.SetPosition(new Vector2(0, 0));
-            MainContainer.SetSize(new Vector2(
+        protected void AlignViewPane() {
+            ViewPane.HGrow = ViewPane.VGrow = 1;
+            ViewPane.SetPosition(new Vector2(0, 0));
+            ViewPane.SetSize(new Vector2(
                 Graphics.Viewport.Width,
                 Graphics.Viewport.Height));
         }
+
+        private static void ScanForItems(Container pane, Dictionary<string, object> buf) {
+            pane.Children.ToList().ForEach(child => {
+                if(child.Id != null)
+                    buf.Add(child.Id, child);
+
+                Container container = child as Container;
+                if(container != null) ScanForItems(container, buf);
+            });
+        }
+
+        // Is called after the first assignment of a new RootPane
+        protected virtual void Init() {}
     }
 }

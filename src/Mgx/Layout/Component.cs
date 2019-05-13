@@ -8,6 +8,9 @@ using System;
 
 namespace Chaotx.Mgx.Layout {
     public abstract class Component : INotifyPropertyChanged {
+        [ContentSerializer(Optional = true)]
+        public string Id {get; private set;}
+
         [ContentSerializer(Optional=true)]
         public float Alpha {
             get {return Parent == null ? alpha : alpha*Parent.Alpha;}

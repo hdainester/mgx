@@ -6,11 +6,10 @@ using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.Views {
     public class FadingView : View {
-        [ContentSerializer(Optional = true)]
         public int FadeInTime {get; set;} = 1000;
-
-        [ContentSerializer(Optional = true)]
         public int FadeOutTime {get; set;} = 1000;
+
+        public FadingView(LayoutPane rootPane) : base(rootPane) {}
 
         public override void Show() {
             State = ViewState.Opening;
@@ -36,16 +35,16 @@ namespace Chaotx.Mgx.Views {
 
                 if(State == ViewState.Opening) {
                     if(fadeTime < FadeInTime)
-                        MainContainer.Alpha = fadeTime/(float)FadeInTime;
+                        ViewPane.Alpha = fadeTime/(float)FadeInTime;
                     else {
-                        MainContainer.Alpha = 1f;
+                        ViewPane.Alpha = 1f;
                         State = ViewState.Open;
                     }
                 } else {
                     if(fadeTime < FadeOutTime)
-                        MainContainer.Alpha = 1f - fadeTime/(float)FadeInTime;
+                        ViewPane.Alpha = 1f - fadeTime/(float)FadeInTime;
                     else {
-                        MainContainer.Alpha = 0f;
+                        ViewPane.Alpha = 0f;
                         State = State == ViewState.Hiding
                             ? ViewState.Hidden
                             : ViewState.Closed;
