@@ -12,7 +12,7 @@ namespace Chaotx.Mgx.Controls {
         [ContentSerializerIgnore]
         public Texture2D Image {get; set;}
 
-        private ImageItem() {} // for content serializer
+        public ImageItem() {} // for content serializer
         public ImageItem(Texture2D image) : this(image, image.Width, image.Height) {}
         public ImageItem(Texture2D image, int width, int height) {
             Image = image;

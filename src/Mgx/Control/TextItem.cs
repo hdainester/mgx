@@ -12,6 +12,7 @@ namespace Chaotx.Mgx.Controls {
             set {
                 if(value != text && value != null) {
                     text = value;
+
                     if(Font != null)
                         Size = Font.MeasureString(text);
                 }
@@ -38,7 +39,7 @@ namespace Chaotx.Mgx.Controls {
         private SpriteFont font;
         private string text = "";
 
-        private TextItem() {} // for content serializer
+        public TextItem() {} // for content serializer
         public TextItem(SpriteFont font)
         : this(font, "") {}
 
@@ -49,6 +50,7 @@ namespace Chaotx.Mgx.Controls {
 
         public override void Load(ContentManager content) {
             base.Load(content);
+
             if(Font == null)
                 Font = content.Load<SpriteFont>(_fontRef);
         }

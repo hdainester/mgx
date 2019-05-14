@@ -1,57 +1,110 @@
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
+using Chaotx.Mgx.Assets;
 using Chaotx.Mgx.Layout;
+
 using System;
 
 namespace Chaotx.Mgx.Controls.Menus {
     public class MenuItem : Control {
-        private Orientation orientation;
+        [ContentSerializer(Optional = true)]
         public Orientation Orientation {
             get {return orientation;}
             set {SetProperty(ref orientation, value);}
         }
 
-        public TextItem Text {get; protected set;}
-        public ImageItem Image {get; protected set;}
+        [ContentSerializer(Optional = true, ElementName = "TextItem")]
+        private Asset<TextItem> TextAsset {get; set;}
+
+        [ContentSerializer(Optional = true, ElementName = "ImageItem")]
+        private Asset<ImageItem> ImageAsset {get; set;}
+
+        [ContentSerializerIgnore]
+        public TextItem TextItem {
+            get => text;
+            protected set {
+                HPane.Remove(text);
+                VPane.Remove(text);
+                text = value;
+                AlignItems();
+            }
+        }
+
+        [ContentSerializerIgnore]
+        public ImageItem ImageItem {
+            get => image;
+            protected set {
+                HPane.Remove(image);
+                VPane.Remove(image);
+                image = value;
+                AlignItems();
+            }
+        }
+
+        [ContentSerializerIgnore] // TODO
         public Menu Menu {get; protected set;}
 
-        protected HPane hPane;
-        protected VPane vPane;
+        protected HPane HPane {get; set;}
+        protected VPane VPane {get; set;}
         
+        private TextItem text;
+        private ImageItem image;
         private float focusFade;
         private float extraScale = 0.1f;
+        private Orientation orientation;
 
-        public MenuItem(Texture2D image) : this(null, null, image) {}
-        public MenuItem(Texture2D image, int imageWidth, int imageHeight) : this(null, null, image, imageWidth, imageHeight) {}
+        private MenuItem() : this("", null, null, 0, 0) {} // for content serializer
+        public MenuItem(Texture2D image) : this("", null, image) {}
+        public MenuItem(Texture2D image, int imageWidth, int imageHeight) : this("", null, image, imageWidth, imageHeight) {}
         public MenuItem(string text, SpriteFont font) : this(text, font, null, 0, 0) {}
         public MenuItem(string text, SpriteFont font, Texture2D image) : this (text, font, image, image.Width, image.Height) {}
         public MenuItem(string text, SpriteFont font, Texture2D image, int imageWidth, int imageHeight) {
-            vPane = new VPane();
-            hPane = new HPane();
-
+            VPane = new VPane();
+            HPane = new HPane();
+            
             if(image != null) {
-                Image = new ImageItem(image, imageWidth, imageHeight);
-                Image.HAlign = HAlignment.Center;
-                Image.VAlign = VAlignment.Center;
-                hPane.Add(Image);
+                ImageItem = new ImageItem(image, imageWidth, imageHeight);
+                ImageItem.HAlign = HAlignment.Center;
+                ImageItem.VAlign = VAlignment.Center;
+                HPane.Add(ImageItem);
             }
 
-            if(text != null) {
-                Text = new TextItem(font, text);
-                Text.HAlign = HAlignment.Center;
-                Text.VAlign = VAlignment.Center;
-                hPane.Add(Text);
+            if(font != null) {
+                TextItem = new TextItem(font, text);
+                TextItem.HAlign = HAlignment.Center;
+                TextItem.VAlign = VAlignment.Center;
+                HPane.Add(TextItem);
             }
 
-            hPane.HAlign = vPane.HAlign = HAlignment.Center;
-            hPane.VAlign = vPane.VAlign = VAlignment.Center;
+            HPane.HAlign = VPane.HAlign = HAlignment.Center;
+            HPane.VAlign = VPane.VAlign = VAlignment.Center;
 
             Orientation = Orientation.Vertical;
             HAlign = HAlignment.Center;
             VAlign = VAlignment.Center;
-            _Add(hPane);
-            _Add(vPane);
+        }
+
+        public override void Load(ContentManager content) {
+            // They may not be added in the ctor or
+            // duplicate entries will occur in the
+            // Children collection when loaded with
+            // the content pipeline
+            _Add(HPane);
+            _Add(VPane);
+            
+            if(TextAsset != null) {
+                TextAsset.Load(content);
+                TextItem = TextAsset.Object;
+            }
+
+            if(ImageAsset != null) {
+                ImageAsset.Load(content);
+                ImageItem = ImageAsset.Object;
+            }
+
+            base.Load(content);
         }
 
         public override void Update(GameTime gameTime) {
@@ -82,44 +135,53 @@ namespace Chaotx.Mgx.Controls.Menus {
 
                 // float scale = originalScale + s*focusFade;
                 float scale = 1 + s*focusFade;
-                if(Text != null) Text.Scale = scale;
-                if(Image != null) Image.Scale = scale;
+                if(TextItem != null) TextItem.Scale = scale;
+                if(ImageItem != null) ImageItem.Scale = scale;
             }
         }
 
         protected override void OnPropertyChanged(string propertyName) {
             base.OnPropertyChanged(propertyName);
 
-            // TODO temp solution
-            // if(propertyName.Equals("IsDisabled"))
-            //     if(IsDisabled) IsFocused = false;
-
             if(propertyName.Equals("HGrow"))
-                hPane.HGrow = vPane.HGrow = HGrow;
+                HPane.HGrow = VPane.HGrow = HGrow;
 
             if(propertyName.Equals("VGrow"))
-                hPane.VGrow = vPane.VGrow = VGrow;
+                HPane.VGrow = VPane.VGrow = VGrow;
 
-            if(propertyName.Equals("Orientation") && Text != null && Image != null) {
-                if(Orientation == Orientation.Horizontal) {
-                    hPane.Add(Image);
-                    hPane.Add(Text);
-                }
+            if(propertyName.Equals("Orientation"))
+                AlignItems();
+        }
 
-                if(Orientation == Orientation.RHorizontal) {
-                    hPane.Add(Text);
-                    hPane.Add(Image);
-                }
+        protected virtual void AlignItems() {
+            if(TextItem != null) {
+                HPane.Remove(TextItem);
+                VPane.Remove(TextItem);
+            }
 
-                if(Orientation == Orientation.Vertical) {
-                    vPane.Add(Image);
-                    vPane.Add(Text);
-                }
+            if(ImageItem != null) {
+                HPane.Remove(ImageItem);
+                VPane.Remove(ImageItem);
+            }
 
-                if(Orientation == Orientation.RVertical) {
-                    vPane.Add(Text);
-                    vPane.Add(Image);
-                }
+            if(Orientation == Orientation.Horizontal) {
+                if(ImageItem != null) HPane.Add(ImageItem);
+                if(TextItem != null) HPane.Add(TextItem);
+            }
+
+            if(Orientation == Orientation.RHorizontal) {
+                if(TextItem != null) HPane.Add(TextItem);
+                if(ImageItem != null) HPane.Add(ImageItem);
+            }
+
+            if(Orientation == Orientation.Vertical) {
+                if(ImageItem != null) VPane.Add(ImageItem);
+                if(TextItem != null) VPane.Add(TextItem);
+            }
+
+            if(Orientation == Orientation.RVertical) {
+                if(TextItem != null) VPane.Add(TextItem);
+                if(ImageItem != null) VPane.Add(ImageItem);
             }
         }
 

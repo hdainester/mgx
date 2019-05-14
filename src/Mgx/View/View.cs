@@ -48,16 +48,9 @@ namespace Chaotx.Mgx.Views {
             protected set {
                 rootPane = value;
                 rootPane.ParentView = this;
-                items = new Dictionary<string, object>();
-                ScanForItems(rootPane, items);
 
                 ViewPane.Clear();
                 ViewPane.Add(rootPane);
-
-                if(!rootHistory.Contains(rootPane)) {
-                    rootHistory.Add(rootPane);
-                    Init();
-                }
             }
         }
 
@@ -65,8 +58,15 @@ namespace Chaotx.Mgx.Views {
             get => manager;
             internal set {
                 manager = value;
-                RootPane.Load(Content);
+                ViewPane.Load(Content);
                 AlignViewPane();
+
+                if(!rootHistory.Contains(rootPane)) {
+                    rootHistory.Add(rootPane);
+                    items = new Dictionary<string, object>();
+                    ScanForItems(rootPane, items);
+                    Init();
+                }
             }
         }
 

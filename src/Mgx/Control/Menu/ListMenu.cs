@@ -34,12 +34,12 @@ namespace Chaotx.Mgx.Controls.Menus {
 
         private void _OrientHorizontal(bool reverse = false) {
             for(int i = 0; i < Items.Count; ++i)
-                hPane.Add(Items[reverse ? Items.Count-1-i : i]);
+                HPane.Add(Items[reverse ? Items.Count-1-i : i]);
         }
 
         private void _OrientVertical(bool reverse = false) {
             for(int i = 0; i < Items.Count; ++i)
-                vPane.Add(Items[reverse ? Items.Count-1-i : i]);
+                VPane.Add(Items[reverse ? Items.Count-1-i : i]);
         }
 
         protected override void OnKeyPressed(Keys key) {
@@ -82,10 +82,10 @@ namespace Chaotx.Mgx.Controls.Menus {
 
             // TODO temp solution
             if(propertyName.Equals("HGrow"))
-                hPane.HGrow = vPane.HGrow = HGrow;
+                HPane.HGrow = VPane.HGrow = HGrow;
 
             if(propertyName.Equals("VGrow"))
-                hPane.VGrow = vPane.VGrow = VGrow;
+                HPane.VGrow = VPane.VGrow = VGrow;
 
             if(propertyName.Equals("ItemsOrientation"))
                 AlignChildren();
