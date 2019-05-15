@@ -47,8 +47,6 @@ namespace Chaotx.Mgx.Views {
             get => rootPane;
             protected set {
                 rootPane = value;
-                rootPane.ParentView = this;
-
                 ViewPane.Clear();
                 ViewPane.Add(rootPane);
             }
@@ -91,6 +89,7 @@ namespace Chaotx.Mgx.Views {
             rootHistory = new HashSet<LayoutPane>();
             InputArgs = new InputArgs();
             ViewPane = new ViewPane();
+            ViewPane.ParentView = this;
             RootPane = rootPane;
         }
 
