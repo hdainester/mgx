@@ -15,11 +15,11 @@ namespace Chaotx.Mgx.Controls.Menus {
             set {SetProperty(ref orientation, value);}
         }
 
-        [ContentSerializer(Optional = true, ElementName = "TextItem")]
-        private Asset<TextItem> TextAsset {get; set;}
+        [ContentSerializer(Optional = true)]
+        private Asset<TextItem> TextItemAsset {get; set;}
 
-        [ContentSerializer(Optional = true, ElementName = "ImageItem")]
-        private Asset<ImageItem> ImageAsset {get; set;}
+        [ContentSerializer(Optional = true)]
+        private Asset<ImageItem> ImageItemAsset {get; set;}
 
         [ContentSerializerIgnore]
         public TextItem TextItem {
@@ -55,7 +55,7 @@ namespace Chaotx.Mgx.Controls.Menus {
         private float extraScale = 0.1f;
         private Orientation orientation;
 
-        private MenuItem() : this("", null, null, 0, 0) {} // for content serializer
+        public MenuItem() : this("", null, null, 0, 0) {} // for content serializer
         public MenuItem(Texture2D image) : this("", null, image) {}
         public MenuItem(Texture2D image, int imageWidth, int imageHeight) : this("", null, image, imageWidth, imageHeight) {}
         public MenuItem(string text, SpriteFont font) : this(text, font, null, 0, 0) {}
@@ -66,24 +66,26 @@ namespace Chaotx.Mgx.Controls.Menus {
             
             if(image != null) {
                 ImageItem = new ImageItem(image, imageWidth, imageHeight);
-                ImageItem.HAlign = HAlignment.Center;
-                ImageItem.VAlign = VAlignment.Center;
+                ImageItem.RawSet("HAlign", HAlignment.Center);
+                ImageItem.RawSet("VAlign", VAlignment.Center);
                 HPane.Add(ImageItem);
             }
 
             if(font != null) {
                 TextItem = new TextItem(font, text);
-                TextItem.HAlign = HAlignment.Center;
-                TextItem.VAlign = VAlignment.Center;
+                TextItem.RawSet("HAlign", HAlignment.Center);
+                TextItem.RawSet("VAlign", VAlignment.Center);
                 HPane.Add(TextItem);
             }
 
-            HPane.HAlign = VPane.HAlign = HAlignment.Center;
-            HPane.VAlign = VPane.VAlign = VAlignment.Center;
+            HPane.RawSet("HAlign", HAlignment.Center);
+            VPane.RawSet("HAlign", HAlignment.Center);
+            HPane.RawSet("VAlign", VAlignment.Center);
+            VPane.RawSet("VAlign", VAlignment.Center);
 
-            Orientation = Orientation.Vertical;
-            HAlign = HAlignment.Center;
-            VAlign = VAlignment.Center;
+            RawSet("Orientation", Orientation.Vertical);
+            RawSet("HAlign", HAlignment.Center);
+            RawSet("VAlign", VAlignment.Center);
         }
 
         public override void Load(ContentManager content) {
@@ -94,14 +96,14 @@ namespace Chaotx.Mgx.Controls.Menus {
             _Add(HPane);
             _Add(VPane);
             
-            if(TextAsset != null) {
-                TextAsset.Load(content);
-                TextItem = TextAsset.Object;
+            if(TextItemAsset != null) {
+                TextItemAsset.Load(content);
+                TextItem = TextItemAsset.Object;
             }
 
-            if(ImageAsset != null) {
-                ImageAsset.Load(content);
-                ImageItem = ImageAsset.Object;
+            if(ImageItemAsset != null) {
+                ImageItemAsset.Load(content);
+                ImageItem = ImageItemAsset.Object;
             }
 
             base.Load(content);

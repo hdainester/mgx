@@ -13,9 +13,6 @@ using Chaotx.Mgx.Views;
 
 namespace Chaotx.Mgx.Layout {
     public abstract class Container : Component {
-        [ContentSerializer(FlattenContent = true, CollectionItemName = "Component")]
-        private List<Component> _Children {get => children; set => value.ForEach(_Add);}
-
         [ContentSerializerIgnore]
         public ReadOnlyCollection<Component> Children {
             get => children.AsReadOnly();

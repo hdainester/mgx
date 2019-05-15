@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using Chaotx.Mgx.Layout;
 
@@ -5,14 +6,16 @@ using System.Linq;
 using System;
 
 namespace Chaotx.Mgx.Controls.Menus {
-
     public class ListMenu : Menu {
-        private Orientation itemsOrientation;
+        [ContentSerializer(Optional = true)]
         public Orientation ItemsOrientation {
             get {return itemsOrientation;}
             set {SetProperty(ref itemsOrientation, value);}
         }
 
+        private Orientation itemsOrientation;
+
+        public ListMenu() : this(new MenuItem[0]) {}
         public ListMenu(params MenuItem[] items)
         : base(items) {}
 

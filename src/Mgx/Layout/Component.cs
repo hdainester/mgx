@@ -3,7 +3,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System;
 
 namespace Chaotx.Mgx.Layout {
@@ -19,26 +21,26 @@ namespace Chaotx.Mgx.Layout {
 
         [ContentSerializer(Optional=true)]
         public float HGrow {
-            get {return hgrow;}
-            set {SetProperty(ref hgrow, value);}
+            get {return hGrow;}
+            set {SetProperty(ref hGrow, value);}
         }
 
         [ContentSerializer(Optional=true)]
         public float VGrow {
-            get {return vgrow;}
-            set {SetProperty(ref vgrow, value);}
+            get {return vGrow;}
+            set {SetProperty(ref vGrow, value);}
         }
 
         [ContentSerializer(Optional=true)]
         public HAlignment HAlign {
-            get {return halign;}
-            set {SetProperty(ref halign, value);}
+            get {return hAlign;}
+            set {SetProperty(ref hAlign, value);}
         }
 
         [ContentSerializer(Optional=true)]
         public VAlignment VAlign {
-            get {return valign;}
-            set {SetProperty(ref valign, value);}
+            get {return vAlign;}
+            set {SetProperty(ref vAlign, value);}
         }
 
         [ContentSerializerIgnore]
@@ -84,13 +86,14 @@ namespace Chaotx.Mgx.Layout {
         }
 
         private float alpha = 1f;
-        private float hgrow;
-        private float vgrow;
-        private HAlignment halign;
-        private VAlignment valign;
+        private float hGrow;
+        private float vGrow;
+        private HAlignment hAlign;
+        private VAlignment vAlign;
         private Vector2 position;
         private Vector2 size;
         private Container parent;
+        private HashSet<string> setProperties = new HashSet<string>();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public virtual void Load(ContentManager content) {}
@@ -109,6 +112,10 @@ namespace Chaotx.Mgx.Layout {
             return x > X && x - X < Width && y > Y && y - Y < Height;
         }
 
+        public bool WasPropertySet(string propertyName) {
+            return setProperties.Contains(propertyName);
+        }
+
         protected virtual void OnPropertyChanged(string propertyName) {
             PropertyChangedEventHandler handler = PropertyChanged;
             if(handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
@@ -117,9 +124,40 @@ namespace Chaotx.Mgx.Layout {
         protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string name = "") {
             if(field != null && value == null
             || !value.Equals(field)) {
+                // TODO: this is a temporary solution to keep
+                // track of what properties have been set so
+                // they may override template properties within
+                // an asset when loaded through content pipeline
+                setProperties.Add(name);
+                
                 field = value;
                 OnPropertyChanged(name);
             }
+        }
+
+        // Use this method to set the value of an properties
+        // underlying private variable bypassing its set-method.
+        // The propertyName is automatically converted to a
+        // name matching the default naming conventions of
+        // private attributes (e.g. MyProperty => myProperty).
+        // Properties with no such underlying variable are
+        // not supported.
+        internal void RawSet(string propertyName, object value) {
+            var name = char.ToLower(propertyName[0]) + propertyName.Substring(1);
+            var field = GetField(name, GetType(), typeof(Component));
+
+            if(field == default(FieldInfo))
+                throw new Exception("No such property '" + name + "'");
+
+            field.SetValue(this, value);
+        }
+
+        internal static FieldInfo GetField(string fieldName, Type type, Type topType) {
+            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+            var field = Array.Find(fields, fi => fi.Name.Equals(fieldName));
+            if(field != default(FieldInfo)) return field;
+            if(type == topType) return null;
+            return GetField(fieldName, type.BaseType, topType);
         }
 
         protected static void _SetPosition(Component c, Vector2 position) {

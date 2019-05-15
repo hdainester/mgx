@@ -16,8 +16,8 @@ namespace Chaotx.Mgx.Controls {
         public ImageItem(Texture2D image) : this(image, image.Width, image.Height) {}
         public ImageItem(Texture2D image, int width, int height) {
             Image = image;
-            Width = width;
-            Height = height;
+            RawSet("Width", width);
+            RawSet("Height", height);
         }
 
         public override void Load(ContentManager content) {
