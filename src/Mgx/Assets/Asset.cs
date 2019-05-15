@@ -6,29 +6,23 @@ using System.Reflection;
 using System.Linq;
 
 namespace Chaotx.Mgx.Assets {
-    public interface IAsset {}
-    public class Asset<T> : IAsset where T : Component { // TODO ILoadable instead of Component
+    public abstract class Asset {
         [ContentSerializer(Optional = true)]
         public string Template {get; internal set;}
 
-        [ContentSerializer(Optional = true, ElementName = "Properties")]
-        public T Object {get => obj; protected set => obj = value;}
-        private T obj;
+        [ContentSerializerIgnore]
+        public abstract object RawObject {get; protected set;}
 
-        public virtual void Load(ContentManager content) {
-            if(Template != null) {
-                T tem = content.Load<T>(Template);
-                obj = obj != null ? ApplyTemplate(tem, obj) : tem;
-            }
-        }
+        public abstract void Load(ContentManager content);
 
-        private static T ApplyTemplate(T template, T obj) {
+        internal static T ApplyTemplate<T>(T template, T obj) where T : IReflective {
             obj.GetType().GetTypeInfo().GetRuntimeProperties().ToList().ForEach(property => {
                 object val_obj = null;
+                Asset ass_obj = null;
 
                 if(obj.WasPropertySet(property.Name)
                 || (val_obj = property.GetValue(obj)) != null
-                && (val_obj is IAsset || val_obj is IList)) {
+                && (val_obj is Asset || val_obj is IList)) {
                     if(val_obj == null) val_obj = property.GetValue(obj);
                     IList list_tem = property.GetValue(template) as IList;
 
@@ -37,6 +31,12 @@ namespace Chaotx.Mgx.Assets {
 
                         foreach(var val in list_obj)
                             list_tem.Add(val);
+                    } else if((ass_obj = val_obj as Asset) != null) {
+                        Asset ass_tem = property.GetValue(template) as Asset;
+
+                        if(ass_tem != null)
+                            ApplyTemplate(ass_tem.RawObject as IReflective, ass_obj.RawObject as IReflective);
+                        else ass_tem = ass_obj;
                     } else if(val_obj != null)
                         property.SetValue(template, val_obj);
                 }

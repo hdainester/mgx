@@ -6,7 +6,7 @@ using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.Controls {
     public class ImageItem : Item {
-        [ContentSerializer(ElementName = "Image")]
+        [ContentSerializer(Optional = true, ElementName = "Image")]
         private string _imageRef;
 
         [ContentSerializerIgnore]

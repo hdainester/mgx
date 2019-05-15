@@ -11,7 +11,7 @@ using Chaotx.Mgx.Assets;
 namespace Chaotx.Mgx.Controls.Menus {
     public abstract class Menu : MenuItem {
         [ContentSerializer(FlattenContent = true, CollectionItemName = "MenuItemAsset")]
-        private List<Asset<MenuItem>> MenuItemAssets {get; set;}
+        private List<ComponentAsset<MenuItem>> MenuItemAssets {get; set;}
 
         [ContentSerializerIgnore]
         public ReadOnlyCollection<MenuItem> Items {

@@ -7,11 +7,11 @@ using Chaotx.Mgx.Assets;
 namespace Chaotx.Mgx.Layout {
     public abstract class LayoutPane : Container {
         [ContentSerializer(FlattenContent = true, CollectionItemName = "ComponentAsset")]
-        private List<Asset<Component>> ComponentAssets {get; set;}
+        private List<ComponentAsset<Component>> ComponentAssets {get; set;}
 
         public LayoutPane() : this(new Component[0]) {}
         public LayoutPane(params Component[] children) {
-            ComponentAssets = new List<Asset<Component>>();
+            ComponentAssets = new List<ComponentAsset<Component>>();
 
             foreach(Component child in children)
                 Add(child);

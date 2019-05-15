@@ -9,7 +9,7 @@ using System.Reflection;
 using System;
 
 namespace Chaotx.Mgx.Layout {
-    public abstract class Component : INotifyPropertyChanged {
+    public abstract class Component : INotifyPropertyChanged, IReflective {
         [ContentSerializer(Optional = true)]
         public string Id {get; private set;}
 
@@ -112,10 +112,6 @@ namespace Chaotx.Mgx.Layout {
             return x > X && x - X < Width && y > Y && y - Y < Height;
         }
 
-        public bool WasPropertySet(string propertyName) {
-            return setProperties.Contains(propertyName);
-        }
-
         protected virtual void OnPropertyChanged(string propertyName) {
             PropertyChangedEventHandler handler = PropertyChanged;
             if(handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
@@ -133,31 +129,6 @@ namespace Chaotx.Mgx.Layout {
                 field = value;
                 OnPropertyChanged(name);
             }
-        }
-
-        // Use this method to set the value of an properties
-        // underlying private variable bypassing its set-method.
-        // The propertyName is automatically converted to a
-        // name matching the default naming conventions of
-        // private attributes (e.g. MyProperty => myProperty).
-        // Properties with no such underlying variable are
-        // not supported.
-        internal void RawSet(string propertyName, object value) {
-            var name = char.ToLower(propertyName[0]) + propertyName.Substring(1);
-            var field = GetField(name, GetType(), typeof(Component));
-
-            if(field == default(FieldInfo))
-                throw new Exception("No such property '" + name + "'");
-
-            field.SetValue(this, value);
-        }
-
-        internal static FieldInfo GetField(string fieldName, Type type, Type topType) {
-            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-            var field = Array.Find(fields, fi => fi.Name.Equals(fieldName));
-            if(field != default(FieldInfo)) return field;
-            if(type == topType) return null;
-            return GetField(fieldName, type.BaseType, topType);
         }
 
         protected static void _SetPosition(Component c, Vector2 position) {
@@ -186,6 +157,36 @@ namespace Chaotx.Mgx.Layout {
 
         protected static void _SetParent(Component c, Container parent) {
             c.Parent = parent;
+        }
+
+        // Use this method to set the value of an properties
+        // underlying private variable bypassing its set-method.
+        // The propertyName is automatically converted to a
+        // name matching the default naming conventions of
+        // private attributes (e.g. MyProperty => myProperty).
+        // Properties with no such underlying variable are
+        // not supported.
+        public void RawSet(string propertyName, object value) {
+            var name = char.ToLower(propertyName[0]) + propertyName.Substring(1);
+            var field = GetField(name, GetType(), typeof(Component));
+
+            if(field == default(FieldInfo))
+                throw new Exception("No such property '" + name + "'");
+
+            field.SetValue(this, value);
+        }
+
+        public bool WasPropertySet(string propertyName) {
+            return setProperties.Contains(propertyName);
+        }
+
+        // TODO complete IReflective
+        internal static FieldInfo GetField(string fieldName, Type type, Type topType) {
+            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+            var field = Array.Find(fields, fi => fi.Name.Equals(fieldName));
+            if(field != default(FieldInfo)) return field;
+            if(type == topType) return null;
+            return GetField(fieldName, type.BaseType, topType);
         }
     }
 }

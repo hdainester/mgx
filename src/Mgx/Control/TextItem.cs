@@ -19,7 +19,7 @@ namespace Chaotx.Mgx.Controls {
             }
         }
 
-        [ContentSerializer(ElementName = "Font")]
+        [ContentSerializer(Optional = true, ElementName = "Font")]
         private string _fontRef;
 
         [ContentSerializerIgnore]

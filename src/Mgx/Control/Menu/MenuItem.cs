@@ -16,10 +16,10 @@ namespace Chaotx.Mgx.Controls.Menus {
         }
 
         [ContentSerializer(Optional = true)]
-        private Asset<TextItem> TextItemAsset {get; set;}
+        private ComponentAsset<TextItem> TextItemAsset {get; set;}
 
         [ContentSerializer(Optional = true)]
-        private Asset<ImageItem> ImageItemAsset {get; set;}
+        private ComponentAsset<ImageItem> ImageItemAsset {get; set;}
 
         [ContentSerializerIgnore]
         public TextItem TextItem {
