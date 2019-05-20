@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Chaotx.Mgx.Assets {
     public abstract class Asset {
-        [ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional = true)]
         public string Template {get; internal set;}
 
         [ContentSerializerIgnore]
@@ -20,7 +20,7 @@ namespace Chaotx.Mgx.Assets {
                 object val_obj = null;
                 Asset ass_obj = null;
 
-                if(obj.WasPropertySet(property.Name)
+                if(obj.IsDeclared(property.Name)
                 || (val_obj = property.GetValue(obj)) != null
                 && (val_obj is Asset || val_obj is IList)) {
                     if(val_obj == null) val_obj = property.GetValue(obj);
@@ -34,8 +34,9 @@ namespace Chaotx.Mgx.Assets {
                     } else if((ass_obj = val_obj as Asset) != null) {
                         Asset ass_tem = property.GetValue(template) as Asset;
 
-                        if(ass_tem != null)
-                            ApplyTemplate(ass_tem.RawObject as IReflective, ass_obj.RawObject as IReflective);
+                        if(ass_tem != null) ApplyTemplate(
+                            ass_tem.RawObject as IReflective,
+                            ass_obj.RawObject as IReflective);
                         else ass_tem = ass_obj;
                     } else if(val_obj != null)
                         property.SetValue(template, val_obj);

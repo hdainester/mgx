@@ -10,34 +10,34 @@ using System;
 
 namespace Chaotx.Mgx.Layout {
     public abstract class Component : INotifyPropertyChanged, IReflective {
-        [ContentSerializer(Optional = true)]
-        public string Id {get; private set;}
+        [Ordered, ContentSerializer(Optional = true)]
+        public string Id {get; internal set;}
 
-        [ContentSerializer(Optional=true)]
+        [Ordered, ContentSerializer(Optional=true)]
         public float Alpha {
             get {return Parent == null ? alpha : alpha*Parent.Alpha;}
             set {SetProperty(ref alpha, value);}
         }
 
-        [ContentSerializer(Optional=true)]
+        [Ordered, ContentSerializer(Optional=true)]
         public float HGrow {
             get {return hGrow;}
             set {SetProperty(ref hGrow, value);}
         }
 
-        [ContentSerializer(Optional=true)]
+        [Ordered, ContentSerializer(Optional=true)]
         public float VGrow {
             get {return vGrow;}
             set {SetProperty(ref vGrow, value);}
         }
 
-        [ContentSerializer(Optional=true)]
+        [Ordered, ContentSerializer(Optional=true)]
         public HAlignment HAlign {
             get {return hAlign;}
             set {SetProperty(ref hAlign, value);}
         }
 
-        [ContentSerializer(Optional=true)]
+        [Ordered, ContentSerializer(Optional=true)]
         public VAlignment VAlign {
             get {return vAlign;}
             set {SetProperty(ref vAlign, value);}
@@ -93,9 +93,14 @@ namespace Chaotx.Mgx.Layout {
         private Vector2 position;
         private Vector2 size;
         private Container parent;
-        private HashSet<string> setProperties = new HashSet<string>();
-        public event PropertyChangedEventHandler PropertyChanged;
 
+        // deprecated
+        private HashSet<string> setProperties = new HashSet<string>();
+        
+        internal List<string> _DeclaredProperties
+            {get; set;} = new List<string>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
         public virtual void Load(ContentManager content) {}
         public abstract void Update(GameTime gameTime);
         public abstract void Draw(SpriteBatch spriteBatch);
@@ -166,6 +171,7 @@ namespace Chaotx.Mgx.Layout {
         // private attributes (e.g. MyProperty => myProperty).
         // Properties with no such underlying variable are
         // not supported.
+        // deprecated
         public void RawSet(string propertyName, object value) {
             var name = char.ToLower(propertyName[0]) + propertyName.Substring(1);
             var field = GetField(name, GetType(), typeof(Component));
@@ -176,6 +182,7 @@ namespace Chaotx.Mgx.Layout {
             field.SetValue(this, value);
         }
 
+        // deprecated
         public bool WasPropertySet(string propertyName) {
             return setProperties.Contains(propertyName);
         }
@@ -187,6 +194,10 @@ namespace Chaotx.Mgx.Layout {
             if(field != default(FieldInfo)) return field;
             if(type == topType) return null;
             return GetField(fieldName, type.BaseType, topType);
+        }
+
+        public bool IsDeclared(string propertyName) {
+            return _DeclaredProperties.Contains(propertyName);
         }
     }
 }

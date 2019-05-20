@@ -9,16 +9,16 @@ using System;
 
 namespace Chaotx.Mgx.Controls.Menus {
     public class MenuItem : Control {
-        [ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional = true)]
         public Orientation Orientation {
             get {return orientation;}
             set {SetProperty(ref orientation, value);}
         }
 
-        [ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional = true)]
         private ComponentAsset<TextItem> TextItemAsset {get; set;}
 
-        [ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional = true)]
         private ComponentAsset<ImageItem> ImageItemAsset {get; set;}
 
         [ContentSerializerIgnore]

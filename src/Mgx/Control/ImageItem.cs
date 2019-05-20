@@ -6,8 +6,9 @@ using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.Controls {
     public class ImageItem : Item {
-        [ContentSerializer(Optional = true, ElementName = "Image")]
-        private string _imageRef;
+        [Ordered, ContentSerializer(Optional = true, ElementName = "Image")]
+        private string imageRef {get => _imageRef; set => SetProperty(ref _imageRef, value);}
+        private string _imageRef = "";
 
         [ContentSerializerIgnore]
         public Texture2D Image {get; set;}

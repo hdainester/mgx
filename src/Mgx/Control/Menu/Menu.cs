@@ -10,7 +10,7 @@ using Chaotx.Mgx.Assets;
 
 namespace Chaotx.Mgx.Controls.Menus {
     public abstract class Menu : MenuItem {
-        [ContentSerializer(FlattenContent = true, CollectionItemName = "MenuItemAsset")]
+        [Ordered, ContentSerializer(FlattenContent = true, CollectionItemName = "MenuItemAsset")]
         private List<ComponentAsset<MenuItem>> MenuItemAssets {get; set;}
 
         [ContentSerializerIgnore]

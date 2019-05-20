@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Chaotx.Mgx.Assets {
     public class ComponentAsset<T> : Asset where T : Component {
-        [ContentSerializer(Optional = true, ElementName = "Properties")]
+        [Ordered, ContentSerializer(Optional = true, ElementName = "Properties")]
         public T Object {get => obj; protected set => obj = value;}
         private T obj;
 

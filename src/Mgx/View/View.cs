@@ -62,7 +62,7 @@ namespace Chaotx.Mgx.Views {
                 if(!rootHistory.Contains(rootPane)) {
                     rootHistory.Add(rootPane);
                     items = new Dictionary<string, object>();
-                    ScanForItems(rootPane, items);
+                    ScanForItems(ViewPane, items);
                     Init();
                 }
             }

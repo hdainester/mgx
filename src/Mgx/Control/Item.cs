@@ -4,10 +4,10 @@ using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.Controls {
     public abstract class Item : Component {
-        [ContentSerializer(Optional = true, ElementName = "Size")]
+        [Ordered, ContentSerializer(Optional = true, ElementName = "Size")]
         private Vector2 _Size {get => Size; set => Size = value;}
 
-        [ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional = true)]
         public float Scale {
             get {return scale;}
             set {
@@ -16,14 +16,14 @@ namespace Chaotx.Mgx.Controls {
             }
         }
 
-        [ContentSerializer(Optional = true, ElementName = "Color")]
+        [Ordered, ContentSerializer(Optional = true, ElementName = "Color")]
         private Vector3 _Color {
             get => _color;
             set => Color = Color.FromNonPremultiplied(
                 (int)value.X, (int)value.Y, (int)(_color = value).Z, 255);
         }
 
-        [ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional = true)]
         public bool IsSizeScaled {get; set;}
 
         [ContentSerializerIgnore]

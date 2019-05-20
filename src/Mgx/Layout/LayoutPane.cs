@@ -6,8 +6,9 @@ using Chaotx.Mgx.Assets;
 
 namespace Chaotx.Mgx.Layout {
     public abstract class LayoutPane : Container {
-        [ContentSerializer(FlattenContent = true, CollectionItemName = "ComponentAsset")]
-        private List<ComponentAsset<Component>> ComponentAssets {get; set;}
+        [Ordered, ContentSerializer(FlattenContent = true, CollectionItemName = "ComponentAsset")]
+        public List<ComponentAsset<Component>> ComponentAssets {get; set;}
+        // TODO temporary public for ComponentImporter (Reflection bug?)
 
         public LayoutPane() : this(new Component[0]) {}
         public LayoutPane(params Component[] children) {

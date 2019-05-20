@@ -7,7 +7,7 @@ using System;
 
 namespace Chaotx.Mgx.Controls.Menus {
     public class ListMenu : Menu {
-        [ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional = true)]
         public Orientation ItemsOrientation {
             get {return itemsOrientation;}
             set {SetProperty(ref itemsOrientation, value);}

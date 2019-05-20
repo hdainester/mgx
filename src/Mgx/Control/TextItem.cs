@@ -6,7 +6,7 @@ using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.Controls {
     public class TextItem : Item {
-        [ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional = true)]
         public string Text {
             get {return text;}
             set {
@@ -19,7 +19,7 @@ namespace Chaotx.Mgx.Controls {
             }
         }
 
-        [ContentSerializer(Optional = true, ElementName = "Font")]
+        [Ordered, ContentSerializer(Optional = true, ElementName = "Font")]
         private string _fontRef;
 
         [ContentSerializerIgnore]

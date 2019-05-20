@@ -10,7 +10,7 @@ namespace Chaotx.Mgx.Controls {
     public class TextField : Control {
         public delegate void TextInputEventHandler(object sender, TextInputEventArgs args);
 
-        [ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional = true)]
         public HAlignment TextAlignment {
             get {return textItem.HAlign;}
             set {textItem.HAlign = value;}
