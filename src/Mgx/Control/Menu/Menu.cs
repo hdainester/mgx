@@ -36,7 +36,7 @@ namespace Chaotx.Mgx.Controls.Menus {
 
         public override void Load(ContentManager content) {
             MenuItemAssets.ForEach(asset => {
-                asset.Load(content);
+                asset.Object.Load(content);
                 AddItem(asset.Object);
             });
 

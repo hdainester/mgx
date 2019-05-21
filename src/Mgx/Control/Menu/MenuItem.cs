@@ -66,43 +66,38 @@ namespace Chaotx.Mgx.Controls.Menus {
             
             if(image != null) {
                 ImageItem = new ImageItem(image, imageWidth, imageHeight);
-                ImageItem.RawSet("HAlign", HAlignment.Center);
-                ImageItem.RawSet("VAlign", VAlignment.Center);
+                ImageItem.HAlign = HAlignment.Center;
+                ImageItem.VAlign = VAlignment.Center;
                 HPane.Add(ImageItem);
             }
 
             if(font != null) {
                 TextItem = new TextItem(font, text);
-                TextItem.RawSet("HAlign", HAlignment.Center);
-                TextItem.RawSet("VAlign", VAlignment.Center);
+                TextItem.HAlign = HAlignment.Center;
+                TextItem.VAlign = VAlignment.Center;
                 HPane.Add(TextItem);
             }
 
-            HPane.RawSet("HAlign", HAlignment.Center);
-            VPane.RawSet("HAlign", HAlignment.Center);
-            HPane.RawSet("VAlign", VAlignment.Center);
-            VPane.RawSet("VAlign", VAlignment.Center);
+            HPane.HAlign = HAlignment.Center;
+            VPane.HAlign = HAlignment.Center;
+            HPane.VAlign = VAlignment.Center;
+            VPane.VAlign = VAlignment.Center;
 
-            RawSet("Orientation", Orientation.Vertical);
-            RawSet("HAlign", HAlignment.Center);
-            RawSet("VAlign", VAlignment.Center);
+            Orientation = Orientation.Vertical;
+            HAlign = HAlignment.Center;
+            VAlign = VAlignment.Center;
+            _Add(HPane);
+            _Add(VPane);
         }
 
         public override void Load(ContentManager content) {
-            // They may not be added in the ctor or
-            // duplicate entries will occur in the
-            // Children collection when loaded with
-            // the content pipeline
-            _Add(HPane);
-            _Add(VPane);
-            
             if(TextItemAsset != null) {
-                TextItemAsset.Load(content);
+                TextItemAsset.Object.Load(content);
                 TextItem = TextItemAsset.Object;
             }
 
             if(ImageItemAsset != null) {
-                ImageItemAsset.Load(content);
+                ImageItemAsset.Object.Load(content);
                 ImageItem = ImageItemAsset.Object;
             }
 

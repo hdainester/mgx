@@ -7,8 +7,7 @@ using Chaotx.Mgx.Assets;
 namespace Chaotx.Mgx.Layout {
     public abstract class LayoutPane : Container {
         [Ordered, ContentSerializer(FlattenContent = true, CollectionItemName = "ComponentAsset")]
-        public List<ComponentAsset<Component>> ComponentAssets {get; set;}
-        // TODO temporary public for ComponentImporter (Reflection bug?)
+        private List<ComponentAsset<Component>> ComponentAssets {get; set;}
 
         public LayoutPane() : this(new Component[0]) {}
         public LayoutPane(params Component[] children) {
@@ -20,7 +19,7 @@ namespace Chaotx.Mgx.Layout {
 
         public override void Load(ContentManager content) {
             ComponentAssets.ForEach(asset => {
-                asset.Load(content);
+                asset.Object.Load(content);
                 Add(asset.Object);
             });
 

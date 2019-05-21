@@ -11,7 +11,7 @@ namespace Chaotx.Mgx.Controls {
             get {return text;}
             set {
                 if(value != text && value != null) {
-                    text = value;
+                    SetProperty(ref text, value);
 
                     if(Font != null)
                         Size = Font.MeasureString(text);

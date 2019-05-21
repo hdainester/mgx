@@ -9,8 +9,8 @@ using System.Reflection;
 using System;
 
 namespace Chaotx.Mgx.Layout {
-    public abstract class Component : INotifyPropertyChanged, IReflective {
-        [Ordered, ContentSerializer(Optional = true)]
+    public abstract class Component : INotifyPropertyChanged {
+        [Ordered, ContentSerializer(Optional=true)] // TODO: Id is not set in Mgx pipeline with ContentSerializerIgnore
         public string Id {get; internal set;}
 
         [Ordered, ContentSerializer(Optional=true)]
@@ -94,12 +94,6 @@ namespace Chaotx.Mgx.Layout {
         private Vector2 size;
         private Container parent;
 
-        // deprecated
-        private HashSet<string> setProperties = new HashSet<string>();
-        
-        internal List<string> _DeclaredProperties
-            {get; set;} = new List<string>();
-
         public event PropertyChangedEventHandler PropertyChanged;
         public virtual void Load(ContentManager content) {}
         public abstract void Update(GameTime gameTime);
@@ -125,17 +119,12 @@ namespace Chaotx.Mgx.Layout {
         protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string name = "") {
             if(field != null && value == null
             || !value.Equals(field)) {
-                // TODO: this is a temporary solution to keep
-                // track of what properties have been set so
-                // they may override template properties within
-                // an asset when loaded through content pipeline
-                setProperties.Add(name);
-                
                 field = value;
                 OnPropertyChanged(name);
             }
         }
 
+        // TODO move this stuff to a extension class (replace by RawSet?)
         protected static void _SetPosition(Component c, Vector2 position) {
             c.Position = position;
         }
@@ -162,42 +151,6 @@ namespace Chaotx.Mgx.Layout {
 
         protected static void _SetParent(Component c, Container parent) {
             c.Parent = parent;
-        }
-
-        // Use this method to set the value of an properties
-        // underlying private variable bypassing its set-method.
-        // The propertyName is automatically converted to a
-        // name matching the default naming conventions of
-        // private attributes (e.g. MyProperty => myProperty).
-        // Properties with no such underlying variable are
-        // not supported.
-        // deprecated
-        public void RawSet(string propertyName, object value) {
-            var name = char.ToLower(propertyName[0]) + propertyName.Substring(1);
-            var field = GetField(name, GetType(), typeof(Component));
-
-            if(field == default(FieldInfo))
-                throw new Exception("No such property '" + name + "'");
-
-            field.SetValue(this, value);
-        }
-
-        // deprecated
-        public bool WasPropertySet(string propertyName) {
-            return setProperties.Contains(propertyName);
-        }
-
-        // TODO complete IReflective
-        internal static FieldInfo GetField(string fieldName, Type type, Type topType) {
-            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-            var field = Array.Find(fields, fi => fi.Name.Equals(fieldName));
-            if(field != default(FieldInfo)) return field;
-            if(type == topType) return null;
-            return GetField(fieldName, type.BaseType, topType);
-        }
-
-        public bool IsDeclared(string propertyName) {
-            return _DeclaredProperties.Contains(propertyName);
         }
     }
 }
