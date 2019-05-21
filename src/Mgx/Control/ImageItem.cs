@@ -14,8 +14,12 @@ namespace Chaotx.Mgx.Controls {
         public Texture2D Image {get; set;}
 
         public ImageItem() {} // for content serializer
-        public ImageItem(Texture2D image) : this(image, image.Width, image.Height) {}
-        public ImageItem(Texture2D image, int width, int height) {
+        public ImageItem(Texture2D image, int width = -1, int height = -1) {
+            if(image != null) {
+                if(width < 0) width = image.Width;
+                if(height < 0) height = image.Width;
+            }
+
             Image = image;
             Width = width;
             Height = height;

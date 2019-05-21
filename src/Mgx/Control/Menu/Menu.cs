@@ -4,20 +4,20 @@ using Microsoft.Xna.Framework;
 
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Linq;
 using System;
-
-using Chaotx.Mgx.Assets;
 
 namespace Chaotx.Mgx.Controls.Menus {
     public abstract class Menu : MenuItem {
-        [Ordered, ContentSerializer(FlattenContent = true, CollectionItemName = "MenuItemAsset")]
-        private List<ComponentAsset<MenuItem>> MenuItemAssets {get; set;}
+        [Ordered, ContentSerializer(FlattenContent = true, CollectionItemName = "MenuItem")]
+        private List<MenuItem> _Items {
+            get => items;
+            set => value.ForEach(AddItem);
+        }
 
         [ContentSerializerIgnore]
         public ReadOnlyCollection<MenuItem> Items {
-            get {return items.AsReadOnly();}
-            protected set {items = new List<MenuItem>(value);}
-        }
+            get {return items.AsReadOnly();}}
 
         [ContentSerializerIgnore]
         public int Selected {
@@ -35,11 +35,7 @@ namespace Chaotx.Mgx.Controls.Menus {
         }
 
         public override void Load(ContentManager content) {
-            MenuItemAssets.ForEach(asset => {
-                asset.Object.Load(content);
-                AddItem(asset.Object);
-            });
-
+            Items.ToList().ForEach(item => item.Load(content));
             base.Load(content);
         }
 

@@ -2,9 +2,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
-using Chaotx.Mgx.Assets;
 using Chaotx.Mgx.Layout;
-
 using System;
 
 namespace Chaotx.Mgx.Controls.Menus {
@@ -16,12 +14,6 @@ namespace Chaotx.Mgx.Controls.Menus {
         }
 
         [Ordered, ContentSerializer(Optional = true)]
-        private ComponentAsset<TextItem> TextItemAsset {get; set;}
-
-        [Ordered, ContentSerializer(Optional = true)]
-        private ComponentAsset<ImageItem> ImageItemAsset {get; set;}
-
-        [ContentSerializerIgnore]
         public TextItem TextItem {
             get => text;
             protected set {
@@ -32,7 +24,7 @@ namespace Chaotx.Mgx.Controls.Menus {
             }
         }
 
-        [ContentSerializerIgnore]
+        [Ordered, ContentSerializer(Optional = true)]
         public ImageItem ImageItem {
             get => image;
             protected set {
@@ -91,16 +83,8 @@ namespace Chaotx.Mgx.Controls.Menus {
         }
 
         public override void Load(ContentManager content) {
-            if(TextItemAsset != null) {
-                TextItemAsset.Object.Load(content);
-                TextItem = TextItemAsset.Object;
-            }
-
-            if(ImageItemAsset != null) {
-                ImageItemAsset.Object.Load(content);
-                ImageItem = ImageItemAsset.Object;
-            }
-
+            if(TextItem != null) TextItem.Load(content);
+            if(ImageItem != null) ImageItem.Load(content);
             base.Load(content);
         }
 

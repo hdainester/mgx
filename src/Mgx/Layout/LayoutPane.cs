@@ -1,29 +1,21 @@
 using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
 using Chaotx.Mgx.Controls;
+using System.Linq;
 using System;
-using Chaotx.Mgx.Assets;
 
 namespace Chaotx.Mgx.Layout {
     public abstract class LayoutPane : Container {
-        [Ordered, ContentSerializer(FlattenContent = true, CollectionItemName = "ComponentAsset")]
-        private List<ComponentAsset<Component>> ComponentAssets {get; set;}
+        [Ordered, ContentSerializer(FlattenContent = true, CollectionItemName = "Component")]
+        private List<Component> _Children {
+            get => Children.ToList();
+            set => value.ForEach(Add);
+        }
 
         public LayoutPane() : this(new Component[0]) {}
         public LayoutPane(params Component[] children) {
-            ComponentAssets = new List<ComponentAsset<Component>>();
-
             foreach(Component child in children)
                 Add(child);
-        }
-
-        public override void Load(ContentManager content) {
-            ComponentAssets.ForEach(asset => {
-                asset.Object.Load(content);
-                Add(asset.Object);
-            });
-
-            base.Load(content);
         }
 
         public void Add(Component child) {
