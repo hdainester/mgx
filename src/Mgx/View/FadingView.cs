@@ -9,6 +9,7 @@ namespace Chaotx.Mgx.Views {
         public int FadeInTime {get; set;} = 1000;
         public int FadeOutTime {get; set;} = 1000;
 
+        public FadingView() : this(null) {}
         public FadingView(LayoutPane rootPane) : base(rootPane) {}
 
         public override void Show() {

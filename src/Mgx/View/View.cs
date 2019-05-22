@@ -49,7 +49,9 @@ namespace Chaotx.Mgx.Views {
             protected set {
                 rootPane = value;
                 ViewPane.Clear();
-                ViewPane.Add(rootPane);
+   
+                if(value != null)
+                    ViewPane.Add(rootPane);
             }
         }
 
@@ -83,6 +85,7 @@ namespace Chaotx.Mgx.Views {
         private LayoutPane rootPane;
         private ViewManager manager;
 
+        public View() : this(null) {}
         public View(LayoutPane rootPane) {
             State = ViewState.Closed;
             pressedKeys = new HashSet<Keys>();

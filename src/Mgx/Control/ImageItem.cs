@@ -17,7 +17,7 @@ namespace Chaotx.Mgx.Controls {
         public ImageItem(Texture2D image, int width = -1, int height = -1) {
             if(image != null) {
                 if(width < 0) width = image.Width;
-                if(height < 0) height = image.Width;
+                if(height < 0) height = image.Height;
             }
 
             Image = image;
