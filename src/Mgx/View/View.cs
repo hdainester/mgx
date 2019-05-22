@@ -9,6 +9,7 @@ using System.Linq;
 using System;
 
 using Chaotx.Mgx.Layout;
+using System.Text.RegularExpressions;
 
 namespace Chaotx.Mgx.Views {
     public class InputArgs {
@@ -111,8 +112,23 @@ namespace Chaotx.Mgx.Views {
             ViewPane.Draw(spriteBatch);
         }
 
+        private string itemIds = "";
         public T GetItem<T> (string id) where T : Component {
-            return items[id] as T;
+            string regex1 = @"([\w]+\.)*" + id + @"(\.[\w]+)*";
+            string regex2 = @"([\w]+\.)*" + id;
+            string regex3 = id + @"([\w]+\.)*";
+
+            var matches = Regex.Matches(itemIds, regex1);
+            if(matches.Count == 1) return items[matches[0].Value] as T;
+
+            matches = Regex.Matches(itemIds, regex2);
+            if(matches.Count == 1) return items[matches[0].Value] as T;
+
+            matches = Regex.Matches(itemIds, regex3);
+            if(matches.Count == 1) return items[matches[0].Value] as T;
+
+            throw new ArgumentException(
+                string.Format("no such item with id \"{0}\"", id));
         }
 
         protected virtual void HandleInput() {
@@ -169,10 +185,13 @@ namespace Chaotx.Mgx.Views {
                 Graphics.Viewport.Height));
         }
 
-        private static void ScanForItems(Container pane, Dictionary<string, object> buf) {
+        private void ScanForItems(Container pane, Dictionary<string, object> buf) {
             pane.Children.ToList().ForEach(child => {
-                if(child.Id != null)
+                if(child.Id != null) {
                     buf.Add(child.Id, child);
+                    if(itemIds.Length > 0) itemIds += "|";
+                    itemIds += child.Id;
+                }
 
                 Container container = child as Container;
                 if(container != null) ScanForItems(container, buf);
