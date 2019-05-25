@@ -104,7 +104,7 @@ namespace Chaotx.Mgx.Layout {
             }
         }
 
-        protected void _Add(Component child) {
+        internal void _Add(Component child) {
             if(child.Parent != null)
                 child.Parent._Remove(child);
                 
@@ -118,7 +118,7 @@ namespace Chaotx.Mgx.Layout {
             alignmentPending = true;
         }
 
-        protected void _Remove(Component child) {
+        internal void _Remove(Component child) {
             if(children.Remove(child)) {
                 _SetParent(child, null);
                 Control control = child as Control;
@@ -132,7 +132,7 @@ namespace Chaotx.Mgx.Layout {
 
         /// Default alignment for children is for each child
         /// determined independent of the other children
-        protected void _DefaultAlign() {
+        internal void _DefaultAlign() {
             float w = 0, h = 0;
 
             if(HGrow == 0 || VGrow == 0) {
