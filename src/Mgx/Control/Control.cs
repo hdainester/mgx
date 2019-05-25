@@ -95,17 +95,17 @@ namespace Chaotx.Mgx.Controls {
             } else OnButtonReleased(button);
         }
 
-        private bool mouseLeftDown;
+        private ButtonState prevMouseLeftState = ButtonState.Pressed;
         protected virtual void HandleMouse(MouseState mouse) {
             if(ContainsPoint(mouse.Position)) {
+                if(!IsFocused) prevMouseLeftState = ButtonState.Pressed;
                 IsFocused = true;
 
-                if(mouse.LeftButton == ButtonState.Pressed) {
-                    if(!mouseLeftDown) {
-                        mouseLeftDown = true;
-                        OnAction();
-                    }
-                } else mouseLeftDown = false;
+                if(prevMouseLeftState == ButtonState.Released
+                && mouse.LeftButton == ButtonState.Pressed)
+                    OnAction();
+
+                prevMouseLeftState = mouse.LeftButton;
             } else IsFocused = false;
         }
 
