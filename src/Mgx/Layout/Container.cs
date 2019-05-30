@@ -107,8 +107,8 @@ namespace Chaotx.Mgx.Layout {
         internal void _Add(Component child) {
             if(child.Parent != null)
                 child.Parent._Remove(child);
-                
-            _SetParent(child, this);
+
+            child.Parent = this;
             children.Add(child);
             Control control = child as Control;
             Container container = child as Container;
@@ -120,7 +120,7 @@ namespace Chaotx.Mgx.Layout {
 
         internal void _Remove(Component child) {
             if(children.Remove(child)) {
-                _SetParent(child, null);
+                child.Parent = null;
                 Control control = child as Control;
                 Container container = child as Container;
                 if(control != null) controls.Remove(control);
@@ -146,14 +146,14 @@ namespace Chaotx.Mgx.Layout {
             }
 
             Children.ToList().ForEach(child => {
-                if(child.HGrow > 0) _SetWidth(child, Math.Min(1, child.HGrow)*Width);
-                if(child.VGrow > 0) _SetHeight(child, Math.Min(1, child.VGrow)*Height);
-                if(child.HAlign == HAlignment.Left) _SetX(child, X);
-                if(child.HAlign == HAlignment.Center) _SetX(child, X + Width/2 - child.Width/2);
-                if(child.HAlign == HAlignment.Right) _SetX(child, X + Width - child.Width);
-                if(child.VAlign == VAlignment.Top) _SetY(child, Y);
-                if(child.VAlign == VAlignment.Center) _SetY(child, Y + Height/2 - child.Height/2);
-                if(child.VAlign == VAlignment.Bottom) _SetY(child, Y + Height - child.Height);
+                if(child.HGrow > 0) child.Width = Math.Min(1, child.HGrow)*Width;
+                if(child.VGrow > 0) child.Height = Math.Min(1, child.VGrow)*Height;
+                if(child.HAlign == HAlignment.Left) child.X = X;
+                if(child.HAlign == HAlignment.Center) child.X = X + Width/2 - child.Width/2;
+                if(child.HAlign == HAlignment.Right) child.X = X + Width - child.Width;
+                if(child.VAlign == VAlignment.Top) child.Y = Y;
+                if(child.VAlign == VAlignment.Center) child.Y = Y + Height/2 - child.Height/2;
+                if(child.VAlign == VAlignment.Bottom) child.Y = Y + Height - child.Height;
             });
         }
     }

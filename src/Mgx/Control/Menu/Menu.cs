@@ -45,14 +45,14 @@ namespace Chaotx.Mgx.Controls.Menus {
                 item.FocusLoss += OnItemFocusLoss;
                 items.Add(item);
                 AlignChildren();
-                _SetMenu(item, this);
+                item.Menu = this;
             }
         }
 
         public void RemoveItem(MenuItem item) {
             if(items.Remove(item)) {
                 if(item == this.item) {
-                    _SetFocus(item, false);
+                    item.IsFocused = false;
                     this.item = null;
                 }
 
@@ -75,10 +75,10 @@ namespace Chaotx.Mgx.Controls.Menus {
             if(propertyName == "Selected") {
                 if(Selected < Items.Count) {
                     if(item != null)
-                        _SetFocus(item, false);
+                        item.IsFocused = false;
 
                     item = Items[Selected];
-                    _SetFocus(item, true);
+                    item.IsFocused = true;
                 }
             }
         }

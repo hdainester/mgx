@@ -36,7 +36,7 @@ namespace Chaotx.Mgx.Controls.Menus {
         }
 
         [ContentSerializerIgnore] // TODO
-        public Menu Menu {get; protected set;}
+        public Menu Menu {get; internal set;}
 
         protected HPane HPane {get; set;}
         protected VPane VPane {get; set;}
@@ -164,10 +164,6 @@ namespace Chaotx.Mgx.Controls.Menus {
                 if(TextItem != null) VPane.Add(TextItem);
                 if(ImageItem != null) VPane.Add(ImageItem);
             }
-        }
-
-        protected static void _SetMenu(MenuItem item, Menu menu) {
-            item.Menu = menu;
         }
     }
 }

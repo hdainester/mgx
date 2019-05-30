@@ -61,7 +61,7 @@ namespace Chaotx.Mgx.Controls.Menus {
 
                 if(key == Keys.Left || key  == Keys.Right)
                     if(Items[Selected].IsDisabled)
-                        _SetFocus(Items[Selected], false);
+                        Items[Selected].IsFocused = false;
             } else
 
             if(ItemsOrientation == Orientation.RHorizontal) {

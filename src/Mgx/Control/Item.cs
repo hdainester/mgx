@@ -4,10 +4,7 @@ using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.Controls {
     public abstract class Item : Component {
-        [Ordered, ContentSerializer(Optional = true, ElementName = "Size")]
-        private Vector2 _Size {get => Size; set => Size = value;}
-
-        [Ordered, ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional=true)]
         public float Scale {
             get {return scale;}
             set {
@@ -16,20 +13,26 @@ namespace Chaotx.Mgx.Controls {
             }
         }
 
-        [Ordered, ContentSerializer(Optional = true, ElementName = "Color")]
-        private Vector3 _Color {
-            get => _color;
-            set => Color = Color.FromNonPremultiplied(
-                (int)value.X, (int)value.Y, (int)(_color = value).Z, 255);
+        [Ordered, ContentSerializer(Optional=true, ElementName="Color")]
+        protected Vector3 _Color {
+            get => colorv;
+            set {
+                colorv = value;
+                color = Color.FromNonPremultiplied(
+                    (int)value.X, (int)value.Y, (int)value.Z, 255);
+            }
         }
 
-        [Ordered, ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional=true, ElementName="Size")]
+        protected Vector2 _Size {get => Size; set => Size = value;}
+
+        [Ordered, ContentSerializer(Optional=true)]
         public bool IsSizeScaled {get; set;}
 
         [ContentSerializerIgnore]
         public override Vector2 Size {
             get => IsSizeScaled ? scaledSize : base.Size;
-            protected set {
+            internal set {
                 base.Size = value;
                 scaledSize = value*Scale;
             }
@@ -47,6 +50,6 @@ namespace Chaotx.Mgx.Controls {
         private Vector2 scaledSize;
         private float scale = 1f;
         private Color color = Color.White;
-        private Vector3 _color = new Vector3(255, 255, 255);
+        private Vector3 colorv = new Vector3(255, 255, 255);
     }
 }

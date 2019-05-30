@@ -25,7 +25,7 @@ namespace Chaotx.Mgx.Controls {
         [ContentSerializerIgnore]
         public override Vector2 Size {
             get => base.Size;
-            protected set => base.Size
+            internal set => base.Size
                 = new Vector2(value.X, font.MeasureString("I").Y);
         }
 

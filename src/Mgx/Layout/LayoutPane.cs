@@ -18,11 +18,11 @@ namespace Chaotx.Mgx.Layout {
                 Add(child);
         }
 
-        public void Add(Component child) {
+        public virtual void Add(Component child) {
             _Add(child);
         }
 
-        public void Remove(Component child) {
+        public virtual void Remove(Component child) {
             _Remove(child);
         }
 

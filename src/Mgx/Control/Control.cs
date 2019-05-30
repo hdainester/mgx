@@ -23,7 +23,7 @@ namespace Chaotx.Mgx.Controls {
                 && Parent.ParentView.State != ViewState.Closed
                 && Parent.ParentView.State != ViewState.Hidden;
             }
-            protected set {
+            internal set {
                 if(value != isFocused) {
                     SetProperty(ref isFocused, value);
                     if(isFocused)
@@ -176,10 +176,6 @@ namespace Chaotx.Mgx.Controls {
         protected override void AlignChildren() {
             base.AlignChildren();
             _DefaultAlign();
-        }
-
-        protected static void _SetFocus(Control c, bool focus) {
-            c.IsFocused = focus;
         }
     }
 }

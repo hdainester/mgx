@@ -22,10 +22,10 @@ namespace Chaotx.Mgx.Layout {
             if(VGrow == 0) Height = h;
 
             Children.ToList().ForEach(child => {
-                if(HGrow == 0 && child.HGrow >= 1) _SetWidth(child, Width*child.HGrow/m);
-                else if(HGrow > 0 && child.HGrow >= 1) _SetWidth(child, (Width-w)*child.HGrow/m);
-                else if(child.HGrow > 0) _SetWidth(child, child.HGrow*(Width-w));
-                if(child.VGrow > 0) _SetHeight(child, Math.Min(1, child.VGrow)*Height);
+                if(HGrow == 0 && child.HGrow >= 1) child.Width = Width*child.HGrow/m;
+                else if(HGrow > 0 && child.HGrow >= 1) child.Width = (Width-w)*child.HGrow/m;
+                else if(child.HGrow > 0) child.Width = child.HGrow*(Width-w);
+                if(child.VGrow > 0) child.Height = Math.Min(1, child.VGrow)*Height;
             });
 
             List<Component> left = Children.Where(c => c.HAlign == HAlignment.Left).ToList();
@@ -40,11 +40,11 @@ namespace Chaotx.Mgx.Layout {
         
         private void _AlignGroup(float x, List<Component> group) {
             group.ForEach(child => {
-                _SetX(child, X + x);
-                _SetY(child, Y + (child.VAlign == VAlignment.Top ? 0
+                child.X = X + x;
+                child.Y = Y + (child.VAlign == VAlignment.Top ? 0
                     : child.VAlign == VAlignment.Center
                     ? (Height/2 - child.Height/2)
-                    : (Height - child.Height)));
+                    : (Height - child.Height));
                 x += child.Width;
             });
         }
