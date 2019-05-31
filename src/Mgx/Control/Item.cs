@@ -27,6 +27,7 @@ namespace Chaotx.Mgx.Controls {
         protected Vector2 _Size {get => Size; set => Size = value;}
 
         [Ordered, ContentSerializer(Optional=true)]
+        [System.Obsolete("May be dropped in the near future. No more support for alignment of scaled items")]
         public bool IsSizeScaled {get; set;}
 
         [ContentSerializerIgnore]

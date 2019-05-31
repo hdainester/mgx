@@ -85,7 +85,14 @@ namespace Chaotx.Mgx.Layout {
             internal set {SetProperty(ref parent, value);}
         }
 
+        [ContentSerializerIgnore]
+        public float Layer {
+            get => layer + (Parent != null ? Parent.Layer : 0);
+            internal set => SetProperty(ref layer, value);
+        }
+
         private float alpha = 1f;
+        private float layer;
         private float hGrow;
         private float vGrow;
         private HAlignment hAlign;
@@ -108,8 +115,8 @@ namespace Chaotx.Mgx.Layout {
         }
 
         public bool ContainsPoint(float x, float y) {
-            return x > X && x - X < Width
-                && y > Y && y - Y < Height;
+            return x >= X && x - X < Width
+                && y >= Y && y - Y < Height;
         }
 
         protected virtual void OnPropertyChanged(string propertyName) {

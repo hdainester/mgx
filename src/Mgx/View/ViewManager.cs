@@ -67,7 +67,7 @@ namespace Chaotx.Mgx.Views {
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, null, SamplerState.PointClamp);
             foreach(View view in views.Reverse())
                 view.Draw(spriteBatch);
             spriteBatch.End();

@@ -78,7 +78,7 @@ namespace Chaotx.Mgx.Layout {
             || args.PropertyName.Equals("VAlign")
             || args.PropertyName.Equals("HGrow")
             || args.PropertyName.Equals("VGrow")
-            || args.PropertyName.Equals("Scale")
+            // || args.PropertyName.Equals("Scale") // too busy
             || args.PropertyName.Equals("Size")
             || args.PropertyName.Equals("Position")) {
                 Container root = this;

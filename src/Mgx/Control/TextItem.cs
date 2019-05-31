@@ -62,9 +62,11 @@ namespace Chaotx.Mgx.Controls {
         public override void Draw(SpriteBatch spriteBatch) {
             int x = (int)(X - (ScaledSize.X - Size.X)/2);
             int y = (int)(Y - (ScaledSize.Y - Size.Y)/2);
+            float rotation = 0f; // TODO
+            Vector2 origin = Vector2.Zero; // TODO
 
             spriteBatch.DrawString(Font, Text, new Vector2(x, y), Color*Alpha,
-                0f, Vector2.Zero, Scale, SpriteEffects.None, 1f);
+                rotation, origin, Scale, SpriteEffects.None, Layer);
         }
     }
 }

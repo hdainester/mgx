@@ -7,13 +7,37 @@ using System;
 
 namespace Chaotx.Mgx.Controls.Menus {
     public class MenuItem : Control {
-        [Ordered, ContentSerializer(Optional = true)]
+        private static readonly float FocusLayer = 0.0001f;
+        
+        [Ordered, ContentSerializer(Optional=true)]
+        public override float HGrow {
+            get => base.HGrow;
+            set {
+                if(TextItem != null) TextItem.HGrow = value == 0 ? 0 : 1;
+                if(ImageItem != null) ImageItem.HGrow = value == 0 ? 0 : 1;
+                HPane.HGrow = VPane.HGrow = value == 0 ? 0 : 1;
+                base.HGrow = value;
+            }
+        }
+
+        [Ordered, ContentSerializer(Optional=true)]
+        public override float VGrow {
+            get => base.VGrow;
+            set {
+                if(TextItem != null) TextItem.VGrow = value == 0 ? 0 : 1;
+                if(ImageItem != null) ImageItem.VGrow = value == 0 ? 0 : 1;
+                HPane.VGrow = VPane.VGrow = value == 0 ? 0 : 1;
+                base.VGrow = value;
+            }
+        }
+
+        [Ordered, ContentSerializer(Optional=true)]
         public Orientation Orientation {
             get {return orientation;}
             set {SetProperty(ref orientation, value);}
         }
 
-        [Ordered, ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional=true)]
         public TextItem TextItem {
             get => text;
             protected set {
@@ -24,7 +48,7 @@ namespace Chaotx.Mgx.Controls.Menus {
             }
         }
 
-        [Ordered, ContentSerializer(Optional = true)]
+        [Ordered, ContentSerializer(Optional=true)]
         public ImageItem ImageItem {
             get => image;
             protected set {
@@ -44,6 +68,7 @@ namespace Chaotx.Mgx.Controls.Menus {
         private TextItem text;
         private ImageItem image;
         private float focusFade;
+        private float layerBackup;
         private float extraScale = 0.1f;
         private Orientation orientation;
 
@@ -93,6 +118,17 @@ namespace Chaotx.Mgx.Controls.Menus {
             UpdateFocusedEffect(gameTime);
         }
 
+        protected override void OnFocusGain() {
+            layerBackup = Layer;
+            Layer += FocusLayer;
+            base.OnFocusGain();
+        }
+
+        protected override void OnFocusLoss() {
+            Layer = layerBackup;
+            base.OnFocusLoss();
+        }
+
         protected override void OnAction() {
             if(!IsDisabled && (Menu == null || !Menu.IsDisabled))
                 base.OnAction();
@@ -123,13 +159,7 @@ namespace Chaotx.Mgx.Controls.Menus {
 
         protected override void OnPropertyChanged(string propertyName) {
             base.OnPropertyChanged(propertyName);
-
-            if(propertyName.Equals("HGrow"))
-                HPane.HGrow = VPane.HGrow = HGrow;
-
-            if(propertyName.Equals("VGrow"))
-                HPane.VGrow = VPane.VGrow = VGrow;
-
+            
             if(propertyName.Equals("Orientation"))
                 AlignItems();
         }

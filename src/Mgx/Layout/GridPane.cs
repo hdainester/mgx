@@ -78,36 +78,35 @@ namespace Chaotx.Mgx.Layout {
             base.Load(content);
         }
 
-        public override void Update(GameTime gameTime) {
+        protected override void AlignChildren() {
             // TODO temp solution (in case load was not called)
             if(Children.Count == 0) _Add(rows);
-            base.Update(gameTime);
-        }
-
-        protected override void AlignChildren() {
             _AlignCells();
             base.AlignChildren();
         }
 
         private void _AlignCells() {
-            int cellWidth = 0, cellHeight = 0;
-            if(HGrow > 0) cellWidth = (int)Width/GridWidth;
-            if(VGrow > 0) cellHeight = (int)Height/GridHeight;
+            float cellWidth = 0, cellHeight = 0;
+            if(HGrow > 0) cellWidth = Width/GridWidth;
+            if(VGrow > 0) cellHeight = Height/GridHeight;
             if(HGrow == 0 || VGrow == 0) {
                 cells.Values.ToList().ForEach(cell => {
                     if(HGrow == 0 && cell.Content != null
                     && cell.Content.Width > cellWidth)
-                        cellWidth = (int)cell.Content.Width;
+                        cellWidth = cell.Content.Width;
 
                     if(VGrow == 0 && cell.Content != null
                     && cell.Content.Height > cellHeight)
-                        cellHeight = (int)cell.Content.Height;
+                        cellHeight = cell.Content.Height;
+                });
+
+                cells.Values.ToList().ForEach(cell => {
+                    cell.Width = cellWidth;
+                    cell.Height = cellHeight;
                 });
             }
 
             cells.Values.ToList().ForEach(cell => {
-                cell.Width = cellWidth;
-                cell.Height = cellHeight;
                 cell.HAlign = CellsHAlign;
                 cell.VAlign = CellsVAlign;
             });

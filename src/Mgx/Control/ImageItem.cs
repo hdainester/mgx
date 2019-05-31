@@ -49,7 +49,7 @@ namespace Chaotx.Mgx.Controls {
             if(image != null) {
                 if(width < 0) width = image.Width;
                 if(height < 0) height = image.Height;
-                AspectRatio = Width/(float)Height;
+                AspectRatio = width/(float)height;
             }
 
             Image = image;
@@ -71,13 +71,20 @@ namespace Chaotx.Mgx.Controls {
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
-            int width = (int)ScaledSize.X;
-            int height = (int)ScaledSize.Y;
-            int x = (int)(X - (width - Width)/2);
-            int y = (int)(Y - (height - Height)/2);
+            float width = ScaledSize.X;
+            float height = ScaledSize.Y;
+            float x = X - (width - Width)/2;
+            float y = Y - (height - Height)/2;
+            float rotation = 0f; // TODO
 
-            Rectangle destination = new Rectangle(x, y, width, height);
-            spriteBatch.Draw(Image, destination, Color*Alpha);
+            Vector2 origin = Vector2.Zero; // TODO
+            Rectangle? source = null; // TODO
+            Rectangle destination = new Rectangle(
+                (int)(x+0.5f), (int)(y+0.5f),
+                (int)(width+0.5f), (int)(height+0.5f));
+
+            spriteBatch.Draw(Image, destination, source, Color*Alpha,
+                rotation, origin, SpriteEffects.None, Layer);
         }
     }
 }
