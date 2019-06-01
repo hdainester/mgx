@@ -10,6 +10,8 @@ using System;
 
 namespace Chaotx.Mgx.Layout {
     public abstract class Component : INotifyPropertyChanged {
+        private static readonly float MinUFloat = 1f/UInt32.MaxValue;
+
         [Ordered, ContentSerializer(Optional=true)] // TODO: Id is not set in Mgx pipeline with ContentSerializerIgnore
         public string Id {get; internal set;}
 
@@ -87,7 +89,7 @@ namespace Chaotx.Mgx.Layout {
 
         [ContentSerializerIgnore]
         public float Layer {
-            get => layer + (Parent != null ? Parent.Layer : 0);
+            get => layer + (Parent != null ? (Parent.Layer + MinUFloat) : 0);
             internal set => SetProperty(ref layer, value);
         }
 

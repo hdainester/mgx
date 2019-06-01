@@ -119,13 +119,12 @@ namespace Chaotx.Mgx.Controls.Menus {
         }
 
         protected override void OnFocusGain() {
-            layerBackup = Layer;
             Layer += FocusLayer;
             base.OnFocusGain();
         }
 
         protected override void OnFocusLoss() {
-            Layer = layerBackup;
+            Layer -= FocusLayer;
             base.OnFocusLoss();
         }
 
