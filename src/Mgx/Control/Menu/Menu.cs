@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
+using Chaotx.Mgx.Layout;
+
 namespace Chaotx.Mgx.Controls.Menus {
-    public abstract class Menu : MenuItem {
+    public abstract class Menu : Control {
         [Ordered, ContentSerializer(FlattenContent = true, CollectionItemName = "MenuItem")]
         private List<MenuItem> _Items {
             get => items;
@@ -25,11 +27,20 @@ namespace Chaotx.Mgx.Controls.Menus {
             set {SetProperty(ref selected, value);}
         }
 
+        protected HPane HPane {get; set;}
+        protected VPane VPane {get; set;}
+
         private List<MenuItem> items;
         private MenuItem item;
         private int selected;
-
-        public Menu(params MenuItem[] items) : base(null, null, null, 0, 0) {
+        
+        public Menu(params MenuItem[] items) {
+            _Add(HPane = new HPane());
+            _Add(VPane = new VPane());
+            HPane.HAlign = HAlignment.Center;
+            VPane.HAlign = HAlignment.Center;
+            HPane.VAlign = VAlignment.Center;
+            VPane.VAlign = VAlignment.Center;
             this.items = new List<MenuItem>();
             foreach(var item in items) AddItem(item);
         }

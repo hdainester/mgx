@@ -10,8 +10,6 @@ using System;
 
 namespace Chaotx.Mgx.Layout {
     public abstract class Component : INotifyPropertyChanged {
-        private static readonly float MinUFloat = 1f/UInt32.MaxValue;
-
         [Ordered, ContentSerializer(Optional=true)] // TODO: Id is not set in Mgx pipeline with ContentSerializerIgnore
         public string Id {get; internal set;}
 
@@ -89,8 +87,33 @@ namespace Chaotx.Mgx.Layout {
 
         [ContentSerializerIgnore]
         public float Layer {
-            get => layer + (Parent != null ? (Parent.Layer + MinUFloat) : 0);
+            get {
+                // TODO not very performant and may cause trouble
+                // for too many layers (~45) but does the job for now
+                if(Parent == null || layer != 0) return layer;
+                ulong i = (ulong)Parent.Children.IndexOf(this);
+                ulong c = (ulong)Parent.Children.Count;
+                ulong d = (ulong)Depth;
+                ulong t  = 1;
+
+                for(ulong j = 0; j < d; ++j, t *= 10);
+                return (i+1)/(float)(t*(c+1)) + Parent.Layer;
+            }
             internal set => SetProperty(ref layer, value);
+        }
+
+        [ContentSerializerIgnore]
+        internal float InternalLayer => layer;
+
+        [ContentSerializerIgnore]
+        public int Depth {
+            get {
+                int d = 0;
+                for(var c = Parent; c != null;
+                    c = c.Parent, ++d);
+
+                return d;
+            }
         }
 
         private float alpha = 1f;
