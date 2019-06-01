@@ -78,7 +78,7 @@ namespace Chaotx.Mgx.Layout {
             base.Load(content);
         }
 
-        protected override void AlignChildren() {
+        internal override void AlignChildren() {
             // TODO temp solution (in case load was not called)
             if(Children.Count == 0) _Add(rows);
             _AlignCells();

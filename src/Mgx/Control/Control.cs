@@ -173,7 +173,7 @@ namespace Chaotx.Mgx.Controls {
             if(handler != null) handler(this, new ButtonEventArgs(button));
         }
 
-        protected override void AlignChildren() {
+        internal override void AlignChildren() {
             base.AlignChildren();
             _DefaultAlign();
         }

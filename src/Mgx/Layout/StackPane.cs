@@ -6,7 +6,7 @@ namespace Chaotx.Mgx.Layout {
         public StackPane() : this(new Component[0]) {}
         public StackPane(params Component[] children) : base(children) {}
 
-        protected override void AlignChildren() {
+        internal override void AlignChildren() {
             /// Default alignment strategy of containers is
             /// equal to the alignment strategy of a StackPane
             base.AlignChildren();

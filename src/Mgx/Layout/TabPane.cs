@@ -47,7 +47,7 @@ namespace Chaotx.Mgx.Layout {
             _Remove(tab);
         }
 
-        protected override void AlignChildren() {
+        internal override void AlignChildren() {
             base.AlignChildren();
             _DefaultAlign();
         }

@@ -19,7 +19,7 @@ namespace Chaotx.Mgx.Controls.Menus {
         public ListMenu(params MenuItem[] items)
         : base(items) {}
 
-        protected override void AlignChildren() {
+        internal override void AlignChildren() {
             if(ItemsOrientation == Orientation.Horizontal)
                 _OrientHorizontal();
 

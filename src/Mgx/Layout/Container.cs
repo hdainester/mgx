@@ -40,13 +40,22 @@ namespace Chaotx.Mgx.Layout {
             }
         }
 
+        [ContentSerializerIgnore]
+        internal bool AlignmentPending {
+            get => alignmentPending;
+            set => alignmentPending = value;
+        }
+
+        [ContentSerializerIgnore]
+        internal bool InitialAligned => initialAligned
+            && (Parent == null || Parent.InitialAligned);
+
         private View parentView;
         private bool alignmentPending;
         private bool initialAligned;
         private List<Component> children = new List<Component>();
         private List<Container> containers = new List<Container>();
         private List<Control> controls = new List<Control>();
-        private int alignmentBuffer = 160;
         
         public override void Load(ContentManager content) {
             base.Load(content);
@@ -54,21 +63,20 @@ namespace Chaotx.Mgx.Layout {
         }
 
         public override void Update(GameTime gameTime) {
-            if(alignmentBuffer > 0)
-                alignmentBuffer -= gameTime.ElapsedGameTime.Milliseconds;
-            else initialAligned = true;
-
-            if(alignmentPending) {
-                alignmentPending = false;
+            if(AlignmentPending) {
+                AlignmentPending = false;
                 AlignChildren();
             }
 
             for(int i = children.Count-1; i >= 0; --i)
                 children[i].Update(gameTime);
+
+            if(!initialAligned)
+                initialAligned = !AlignmentPending;
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
-            if(initialAligned)
+            if(InitialAligned)
                 children.ForEach(c => c.Draw(spriteBatch));
         }
 
@@ -81,17 +89,21 @@ namespace Chaotx.Mgx.Layout {
             // || args.PropertyName.Equals("Scale") // too busy
             || args.PropertyName.Equals("Size")
             || args.PropertyName.Equals("Position")) {
-                Container root = this;
-                while(root.Parent != null) root = root.Parent;
-                root.alignmentPending = true;
+                if(ParentView != null)
+                    ParentView.ViewPane.AlignmentPending = true;
+                else {
+                    Container root = this;
+                    while(root.Parent != null) root = root.Parent;
+                    root.AlignmentPending = true;
+                }
             }
         }
 
-        protected virtual void AlignChildren() {
+        internal virtual void AlignChildren() {
             Containers.OrderBy(c => c.HGrow + c.VGrow)
                 .ToList().ForEach(c => {
                     c.AlignChildren();
-                    c.alignmentPending = false;
+                    c.AlignmentPending = false;
                 });
 
             if((HGrow == 0 || VGrow == 0) && Children.Count > 0) {
@@ -115,7 +127,7 @@ namespace Chaotx.Mgx.Layout {
             if(control != null) controls.Add(control);
             if(container != null) containers.Add(container);
             child.PropertyChanged += ChildPropertyChangedHandler;
-            alignmentPending = true;
+            AlignmentPending = true;
         }
 
         internal void _Remove(Component child) {
@@ -126,7 +138,7 @@ namespace Chaotx.Mgx.Layout {
                 if(control != null) controls.Remove(control);
                 if(container != null) containers.Remove(container);
                 child.PropertyChanged -= ChildPropertyChangedHandler;
-                alignmentPending = true;
+                AlignmentPending = true;
             }
         }
 

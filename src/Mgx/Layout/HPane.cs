@@ -7,7 +7,7 @@ namespace Chaotx.Mgx.Layout {
         public HPane() : this(new Component[0]) {}
         public HPane(params Component[] children) : base(children) {}
 
-        protected override void AlignChildren() {
+        internal override void AlignChildren() {
             base.AlignChildren();
             float w = 0, h = 0;
             float m = Children.Sum(c => c.HGrow);
