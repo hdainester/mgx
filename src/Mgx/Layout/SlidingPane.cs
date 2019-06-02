@@ -49,7 +49,6 @@ namespace Chaotx.Mgx.Layout {
         public event EventHandler SlidedOut;
 
         private int timeTraveled;
-        private bool initialized;
         private bool slidin, locked;
         private SlidingPaneState nextState;
         private GenericPosition genericStart;
@@ -75,20 +74,24 @@ namespace Chaotx.Mgx.Layout {
         }
 
         public override void Update(GameTime gameTime) {
-            base.Update(gameTime);
+            if(State != SlidingPaneState.SlidedOut)
+                base.Update(gameTime);
 
-            if(!initialized && State == SlidingPaneState.SlidedOut) {
-                StartPosition = GenericToVector2(GenericStart);
-                SetPosition(StartPosition);
-                initialized = locked = true;
-            }
+            if(State == SlidingPaneState.SlidedIn
+            || State == SlidingPaneState.SlidedOut)
+                State = nextState;
 
             if(State == SlidingPaneState.SlidingIn
             || State == SlidingPaneState.SlidingOut) {
                 if(!slidin)
                     slidin = locked = EvaluatePositions();
                 else Slide(gameTime);
-            } else State = nextState;
+            }
+        }
+
+        public override void Draw(SpriteBatch spriteBatch) {
+            if(State != SlidingPaneState.SlidedOut)
+                base.Draw(spriteBatch);
         }
 
         public void SlideIn(GenericPosition start, LayoutPane origin = null) {
@@ -184,14 +187,14 @@ namespace Chaotx.Mgx.Layout {
                 h = ParentView.ViewPane.Height;
             }
 
-            return generic == GenericPosition.Left ? new Vector2(x - w, y)
-                : generic == GenericPosition.TopLeft ? new Vector2(x - w, y - h)
-                : generic == GenericPosition.Top ? new Vector2(x, y - h)
-                : generic == GenericPosition.TopRight ? new Vector2(x + w, y - h)
-                : generic == GenericPosition.Right ? new Vector2(x + w, y)
+            return generic == GenericPosition.Left ? new Vector2(x - Width, y + h/2f - Height/2f)
+                : generic == GenericPosition.TopLeft ? new Vector2(x - Width, y - Height)
+                : generic == GenericPosition.Top ? new Vector2(x + w/2f - Width/2f, y - Height)
+                : generic == GenericPosition.TopRight ? new Vector2(x + w, y - Height)
+                : generic == GenericPosition.Right ? new Vector2(x + w, y + h/2f - Height/2f)
                 : generic == GenericPosition.BottomRight ? new Vector2(x + w, y + h)
-                : generic == GenericPosition.Bottom ? new Vector2(x, y + h)
-                : generic == GenericPosition.BottomLeft ? new Vector2(x - w, y + h)
+                : generic == GenericPosition.Bottom ? new Vector2(x + w/2f - Width/2f, y + h)
+                : generic == GenericPosition.BottomLeft ? new Vector2(x - Width, y + h)
                 : Position;
         }
 
