@@ -14,6 +14,21 @@ using Chaotx.Mgx.Views;
 namespace Chaotx.Mgx.Layout {
     public abstract class Container : Component {
         [ContentSerializerIgnore]
+        public override Vector2 Position {
+            get => base.Position;
+            internal set {
+                if(value.Equals(Position))
+                    return;
+                    
+                var diff = value - Position;
+                base.Position = value;
+
+                Children.ToList().ForEach(child =>
+                    child.Position += diff);
+            }
+        }
+
+        [ContentSerializerIgnore]
         public ReadOnlyCollection<Component> Children {
             get => children.AsReadOnly();
             protected set => children = new List<Component>(value);
@@ -71,8 +86,8 @@ namespace Chaotx.Mgx.Layout {
             for(int i = children.Count-1; i >= 0; --i)
                 children[i].Update(gameTime);
 
-            if(!initialAligned)
-                initialAligned = !AlignmentPending;
+            if(!initialAligned) initialAligned =
+                !AlignmentPending && !ParentView.ViewPane.AlignmentPending;
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
@@ -86,9 +101,9 @@ namespace Chaotx.Mgx.Layout {
             || args.PropertyName.Equals("VAlign")
             || args.PropertyName.Equals("HGrow")
             || args.PropertyName.Equals("VGrow")
-            // || args.PropertyName.Equals("Scale") // too busy
-            || args.PropertyName.Equals("Size")
-            || args.PropertyName.Equals("Position")) {
+            // || args.PropertyName.Equals("Scale") // deprecated (too busy)
+            || args.PropertyName.Equals("Size")) {
+            // || args.PropertyName.Equals("Position")) { // deprecated (Position update in property now)
                 if(ParentView != null)
                     ParentView.ViewPane.AlignmentPending = true;
                 else {
