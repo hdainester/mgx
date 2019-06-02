@@ -16,12 +16,21 @@ namespace Chaotx.Mgx.Layout {
 
     public class SlidingPane : StackPane {
         [Ordered, ContentSerializer(Optional=true)]
+        internal SlidingPaneState InitialState {
+            get => initialState;
+            set => initialState = nextState = value;
+        }
+
+        [Ordered, ContentSerializer(Optional=true)]
+        public bool SuppressUpdates {get; set;}
+
+        [Ordered, ContentSerializer(Optional=true)]
         public int TravelTime {get; internal set;}
 
         [Ordered, ContentSerializer(Optional=true)]
         public GenericPosition GenericStart {
             get => genericStart;
-            set => genericStart = value;
+            set => genericStart = genericTarget = value;
         }
 
         [Ordered, ContentSerializer(Optional=true)]
@@ -51,8 +60,13 @@ namespace Chaotx.Mgx.Layout {
         private int timeTraveled;
         private bool slidin, locked;
         private SlidingPaneState nextState;
+        private SlidingPaneState initialState;
         private GenericPosition genericStart;
         private GenericPosition genericTarget;
+
+        public SlidingPane() : this(2000) {}
+        public SlidingPane(LayoutPane origin) : this(2000, origin) {}
+        public SlidingPane(SlidingPaneState initialState) : this(2000, null, initialState) {}
 
         public SlidingPane(int time = 2000, LayoutPane origin = null,
         SlidingPaneState initialState = SlidingPaneState.SlidingIn)
@@ -66,17 +80,20 @@ namespace Chaotx.Mgx.Layout {
 
         public SlidingPane(GenericPosition start = 0, int time = 2000, LayoutPane origin = null,
         SlidingPaneState initialState = SlidingPaneState.SlidingIn) {
+            State = SlidingPaneState.SlidedOut;
+            InitialState = initialState;
             GenericStart = start;
-            State = initialState;
             nextState = State;
             TravelTime = time;
             Origin = origin;
         }
 
         public override void Update(GameTime gameTime) {
-            if(State != SlidingPaneState.SlidedOut)
+            if(!SuppressUpdates && State != SlidingPaneState.SlidedOut
+            || State == SlidingPaneState.SlidedIn || !InitialAligned)
                 base.Update(gameTime);
 
+            if(!InitialAligned) return;
             if(State == SlidingPaneState.SlidedIn
             || State == SlidingPaneState.SlidedOut)
                 State = nextState;
@@ -87,11 +104,12 @@ namespace Chaotx.Mgx.Layout {
                     slidin = locked = EvaluatePositions();
                 else Slide(gameTime);
             }
-        }
 
-        public override void Draw(SpriteBatch spriteBatch) {
-            if(State != SlidingPaneState.SlidedOut)
-                base.Draw(spriteBatch);
+            if((State == SlidingPaneState.SlidedIn
+            || State == SlidingPaneState.SlidedOut)
+            && !Position.Equals(TargetPosition)
+            && EvaluatePositions())
+                SetPosition(TargetPosition);
         }
 
         public void SlideIn(GenericPosition start, LayoutPane origin = null) {
@@ -106,11 +124,10 @@ namespace Chaotx.Mgx.Layout {
         }
 
         public void SlideOut(GenericPosition target = 0) {
+            if(target != 0) genericTarget = target;
             nextState = SlidingPaneState.SlidingOut;
             StartPosition = Position;
             timeTraveled = 0;
-            genericTarget = target == 0
-                ? genericStart : target;
         }
 
         protected virtual void OnSlidedIn(EventArgs args = null) {
@@ -138,7 +155,8 @@ namespace Chaotx.Mgx.Layout {
             || ParentView.ViewPane.AlignmentPending)
                 return false;
 
-            if(State == SlidingPaneState.SlidingIn) {
+            if(State == SlidingPaneState.SlidingIn
+            || State == SlidingPaneState.SlidedIn) {
                 StartPosition = GenericToVector2(genericStart);
                 var old = locked;
                 locked = false;
@@ -146,7 +164,8 @@ namespace Chaotx.Mgx.Layout {
                 locked = old;
                 TargetPosition = Position;
             } else
-            if(State == SlidingPaneState.SlidingOut) {
+            if(State == SlidingPaneState.SlidingOut
+            || State == SlidingPaneState.SlidedOut) {
                 StartPosition = Position;
                 TargetPosition = GenericToVector2(genericTarget);
             }

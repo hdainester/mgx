@@ -42,6 +42,8 @@ namespace Chaotx.Mgx.Views {
     }
 
     public abstract class View {
+        private static readonly string IdSep = "|";
+
         public bool InputDisabled {get; set;}
         public ViewPane ViewPane {get; protected set;}
         public LayoutPane RootPane {
@@ -117,18 +119,21 @@ namespace Chaotx.Mgx.Views {
 
         private string itemIds = "";
         public T GetItem<T> (string id) where T : Component {
-            string regex1 = @"([\w]+\.)*" + id + @"(\.[\w]+)*";
-            string regex2 = @"([\w]+\.)*" + id;
-            string regex3 = id + @"([\w]+\.)*";
+            string regex1 = "\\" + IdSep + @"([\w]+\.)*" + id + @"(\.[\w]+)*" + "\\" + IdSep;
+            string regex2 = "\\" + IdSep + @"([\w]+\.)*" + id + "\\" + IdSep;
+            string regex3 = "\\" + IdSep + id + @"([\w]+\.)*" + "\\" + IdSep;
 
             var matches = Regex.Matches(itemIds, regex1);
-            if(matches.Count == 1) return items[matches[0].Value] as T;
+            if(matches.Count == 1) return items[matches[0].Value.Substring(
+                IdSep.Length, matches[0].Value.Length-IdSep.Length-1)] as T;
 
             matches = Regex.Matches(itemIds, regex2);
-            if(matches.Count == 1) return items[matches[0].Value] as T;
+            if(matches.Count == 1) return items[matches[0].Value.Substring(
+                IdSep.Length, matches[0].Value.Length-IdSep.Length-1)] as T;
 
             matches = Regex.Matches(itemIds, regex3);
-            if(matches.Count == 1) return items[matches[0].Value] as T;
+            if(matches.Count == 1) return items[matches[0].Value.Substring(
+                IdSep.Length, matches[0].Value.Length-IdSep.Length-1)] as T;
 
             throw new ArgumentException(
                 string.Format("no such item with id \"{0}\"", id));
@@ -191,9 +196,11 @@ namespace Chaotx.Mgx.Views {
         private void ScanForItems(Container pane, Dictionary<string, object> buf) {
             pane.Children.ToList().ForEach(child => {
                 if(child.Id != null) {
+                    if(child.Id.Contains(IdSep)) throw new FormatException(string.Format(
+                        "separator symbol \"{0}\" not allowed in Ids at: {1}", IdSep, child.Id));
+
                     buf.Add(child.Id, child);
-                    if(itemIds.Length > 0) itemIds += "|";
-                    itemIds += child.Id;
+                    itemIds += IdSep + child.Id + IdSep;
                 }
 
                 Container container = child as Container;
