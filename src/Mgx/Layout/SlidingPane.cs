@@ -5,6 +5,10 @@ using Microsoft.Xna.Framework;
 using System;
 
 namespace Chaotx.Mgx.Layout {
+    public enum TravelMode {
+        Linear, Logarithmic, Exponential
+    }
+
     public enum GenericPosition {
         None, Left, TopLeft, Top, TopRight,
         Right, BottomRight, Bottom, BottomLeft
@@ -22,20 +26,67 @@ namespace Chaotx.Mgx.Layout {
         }
 
         [Ordered, ContentSerializer(Optional=true)]
+        public GenericPosition GenericStart {
+            get => genericStart;
+            set {
+                if(!value.Equals(genericStart)) {
+                    startRelative = false;
+                    SetProperty(ref genericStart, value);
+                }
+            }
+        }
+
+        [Ordered, ContentSerializer(Optional=true)]
+        public GenericPosition GenericTarget {
+            get => genericTarget;
+            set {
+                if(!value.Equals(genericTarget)) {
+                    targetRelative = false;
+                    SetProperty(ref genericTarget, value);
+                }
+            }
+        }
+
+        [Ordered, ContentSerializer(Optional=true)]
+        public Vector2 RelativeStart {
+            get => relativeStart;
+            set {
+                if(!value.Equals(relativeStart)) {
+                    startRelative = true;
+                    SetProperty(ref relativeStart, value);
+                }
+            }
+        }
+
+        [Ordered, ContentSerializer(Optional=true)]
+        public Vector2 RelativeTarget {
+            get => relativeTarget;
+            set {
+                if(!value.Equals(relativeTarget)) {
+                    targetRelative = true;
+                    SetProperty(ref relativeTarget, value);
+                }
+            }
+        }
+
+        [Ordered, ContentSerializer(Optional=true)]
         public bool SuppressUpdates {get; set;}
 
         [Ordered, ContentSerializer(Optional=true)]
         public int TravelTime {get; internal set;}
 
         [Ordered, ContentSerializer(Optional=true)]
-        public GenericPosition GenericStart {
-            get => genericStart;
-            set => genericStart = genericTarget = value;
-        }
+        public TravelMode TravelMode {get; set;}
 
         [Ordered, ContentSerializer(Optional=true)]
-        public Vector2 StartPosition {get; internal set;}
+        public float TravelBase {get; set;} = 5f;
 
+        [Ordered, ContentSerializer(Optional=true)]
+        public float TravelExponent {get; set;} = 5f;
+
+        [Ordered, ContentSerializerIgnore]
+        public Vector2 StartPosition {get; internal set;}
+        
         [Ordered, ContentSerializerIgnore]
         public Vector2 TargetPosition {get; internal set;}
 
@@ -62,33 +113,33 @@ namespace Chaotx.Mgx.Layout {
         public event EventHandler SlidedOut;
 
         private int timeTraveled;
-        private bool slidin, locked, newState;
         private bool positionValidated;
+        private bool slidin, locked, newState;
+        private bool startRelative, targetRelative;
         private SlidingPaneState nextState;
         private SlidingPaneState initialState;
         private GenericPosition genericStart;
         private GenericPosition genericTarget;
+        private Vector2 relativeStart;
+        private Vector2 relativeTarget;
 
-        public SlidingPane() : this(2000) {}
-        public SlidingPane(LayoutPane origin) : this(2000, origin) {}
-        public SlidingPane(SlidingPaneState initialState) : this(2000, null, initialState) {}
-
-        public SlidingPane(int time = 2000, LayoutPane origin = null,
+        public SlidingPane() : this(null, 2000, 0) {}
+        public SlidingPane(LayoutPane origin = null, int time = 2000,
+        Vector2? start = null, Vector2? target = null,
         SlidingPaneState initialState = SlidingPaneState.SlidingIn)
-        : this(0, time, origin, initialState) {}
-
-        public SlidingPane(Vector2 start, int time = 2000, LayoutPane origin = null,
-        SlidingPaneState initialState = SlidingPaneState.SlidingIn)
-        : this(0, time, origin, initialState) {
-            StartPosition = start;
+        : this(origin, time, 0, 0, initialState) {
+            if(start.HasValue) RelativeStart = start.Value;
+            if(target.HasValue) RelativeTarget = target.Value;
         }
 
-        public SlidingPane(GenericPosition start = 0, int time = 2000, LayoutPane origin = null,
+        public SlidingPane(LayoutPane origin = null, int time = 2000,
+        GenericPosition start = 0, GenericPosition target = 0,
         SlidingPaneState initialState = SlidingPaneState.SlidingIn) {
             locked = initialState != SlidingPaneState.SlidedIn;
             State = SlidingPaneState.SlidedOut;
             InitialState = initialState;
             GenericStart = start;
+            GenericTarget = target;
             nextState = State;
             TravelTime = time;
             Origin = origin;
@@ -109,38 +160,54 @@ namespace Chaotx.Mgx.Layout {
                 || !EvaluatePositions())
                     return;
 
-                if(State == SlidingPaneState.SlidingIn
-                || State == SlidingPaneState.SlidingOut)
-                    SetPosition(StartPosition);
-                else SetPosition(TargetPosition);
+                SetPosition(
+                    State == SlidingPaneState.SlidingIn ||
+                    State == SlidingPaneState.SlidedOut
+                    ? StartPosition : TargetPosition);
             }
 
             if(State == SlidingPaneState.SlidingIn
-            || State == SlidingPaneState.SlidingOut) {
-                if(!slidin)
-                    slidin = locked = EvaluatePositions();
+            || State == SlidingPaneState.SlidingOut)
+                if(!slidin) slidin = locked = EvaluatePositions();
                 else Slide(gameTime);
-            }
         }
 
-        public void SlideIn(GenericPosition start, LayoutPane origin = null) {
-            if(origin != null) Origin = origin;
+        public void SlideIn() {SlideIn(0, 0);}
+        public void SlideIn(Vector2? start = null, Vector2? target = null) {
+            if(start.HasValue)  RelativeStart = start.Value;
+            if(target.HasValue) RelativeTarget = target.Value;
             nextState = SlidingPaneState.SlidingIn;
-            GenericStart = start;
             timeTraveled = 0;
             newState = true;
+            slidin = false;
         }
 
-        public void SlideIn(LayoutPane origin = null) {
-            SlideIn(GenericStart, origin);
+        public void SlideIn(GenericPosition start = 0, GenericPosition target = 0) {
+            if(start != 0) GenericStart = start;
+            if(target != 0) GenericTarget = target;
+            nextState = SlidingPaneState.SlidingIn;
+            timeTraveled = 0;
+            newState = true;
+            slidin = false;
         }
 
-        public void SlideOut(GenericPosition target = 0) {
-            if(target != 0) genericTarget = target;
+        public void SlideOut() {SlideOut(0, 0);}
+        public void SlideOut(Vector2? start = null, Vector2? target = null) {
+            if(start.HasValue) RelativeStart = start.Value;
+            if(target.HasValue) RelativeTarget = target.Value;
             nextState = SlidingPaneState.SlidingOut;
-            StartPosition = Position;
             timeTraveled = 0;
             newState = true;
+            slidin = false;
+        }
+
+        public void SlideOut(GenericPosition start = 0, GenericPosition target = 0) {
+            if(start != 0) GenericStart = start;
+            if(target != 0) GenericTarget = target;
+            nextState = SlidingPaneState.SlidingOut;
+            timeTraveled = 0;
+            newState = true;
+            slidin = false;
         }
 
         protected virtual void OnSlidedIn(EventArgs args = null) {
@@ -154,13 +221,24 @@ namespace Chaotx.Mgx.Layout {
         }
 
         private void Slide(GameTime gameTime) {
+            Vector2 start, target;
+            if(State == SlidingPaneState.SlidingIn) {
+                start = StartPosition;
+                target = TargetPosition;
+            } else {
+                start = TargetPosition;
+                target = StartPosition;
+            }
+
             timeTraveled += gameTime.ElapsedGameTime.Milliseconds;
             var f = Math.Min(1, timeTraveled/(float)TravelTime);
-            var a = (float)Math.Max(0, Math.Log10(f*10f));
-            var v = TargetPosition - StartPosition;
-            SetPosition(StartPosition + v*a);
-            if(Position.Equals(TargetPosition))
-                Finish();
+            var a = TravelMode == TravelMode.Logarithmic
+                ? (float)Math.Max(0, Math.Log(f*TravelBase, TravelBase))
+                : TravelMode == TravelMode.Exponential
+                ? (float)Math.Pow(f, TravelExponent) : f;
+
+            SetPosition(start + (target-start)*a);
+            if(Position.Equals(target)) Finish();
         }
 
         private bool EvaluatePositions() {
@@ -168,21 +246,25 @@ namespace Chaotx.Mgx.Layout {
             || ParentView.ViewPane.AlignmentPending)
                 return false;
 
-            if(State == SlidingPaneState.SlidingIn
-            || State == SlidingPaneState.SlidedIn) {
-                StartPosition = GenericToVector2(genericStart);
-                ForceAlign();
-                TargetPosition = Position;
-            } else
-            if(State == SlidingPaneState.SlidingOut
-            || State == SlidingPaneState.SlidedOut) {
-                ForceAlign();
-                StartPosition = Position;
-                TargetPosition = GenericToVector2(genericTarget);
-            }
+            ForceAlign();
             
-            if(!positionValidated) positionValidated = true;
-            SetPosition(StartPosition);
+            StartPosition =
+                startRelative ? Position + RelativeStart
+                : GenericToVector2(GenericStart);
+
+            TargetPosition =
+                targetRelative ? Position + RelativeTarget
+                : GenericToVector2(GenericTarget);
+
+            if(State == SlidingPaneState.SlidingIn
+            || State == SlidingPaneState.SlidedOut)
+                SetPosition(StartPosition);
+            else
+            if(State == SlidingPaneState.SlidingOut
+            || State == SlidingPaneState.SlidedIn)
+                SetPosition(TargetPosition);
+
+            positionValidated = true;
             return true;
         }
 
