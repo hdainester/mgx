@@ -58,7 +58,7 @@ namespace Chaotx.Mgx.Layout {
         public event EventHandler SlidedOut;
 
         private int timeTraveled;
-        private bool slidin, locked;
+        private bool slidin, locked, newState;
         private SlidingPaneState nextState;
         private SlidingPaneState initialState;
         private GenericPosition genericStart;
@@ -86,6 +86,7 @@ namespace Chaotx.Mgx.Layout {
             nextState = State;
             TravelTime = time;
             Origin = origin;
+            newState = true;
         }
 
         public override void Update(GameTime gameTime) {
@@ -93,10 +94,13 @@ namespace Chaotx.Mgx.Layout {
             || State == SlidingPaneState.SlidedIn || !InitialAligned)
                 base.Update(gameTime);
 
-            if(!InitialAligned) return;
-            if(State == SlidingPaneState.SlidedIn
-            || State == SlidingPaneState.SlidedOut)
+            if(!InitialAligned)
+                return;
+
+            if(newState) {
+                newState = slidin = false;
                 State = nextState;
+            }
 
             if(State == SlidingPaneState.SlidingIn
             || State == SlidingPaneState.SlidingOut) {
@@ -117,6 +121,7 @@ namespace Chaotx.Mgx.Layout {
             nextState = SlidingPaneState.SlidingIn;
             GenericStart = start;
             timeTraveled = 0;
+            newState = true;
         }
 
         public void SlideIn(LayoutPane origin = null) {
@@ -128,6 +133,7 @@ namespace Chaotx.Mgx.Layout {
             nextState = SlidingPaneState.SlidingOut;
             StartPosition = Position;
             timeTraveled = 0;
+            newState = true;
         }
 
         protected virtual void OnSlidedIn(EventArgs args = null) {
@@ -220,13 +226,11 @@ namespace Chaotx.Mgx.Layout {
         private void Finish() {
             if(State == SlidingPaneState.SlidingIn) {
                 State = SlidingPaneState.SlidedIn;
-                nextState = State;
                 locked = false;
                 OnSlidedIn();
             } else
             if(State == SlidingPaneState.SlidingOut) {
                 State = SlidingPaneState.SlidedOut;
-                nextState = State;
                 OnSlidedOut();
             }
 
