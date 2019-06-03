@@ -6,6 +6,9 @@ using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.Controls {
     public class TextItem : Item {
+        [Ordered, ContentSerializer(Optional = true, ElementName = "Font")]
+        internal string FontRef {get; set;}
+
         [Ordered, ContentSerializer(Optional = true)]
         public string Text {
             get {return text;}
@@ -18,9 +21,6 @@ namespace Chaotx.Mgx.Controls {
                 }
             }
         }
-
-        [Ordered, ContentSerializer(Optional = true, ElementName = "Font")]
-        private string _fontRef;
 
         [ContentSerializerIgnore]
         public SpriteFont Font {
@@ -52,7 +52,7 @@ namespace Chaotx.Mgx.Controls {
             base.Load(content);
 
             if(Font == null)
-                Font = content.Load<SpriteFont>(_fontRef);
+                Font = content.Load<SpriteFont>(FontRef);
         }
 
         public override void Update(GameTime gameTime) {

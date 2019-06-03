@@ -6,6 +6,9 @@ using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.Controls {
     public class ImageItem : Item {
+        [Ordered, ContentSerializer(Optional=true, ElementName="Image")]
+        internal string ImageRef {get; set;}
+        
         [Ordered, ContentSerializer(Optional=true)]
         public bool KeepAspectRatio {
             get => keepAspectRatio;
@@ -17,9 +20,6 @@ namespace Chaotx.Mgx.Controls {
             get => aspectRatio;
             set => SetProperty(ref aspectRatio, value);
         }
-
-        [Ordered, ContentSerializer(Optional=true, ElementName="Image")]
-        private string imageRef {get => _imageRef; set => SetProperty(ref _imageRef, value);}
 
         [ContentSerializerIgnore]
         public override Vector2 Size {
@@ -42,7 +42,6 @@ namespace Chaotx.Mgx.Controls {
 
         private float aspectRatio;
         private bool keepAspectRatio;
-        private string _imageRef = "";
 
         public ImageItem() {} // for content serializer
         public ImageItem(Texture2D image, int width = -1, int height = -1) {
@@ -59,7 +58,7 @@ namespace Chaotx.Mgx.Controls {
 
         public override void Load(ContentManager content) {
             if(Image == null) {
-                Image = content.Load<Texture2D>(_imageRef);
+                Image = content.Load<Texture2D>(ImageRef);
                 if(Width <= 0) Width = Image.Width;
                 if(Height <= 0) Height = Image.Height;
                 AspectRatio = Width/(float)Height;
