@@ -54,11 +54,16 @@ namespace Chaotx.Mgx.Layout {
             }
         }
 
+        [ContentSerializerIgnore]
+        internal override bool InitialAligned
+            => Parent.InitialAligned && positionValidated;
+
         public event EventHandler SlidedIn;
         public event EventHandler SlidedOut;
 
         private int timeTraveled;
         private bool slidin, locked, newState;
+        private bool positionValidated;
         private SlidingPaneState nextState;
         private SlidingPaneState initialState;
         private GenericPosition genericStart;
@@ -80,6 +85,7 @@ namespace Chaotx.Mgx.Layout {
 
         public SlidingPane(GenericPosition start = 0, int time = 2000, LayoutPane origin = null,
         SlidingPaneState initialState = SlidingPaneState.SlidingIn) {
+            locked = initialState != SlidingPaneState.SlidedIn;
             State = SlidingPaneState.SlidedOut;
             InitialState = initialState;
             GenericStart = start;
@@ -90,16 +96,23 @@ namespace Chaotx.Mgx.Layout {
         }
 
         public override void Update(GameTime gameTime) {
-            if(!SuppressUpdates && State != SlidingPaneState.SlidedOut
-            || State == SlidingPaneState.SlidedIn || !InitialAligned)
+            if(!SuppressUpdates || State == SlidingPaneState.SlidedIn)
                 base.Update(gameTime);
-
-            if(!InitialAligned)
-                return;
 
             if(newState) {
                 newState = slidin = false;
                 State = nextState;
+            }
+
+            if(!positionValidated) {
+                if(!base.InitialAligned
+                || !EvaluatePositions())
+                    return;
+
+                if(State == SlidingPaneState.SlidingIn
+                || State == SlidingPaneState.SlidingOut)
+                    SetPosition(StartPosition);
+                else SetPosition(TargetPosition);
             }
 
             if(State == SlidingPaneState.SlidingIn
@@ -108,12 +121,6 @@ namespace Chaotx.Mgx.Layout {
                     slidin = locked = EvaluatePositions();
                 else Slide(gameTime);
             }
-
-            if((State == SlidingPaneState.SlidedIn
-            || State == SlidingPaneState.SlidedOut)
-            && !Position.Equals(TargetPosition)
-            && EvaluatePositions())
-                SetPosition(TargetPosition);
         }
 
         public void SlideIn(GenericPosition start, LayoutPane origin = null) {
@@ -157,25 +164,24 @@ namespace Chaotx.Mgx.Layout {
         }
 
         private bool EvaluatePositions() {
-            if(ParentView == null || !InitialAligned
+            if(ParentView == null || !base.InitialAligned
             || ParentView.ViewPane.AlignmentPending)
                 return false;
 
             if(State == SlidingPaneState.SlidingIn
             || State == SlidingPaneState.SlidedIn) {
                 StartPosition = GenericToVector2(genericStart);
-                var old = locked;
-                locked = false;
-                Parent.AlignChildren();
-                locked = old;
+                ForceAlign();
                 TargetPosition = Position;
             } else
             if(State == SlidingPaneState.SlidingOut
             || State == SlidingPaneState.SlidedOut) {
+                ForceAlign();
                 StartPosition = Position;
                 TargetPosition = GenericToVector2(genericTarget);
             }
             
+            if(!positionValidated) positionValidated = true;
             SetPosition(StartPosition);
             return true;
         }
@@ -184,6 +190,13 @@ namespace Chaotx.Mgx.Layout {
             var old = locked;
             locked = false;
             Position = value;
+            locked = old;
+        }
+
+        private void ForceAlign() {
+            var old = locked;
+            locked = false;
+            Parent.AlignChildren();
             locked = old;
         }
 

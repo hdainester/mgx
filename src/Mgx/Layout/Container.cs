@@ -62,7 +62,7 @@ namespace Chaotx.Mgx.Layout {
         }
 
         [ContentSerializerIgnore]
-        internal bool InitialAligned => initialAligned
+        internal virtual bool InitialAligned => initialAligned
             && (Parent == null || Parent.InitialAligned);
 
         private View parentView;
