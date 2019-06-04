@@ -140,7 +140,6 @@ namespace Chaotx.Mgx.Layout {
             InitialState = initialState;
             GenericStart = start;
             GenericTarget = target;
-            nextState = State;
             TravelTime = time;
             Origin = origin;
             newState = true;
