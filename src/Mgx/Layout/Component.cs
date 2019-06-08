@@ -84,37 +84,9 @@ namespace Chaotx.Mgx.Layout {
             get {return parent;}
             internal set {SetProperty(ref parent, value);}
         }
-
+        
         [ContentSerializerIgnore]
-        public float Layer {
-            get {
-                // TODO not very performant and may cause trouble
-                // for too many layers (~45) but does the job for now
-                if(Parent == null || layer != 0) return layer;
-                ulong i = (ulong)Parent.Children.IndexOf(this);
-                ulong c = (ulong)Parent.Children.Count;
-                ulong d = (ulong)Depth;
-                ulong t  = 1;
-
-                for(ulong j = 0; j < d; ++j, t *= 10);
-                return (i+1)/(float)(t*(c+1)) + Parent.Layer;
-            }
-            internal set => SetProperty(ref layer, value);
-        }
-
-        [ContentSerializerIgnore]
-        internal float InternalLayer => layer;
-
-        [ContentSerializerIgnore]
-        public int Depth {
-            get {
-                int d = 0;
-                for(var c = Parent; c != null;
-                    c = c.Parent, ++d);
-
-                return d;
-            }
-        }
+        internal float Layer {get; set;}
 
         private float alpha = 1f;
         private float layer;

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
+using Chaotx.Mgx.Layout;
 
 namespace Chaotx.Mgx.Views {
     public class ViewManager {
@@ -59,9 +60,12 @@ namespace Chaotx.Mgx.Views {
                         prevNode.Value.Show();
                         
                     views.Remove(node);
-                } else if(view.State != ViewState.Suspended)
+                } else if(view.State != ViewState.Suspended) {
+                    if(view.ViewPane.AlignmentPending)
+                        UpdateLayers(); // TODO test reliability and performance
+
                     view.Update(gameTime);
-                else if(node == views.First)
+                } else if(node == views.First)
                     view.Resume();
             }
         }
@@ -72,5 +76,48 @@ namespace Chaotx.Mgx.Views {
                 view.Draw(spriteBatch);
             spriteBatch.End();
         }
+
+        // TODO this is not a very performant
+        // solution but it does the job fo now
+        protected void UpdateLayers() {
+            int i = 0;
+
+            Views.Reverse().ToList().ForEach(v =>
+                i = UpdateLayers(v, i+1));
+        }
+
+        private int UpdateLayers(View view, int i = 0,
+            Component comp = null, int count = 0)
+        {
+            if(comp == null) {
+                comp = view.ViewPane;
+                count = Views.Count;
+                Views.ToList().ForEach(v => count += CountItems(v));
+                if(count == 0) return 0;
+            }
+            
+            comp.Layer = i/(float)count;
+            var cont = comp as Container;
+            
+            if(cont != null) cont
+                .Children.ToList()
+                .ForEach(c => i = UpdateLayers(view, i+1, c, count));
+
+            return i;
+        }
+
+        private int CountItems(View view, Component comp = null) {
+            if(comp == null) comp = view.ViewPane;
+            if(comp == null) return 0;
+
+            var cont = comp as Container;
+            int count = 1;
+
+            if(cont != null) cont
+                .Children.ToList()
+                .ForEach(c => count += CountItems(view, c));
+
+            return count;
+        }
     }
-}
+} 

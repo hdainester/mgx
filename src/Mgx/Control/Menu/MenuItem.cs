@@ -7,7 +7,7 @@ using System;
 
 namespace Chaotx.Mgx.Controls.Menus {
     public class MenuItem : Control {
-        private static readonly float FocusLayer = 0.99f;
+        private static readonly float FocusLayer = 0.9999f;
         
         [Ordered, ContentSerializer(Optional=true)]
         public override float HGrow {
@@ -119,7 +119,7 @@ namespace Chaotx.Mgx.Controls.Menus {
         }
 
         protected override void OnFocusGain() {
-            layerBackup = InternalLayer;
+            layerBackup = Layer;
             Layer = FocusLayer;
             base.OnFocusGain();
         }
